@@ -1,4 +1,4 @@
-__all__ = ['Command', 'ChatTypeFilter', 'Text', 'IsReplyFilter', 'RegexpCommandsFilter']
+__all__ = ['Command', 'ChatTypeFilter', 'Text', 'IsReplyFilter', 'RegexpCommandsFilter', 'IsChat', 'IsUser', 'IsForward']
 
 # Base Filters Import
 from aiogram.dispatcher.filters.builtin import Command, ChatTypeFilter, Text, IsReplyFilter, RegexpCommandsFilter

@@ -5,7 +5,9 @@ LoggingMode: bool = False
 
 # Variables to connect:
 # Aiogram Bot
-BOT_TOKEN: str = 'bot_token'
+# BOT_TOKEN: str = 'bot_token'
+BOT_TOKEN_1: str = '1543643507:AAFUDGuLZILJ9XDNfjO-8aj6OuxKE5iLfdo'
+BOT_TOKEN_2: str = '1291992166:AAEwobSMvapLGsSRUvqgSUhtmDEO3WA3tYU'
 PARSE_MODE: str = 'HTML'
 
 # Databases
