@@ -1,4 +1,6 @@
-__all__ = ['Command', 'ChatTypeFilter', 'Text', 'IsReplyFilter', 'RegexpCommandsFilter', 'IsChat', 'IsUser', 'IsForward']
+__all__ = [
+    'Command', 'ChatTypeFilter', 'Text', 'IsReplyFilter', 'RegexpCommandsFilter', 'IsChat', 'IsUser', 'IsForward'
+]
 
 # Base Filters Import
 from aiogram.dispatcher.filters.builtin import Command, ChatTypeFilter, Text, IsReplyFilter, RegexpCommandsFilter
@@ -17,8 +19,8 @@ class IsUser(BoundFilter):
         self.is_admin = is_admin
         self.has_username = has_username
 
-    async def check(self, message: Message) -> bool:
-        user = message.from_user
+    async def check(self, update: Message | CallbackQuery) -> bool:
+        user = update.from_user
 
         # If User`s ID == self.id
         if self.is_id is not None and self.is_id != user.id:
@@ -50,5 +52,5 @@ class IsChat(BoundFilter):
     def __init__(self, chat_id: int):
         self.chat_id = chat_id
 
-    async def check(self, update: Message) -> bool:
+    async def check(self, update: Message | CallbackQuery) -> bool:
         return update.chat.id == self.chat_id

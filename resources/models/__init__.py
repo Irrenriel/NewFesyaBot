@@ -3,21 +3,20 @@ import asyncio
 from aiogram import Bot, Dispatcher
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 
-from config import BOT_TOKEN_1, BOT_TOKEN_2, PARSE_MODE
+from config import BOT_TOKEN, PARSE_MODE
 
-# Here you can create tool instances if needed.
+# Here you can create tool instances if you needed.
 
 # Loop
-loop = asyncio.get_event_loop()
+loop = asyncio.new_event_loop()
+asyncio.set_event_loop(loop)
 
 # MemoryStorage
 storage = MemoryStorage()
 
 
 # Bots
-bot_1 = Bot(token=BOT_TOKEN_1, loop=loop, parse_mode=PARSE_MODE)
-bot_2 = Bot(token=BOT_TOKEN_2, loop=loop, parse_mode=PARSE_MODE)
+bot = Bot(token=BOT_TOKEN, loop=loop, parse_mode=PARSE_MODE)
 
 # Dispatchers
-dp_1 = Dispatcher(bot_1, storage=storage, loop=loop)
-dp_2 = Dispatcher(bot_2, storage=storage, loop=loop)
+dp = Dispatcher(bot, storage=storage, loop=loop)
