@@ -44,4 +44,3 @@ class Database:
         res = cur.fetchall()
         cur.close()
         return res
-
