@@ -1,0 +1,59 @@
+[settings]
+
+create table settings (
+-- Name and values
+var TEXT PRIMARY KEY,
+data_str TEXT DEFAULT '',
+data_int INTEGER DEFAULT 0
+)
+
+
+[active_log]
+
+CREATE TABLE active_log (
+-- Main info
+id INTEGER NOT NULL,
+username TEXT NOT NULL,
+
+-- User message
+info TEXT NOT NULL,
+
+-- Datetime
+time INTEGER NOT NULL,
+date TEXT NOT NULL
+)
+
+
+[admin_log]
+
+CREATE TABLE admin_log (
+-- Main info
+id INTEGER NOT NULL,
+username TEXT NOT NULL,
+
+-- Activity
+info TEXT NOT NULL,
+
+-- Datetime
+time INTEGER NOT NULL,
+date TEXT NOT NULL
+)
+
+
+[quests_packs]
+
+CREATE TABLE quests_packs (
+-- Main Info
+id INTEGER NOT NULL,
+
+-- Pack
+pack TEXT NOT NULL
+)
+
+
+[f_reports_storage]
+
+CREATE TABLE f_reports_storage (
+report TEXT NOT NULL,
+timestamp INTEGER NOT NULL
+)

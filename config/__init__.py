@@ -5,18 +5,19 @@ LoggingMode: bool = False
 
 # Variables to connect:
 # Aiogram Bot
-# BOT_TOKEN: str = 'bot_token'
-BOT_TOKEN: str = 'bot_token'
-PARSE_MODE: str = 'HTML'
+BOT_TOKEN = '1543643507:AAHCW8KfhEtgEhn1JIeb_2ZM1LO8rNZCnJQ'
+PARSE_MODE = 'HTML'
 
 # Databases
-# !!! Please keep your database files in the config/ folder !!!
-# You can create multiple paths and instantiate with them
-DB_PATH_1: str = 'config/ExampleDataBase.db'
+USER = 'postgres'
+PASSWORD = 'ql6554771lp'
+DATABASE = 'FesyaDatabase'
+HOST = '127.0.0.1'
+
+POSTGRES_DB = ('main', USER, PASSWORD, DATABASE, HOST)
 
 # Other variables:
 # Roles
-ADMINS_ID: list[int] = []
+ADMINS_ID: list[int] = [560877161, 394557686]
 
 # Global constants:
-# To import it anywhere or use it to instantiate it into resources / models

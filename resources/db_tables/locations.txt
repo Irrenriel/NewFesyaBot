@@ -1,0 +1,25 @@
+[loc]
+
+CREATE TABLE loc (
+-- Identification Data
+code TEXT DEFAULT 'Empty',
+name TEXT NOT NULL,
+lvl INTEGER NOT NULL,
+type TEXT NOT NULL,
+
+-- Temporary Data
+conqueror TEXT DEFAULT 'Forbidden Clan',
+cycle INTEGER DEFAULT 0,
+status TEXT DEFAULT '⏳',
+
+-- Alive Data
+exist BOOL DEFAULT 0,
+found_time INTEGER DEFAULT 0,
+death_time INTEGER DEFAULT 0,
+
+-- Other
+ft_str TEXT DEFAULT '',
+dt_str TEXT DEFAULT '',
+
+f_by TEXT DEFAULT 'None'
+)

@@ -1,0 +1,165 @@
+{
+	"Classes": {
+		"Knight": {
+			"Passive Skill": {
+				"description": "Шанс нанести критический удар.",
+				"lvls": {
+					"1": {
+						"chance": 5
+					},
+					"2": {
+						"chance": 10
+					},
+					"3": {
+						"chance": 15
+					},
+					"4": {
+						"chance": 20
+					}
+				}
+			}
+		},
+		"Ranger": {
+			"Passive Skill": {
+				"description": "За каждый уход в Оборону повышается урон следующей атаки.",
+				"lvls": {
+					"1": {
+						"units": 10
+					},
+					"2": {
+						"units": 15
+					},
+					"3": {
+						"units": 20
+					},
+					"4": {
+						"units": 25
+					}
+				}
+			}
+		},
+		"Sentinel": {
+			"Passive Skill": {
+				"description": "Шанс уменьшить урон врагу при атаке на вас в Обороне.",
+				"lvls": {
+					"1": {
+						"chance": 5,
+						"units": 20
+					},
+					"2": {
+						"chance": 10,
+						"units": 30
+					},
+					"3": {
+						"chance": 15,
+						"units": 40
+					},
+					"4": {
+						"chance": 20,
+						"units": 50
+					}
+				}
+			}
+		},
+		"Blacksmith": {
+			"Passive Skill": {
+				"description": "Увеличивает максимальный запас маны.",
+				"lvls": {
+					"1": {
+						"units": 100
+					},
+					"2": {
+						"units": 150
+					},
+					"3": {
+						"units": 200
+					},
+					"4": {
+						"units": 250
+					}
+				}
+			}
+		},
+		"Alchemist": {
+			"Passive Skill": {
+				"description": "Увеличивает исходящее лечение и переодический урон.",
+				"lvls": {
+					"1": {
+						"percent": 5
+					},
+					"2": {
+						"percent": 10
+					},
+					"3": {
+						"percent": 15
+					},
+					"4": {
+						"percent": 20
+					}
+				}
+			}
+			}
+		},
+		"Collector": {
+			"Passive Skill": {
+				"description": "???"
+			}
+		}
+	},
+
+	"Weapons": {
+		"Sword": {
+			"Passive Skill": {
+				"description": "Шанс нанести доп. урон в размере % от атаки."
+			}
+		},
+		"Bow": {
+			"Passive Skill": {
+				"description": "Шанс оглушить противника и уклониться от атаки выше."
+			}
+		},
+		"Blant": {
+			"Passive Skill": {
+				"description": "Шанс уменьшить защиту врага."
+			}
+		},
+		"Spear": {
+			"Passive Skill": {
+				"description": "Шанс нанести доп. урон в размере % от защиты."
+			}
+		},
+		"Shield": {
+			"Passive Skill": {
+				"description": "Шанс заблокировать атаку противника увеличен."
+			}
+		},
+		"Dagger": {
+			"Passive Skill": {
+				"description": "Шанс нанести кровоточащую рану наносящую переодический урон."
+			}
+		},
+		"Potions": {
+			"Passive Skill": {
+				"description": ""
+			}
+		}
+	},
+
+	"Armors": {
+		"Light": {
+			"Passive Skill": {
+				"description": "Увеличивает шанс уклонения за каждую часть лёгкой брони."
+			}
+		},
+		"Heavy": {
+			"Passive Skill": {
+				"description": "Уменьшает получаемый урон за каждую часть тяжёлой брони."
+			}
+		},
+		"Robe": {
+			"Passive Skill": {
+				"description": "Увеличивает прирост маны за каждую часть мантии."
+			}
+		}
+	}
+}
