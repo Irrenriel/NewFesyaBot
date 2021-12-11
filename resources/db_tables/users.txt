@@ -8,10 +8,10 @@ username TEXT NOT NULL,
 -- CW Data
 nickname TEXT NOT NULL,
 lvl INTEGER NOT NULL,
-main_class TEXT NOT NULL,
-sub_class TEXT DEFAULT 'None',
+main_class INTEGER NOT NULL,
+sub_class INTEGER DEFAULT 0,
 guild_tag TEXT DEFAULT 'None',
-castle TEXT NOT NULL,
+castle INTEGER NOT NULL,
 
 -- Bot Data
 -- Role: 1 - Default User, 2 - Officer, 3 - Commander, 4 - Alliance leader

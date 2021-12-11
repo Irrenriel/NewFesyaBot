@@ -2,14 +2,14 @@ from enum import Enum
 
 
 class Castles(Enum):
-    OPLOT = '☘'
-    AMBER = '🍁'
-    FERMA = '🍆'
-    NIGHT = '🦇'
-    SKALA = '🖤'
-    DAWN = '🌹'
-    TORTUGA = '🐢'
-    ERROR = 'ERROR'
+    ERROR = 0
+    OPLOT = 1
+    AMBER = 2
+    FERMA = 3
+    NIGHT = 4
+    SKALA = 5
+    RASSVET = 6
+    TORTUGA = 7
 
 
 class Roles(Enum):
@@ -21,14 +21,20 @@ class Roles(Enum):
 
 
 class Classes(Enum):
+    # Chick
+    CHICK = -1
+
+    # None
+    NONE = 0
+
     # Squair
-    KNIGHT = '⚔️'
-    RANGER = '🏹'
-    SENTINEL = '🛡'
-    BERSERK = '🩸'
+    KNIGHT = 1
+    RANGER = 2
+    SENTINEL = 3
+    BERSERK = 4
 
     # Master
-    BLACKSMITH = '⚒'
-    ALCHEMIST = '⚗️'
-    COLLECTOR = '📦'
-    NOBLE = '🎩'
+    BLACKSMITH = 5
+    ALCHEMIST = 6
+    COLLECTOR = 7
+    NOBLE = 8

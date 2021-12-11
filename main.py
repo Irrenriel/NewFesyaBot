@@ -1,17 +1,25 @@
 from aiogram import executor, Dispatcher
 
 from resources.models import dp, loop, db
-from resources.tools.cashes import UserData
+from src.content import Castles
+from src.content.cashes import users
 from src import handlers
 
 
 async def startup_func(dp: Dispatcher):
+    # Connecting to databases
     con = await db.connect()
     if not con:
         raise Exception('Can not connect to Database')
 
-    result = await db.fetch('SELECT * FROM users', one_row=True)
-    print('Result:', UserData(**result))
+    # Cashes
+    # UsersCash uploading
+    users_result = await db.fetch('SELECT * FROM users')
+    await users.update(users_result)
+
+    result = await users.select_castle(Castles.SKALA)
+    print('Result:', result)
+
     print('<- <- <- Bot is working! -> -> ->')
 
 if __name__ == '__main__':
