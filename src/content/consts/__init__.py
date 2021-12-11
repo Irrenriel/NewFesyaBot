@@ -1,1 +1,1 @@
-from .main_enums import Castles, Roles, Classes
+from .main_enums import Castles, Roles, Classes, GMRole

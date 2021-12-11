@@ -1,12 +1,13 @@
-from dataclasses import dataclass
-from asyncpg import Record
+from typing import Optional
 import threading
 
-from src.content import Castles, Roles, Classes
+from asyncpg import Record
+from pydantic import BaseModel
+
+from src.content import Castles, Roles, Classes, GMRole
 
 
-@dataclass
-class UserData:
+class UserData(BaseModel):
     # Telegram Data
     id: int
     username: str
@@ -16,13 +17,13 @@ class UserData:
     lvl: int
     main_class: Classes
     sub_class: Classes
-    guild_tag: str
+    guild_tag: Optional[str]
     castle: Castles
 
     # Bot Data
     role: Roles
     last_hero_update: int
-    gm_role: int
+    gm_role: GMRole
 
 
 class UsersCash:
@@ -34,10 +35,14 @@ class UsersCash:
     _rlock = threading.RLock()
 
     async def update(self, db_result: list[Record]):
+        """
+        Updating all storages.
+        :param db_result: list of Records by postgres
+        """
         with UsersCash._rlock:
             self._storage = [UserData(**r) for r in db_result]
 
-            # Store by ID
+            # Store by IDs
             if self._store_by_ids:
                 self._store_by_ids.clear()
 
@@ -59,7 +64,6 @@ class UsersCash:
                 self._store_by_guild_tags.setdefault(data.guild_tag, {})[data.id] = data
                 self._store_by_castles.setdefault(data.castle, {})[data.id] = data
                 self._store_by_roles.setdefault(data.role, {})[data.id] = data
-            print(self._store_by_castles)
 
     async def select(self, func) -> list:
         """

@@ -38,3 +38,8 @@ class Classes(Enum):
     ALCHEMIST = 6
     COLLECTOR = 7
     NOBLE = 8
+
+
+class GMRole(Enum):
+    FALSE = 0
+    TRUE = 1

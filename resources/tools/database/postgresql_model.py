@@ -49,7 +49,7 @@ class PostgreSQLDatabase:
                 result: list[asyncpg.Record] = await conn.fetch(request, *args)
                 return result
 
-    async def execute(self, request: str,  args: list[str] = None):
+    async def execute(self, request: str,  args: list[str] = None, many: bool = False):
         """
         Execute a request to database.
         :param request: SQL request
@@ -60,7 +60,10 @@ class PostgreSQLDatabase:
             args = []
 
         async with self._pool.acquire() as conn:
-            await conn.execute(request, *args)
+            if many:
+                await conn.executemany(request, *args)
+            else:
+                await conn.execute(request, *args)
 
     async def disconnect(self):
         """
