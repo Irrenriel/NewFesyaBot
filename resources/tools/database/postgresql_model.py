@@ -54,6 +54,7 @@ class PostgreSQLDatabase:
         Execute a request to database.
         :param request: SQL request
         :param args: Args to insert into SQL request
+        :param many: True if you need to user executemany, else False
         :return: bool - True is ok, False is fail
         """
         if args is None:

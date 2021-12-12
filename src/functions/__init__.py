@@ -1,1 +1,1 @@
-from .example_section import *
+from .admin_section import *

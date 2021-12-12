@@ -1,1 +1,1 @@
-from . import example_handlers
+from . import main_handlers, admin_handlers
