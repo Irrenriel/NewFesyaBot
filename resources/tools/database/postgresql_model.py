@@ -26,7 +26,7 @@ class PostgreSQLDatabase:
         )
         return True
 
-    async def fetch(self, request: str, args: list[str] = None, one_row: bool = False) -> \
+    async def fetch(self, request: str, args: list = None, one_row: bool = False) -> \
             list[asyncpg.Record] | asyncpg.Record | None:
         """
         Get a data rows from database by request.
@@ -49,7 +49,7 @@ class PostgreSQLDatabase:
                 result: list[asyncpg.Record] = await conn.fetch(request, *args)
                 return result
 
-    async def execute(self, request: str,  args: list[str] = None, many: bool = False):
+    async def execute(self, request: str,  args: list = None, many: bool = False):
         """
         Execute a request to database.
         :param request: SQL request

@@ -4,7 +4,8 @@ import threading
 from asyncpg import Record
 from pydantic import BaseModel
 
-from src.content import Castles, Roles, Classes, GMRole
+from resources.tools.database import PostgreSQLDatabase
+from src.content import Castles, Roles, Classes, GMRole, ROLES_DICT
 
 
 class UserData(BaseModel):
@@ -41,29 +42,31 @@ class UsersCash:
         """
         with UsersCash._rlock:
             self._storage = [UserData(**r) for r in db_result]
+            await self.reload()
 
-            # Store by IDs
-            if self._store_by_ids:
-                self._store_by_ids.clear()
+    async def reload(self):
+        # Store by IDs
+        if self._store_by_ids:
+            self._store_by_ids.clear()
 
-            # Store by Guild Tags
-            if self._store_by_guild_tags:
-                self._store_by_guild_tags.clear()
+        # Store by Guild Tags
+        if self._store_by_guild_tags:
+            self._store_by_guild_tags.clear()
 
-            # Store by Castles
-            if self._store_by_castles:
-                self._store_by_castles.clear()
+        # Store by Castles
+        if self._store_by_castles:
+            self._store_by_castles.clear()
 
-            # Store by Roles
-            if self._store_by_roles:
-                self._store_by_roles.clear()
+        # Store by Roles
+        if self._store_by_roles:
+            self._store_by_roles.clear()
 
-            # Packing
-            for data in self._storage:
-                self._store_by_ids[data.id] = data
-                self._store_by_guild_tags.setdefault(data.guild_tag, {})[data.id] = data
-                self._store_by_castles.setdefault(data.castle, {})[data.id] = data
-                self._store_by_roles.setdefault(data.role, {})[data.id] = data
+        # Packing
+        for data in self._storage:
+            self._store_by_ids[data.id] = data
+            self._store_by_guild_tags.setdefault(data.guild_tag, {})[data.id] = data
+            self._store_by_castles.setdefault(data.castle, {})[data.id] = data
+            self._store_by_roles.setdefault(data.role, {})[data.id] = data
 
     async def select(self, func) -> list:
         """
@@ -86,7 +89,7 @@ class UsersCash:
                 return [self._store_by_ids.get(uid) for uid in uids]
 
             elif type(uids) is int:
-                return [self._store_by_ids.get(uids)]
+                return self._store_by_ids.get(uids)
 
     async def select_castle(self, castles: list[Castles] | Castles) -> dict:
         """
@@ -143,4 +146,15 @@ class UsersCash:
         :param roles: roles to check
         :return: bool
         """
-        return bool((await self.select_role(roles)).get(uid))
+        with UsersCash._rlock:
+            return bool((await self.select_role(roles)).get(uid))
+
+    async def change_role(self, db: PostgreSQLDatabase, role: int, user: UserData):
+        with UsersCash._rlock:
+            await db.execute('UPDATE users SET role = $1 WHERE id = $2', [role, user.id])
+
+            self._storage = list(filter(lambda x: x.id != user.id, self._storage))
+            user.role = ROLES_DICT.get(role)
+            self._storage.append(user)
+
+            await self.reload()

@@ -43,3 +43,6 @@ class Classes(Enum):
 class GMRole(Enum):
     FALSE = 0
     TRUE = 1
+
+
+ROLES_DICT = {-1: Roles.ADMIN, 1: Roles.COMMON, 2: Roles.OFFICER, 3: Roles.COMMANDER, 4: Roles.ALLIANCE_LEADER}

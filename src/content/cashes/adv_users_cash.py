@@ -69,7 +69,7 @@ class AdvUsersCash:
                 return [self._store_by_ids.get(uid) for uid in uids]
 
             elif type(uids) is int:
-                return [self._store_by_ids.get(uids)]
+                return self._store_by_ids.get(uids)
 
     async def select_rank(self, ranks: list[int] | int) -> dict:
         """
