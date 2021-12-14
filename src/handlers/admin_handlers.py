@@ -1,6 +1,6 @@
 from resources.models import dp
 
-from resources.tools.cfilters import Command, IsUser, IsReplyFilter
+from resources.tools.cfilters import Command, IsUser, IsReplyFilter, ChatTypeFilter
 from src.functions import sql, info, reg_as
 
 
@@ -21,4 +21,10 @@ dp.register_message_handler(
 dp.register_message_handler(
     reg_as,
     Command('reg_as'), IsReplyFilter('is_reply'), IsUser(is_admin=True)
+)
+
+# /j (Journal)
+dp.register_message_handler(
+    active_log,
+    Command('j'), IsUser(is_admin=True)
 )
