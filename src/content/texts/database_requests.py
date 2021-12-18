@@ -6,14 +6,14 @@ ADV_MAIN_REQ = '''
 SELECT id, rank, reputation, avail_quests, inprog_quest, d_limit FROM adv_users
 '''
 
-ACTIVITY_LOG_REQ_BY_USER = '''
+ACTIVITY_LOGGING_REQ_BY_USER = '''
 SELECT id, username, info, time, date FROM active_log WHERE username = $1 ORDER BY time DESC
 '''
 
-ACTIVITY_LOG_REQ_BY_NONE = '''
+ACTIVITY_LOGGING_REQ_BY_NONE = '''
 SELECT id, username, info, time, date FROM active_log ORDER BY time DESC
 '''
 
-J_LOGGING_REQ = f'''
-INSERT INTO activity_log VALUES ($1,$2,$3,$4, datetime('now', 'localtime'))
+ACTIVITY_LOGGING_REQ_INSERT = f'''
+INSERT INTO activity_logger_fesya (id, username, data) VALUES ($1, $2, $3)
 '''

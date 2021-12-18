@@ -14,14 +14,13 @@ CREATE TABLE activity_logger_fesya (
 -- Main info
 id INTEGER NOT NULL,
 username TEXT NOT NULL,
-type TEXT NOT NULL,
 
 -- User`s activity
 data TEXT NOT NULL,
 
 -- Datetime
-time timetz DEFAULT LOCALTIME,
-date timestamptz DEFAULT LOCALTIMESTAMP
+time time DEFAULT LOCALTIME,
+date timestamp DEFAULT LOCALTIMESTAMP
 )
 
 

@@ -84,12 +84,3 @@ async def active_log_pages(call: CallbackQuery, db: PostgreSQLDatabase):
     )
 
     await call.message.edit_text(title + txt, reply_markup=kb)
-
-
-async def add_log(mes, db: PostgreSQLDatabase, info: str = None):
-    id = mes.from_user.id
-    username = mes.from_user.username if mes.from_user.username else mes.from_user.first_name + ':NoUsername'
-    info = mes.text if info is None else info
-
-    db.execute(,[id, username, info]
-    )
