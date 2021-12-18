@@ -1,5 +1,5 @@
 from aiogram.types import Message, CallbackQuery
-from datetime import datetime
+from datetime import datetime, time
 
 from resources.tools.database import PostgreSQLDatabase
 from resources.tools.keyboards import InlineKeyboard, Call
@@ -30,18 +30,19 @@ async def activity_log(mes: Message, db: PostgreSQLDatabase):
     len_res, txt = len(pool_logs), ''
 
     for row in pool_logs[:10]:
-        txt += f'[<i>{row.time}</i>] @{row.username}:\n"<code>{row.data[:20]}</code>"\n'
+        txt += f'[<i>{row.time.strftime("%H:%M:%S")}</i>] @{row.username}:\n"<code>{row.data[:20]}</code>"\n'
 
     page = 1
     u = user if user else 'all'
 
     # Creating keyboard
+    _1st_btn = Call("⬅️", f"j:{u}:{page-1}") if page - 1 else Call(" ", "None")
+    _3rd_btn = Call("➡️", f"j:{u}:{page+1}") if len_res > 10 else Call(" ", "None")
     kb = InlineKeyboard(
-        Call('⬅️', f'j:{u}:{page-1}') if page - 1 else Call(' ', 'None'),
-        Call(str(page), f'j:{u}:{page}'),
-        Call('➡️', f'j:{u}:{page+1}') if len_res > 10 else Call(' ', 'None'),
-        Call('Закрыть', 'j_cancel'),
-        row_width=3
+        Call("⬅️", f"j:{u}:{page-1}") if page - 1 else Call(" ", "None"),
+        Call(str(page), f"j:{u}:{page}"),
+        Call("➡️", f"j:{u}:{page+1}") if len_res > 10 else Call(" ", "None"),
+        Call("Закрыть", "j_cancel"), row_width=3
     )
 
     await mes.answer(title + txt, reply_markup=kb)
@@ -67,7 +68,7 @@ async def activity_log_pages(call: CallbackQuery, db: PostgreSQLDatabase):
 
     if res[n-10:n]:
         for row in pool_logs[n-10:n]:
-            txt += f'[<i>{row.time}</i>] @{row.username}:\n"<code>{row.data[:20]}</code>"\n'
+            txt += f'[<i>{row.time.strftime("%H:%M:%S")}</i>] @{row.username}:\n"<code>{row.data[:20]}</code>"\n'
     else:
         txt += 'The Log is empty or the given user does not exist.'
 

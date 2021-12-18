@@ -1,7 +1,7 @@
 from resources.models import dp
 
-from resources.tools.cfilters import Command, IsUser, IsReplyFilter, ChatTypeFilter, Text
-from src.functions import sql, info, reg_as, activity_log, activity_log_pages
+from resources.tools.cfilters import Command, IsUser, IsReplyFilter, Text
+from src.functions import sql, info, reg_as, activity_log, activity_log_pages, callback_cancel, callback_none
 
 
 '''<<<-----   ADMIN FUNCs   ----->>>'''
@@ -34,3 +34,25 @@ dp.register_callback_query_handler(
     activity_log_pages,
     Text(startswith='j:'), IsUser(is_admin=True)
 )
+
+# Cancel (Journal)
+dp.register_callback_query_handler(
+    callback_cancel,
+    Text('j_cancel'), IsUser(is_admin=True)
+)
+'''------------------------------------------------------------------------------------------------------------------'''
+
+
+'''<<<-----   SETTINGS   ----->>>'''
+# None Callbacks
+dp.register_callback_query_handler(
+    callback_none,
+    Text('None')
+)
+
+# Close Callbacks
+dp.register_callback_query_handler(
+    callback_cancel,
+    Text('cancel')
+)
+'''------------------------------------------------------------------------------------------------------------------'''

@@ -11,13 +11,20 @@ from aiogram.types import Message, CallbackQuery
 
 from config import ADMINS_ID
 
+from src.content import users as uc
+
 
 # Creating filters
 class IsUser(BoundFilter):
-    def __init__(self, is_id: int = None, is_admin: bool = None, has_username: bool = None):
+    def __init__(
+            self, is_id: int = None, is_admin: bool = None, has_username: bool = None, is_registered: bool = None,
+            has_roles: [list, int] = None
+    ):
         self.is_id = is_id
         self.is_admin = is_admin
         self.has_username = has_username
+        self.is_registered = is_registered
+        self.has_roles = has_roles
 
     async def check(self, update) -> bool:
         user = update.from_user
@@ -35,6 +42,17 @@ class IsUser(BoundFilter):
 
         # Is User Has Username
         if self.has_username is not None and user.username is None:
+            return False
+
+        # Is User Registered
+        if self.is_registered is not None:
+            if self.is_registered and not await uc.select_id(user.id):
+                return False
+            elif not self.is_registered and await uc.select_id(user.id):
+                return False
+
+        # Is User Has Role
+        if self.has_roles is not None and not uc.check_role(user.id, self.has_roles):
             return False
 
         return True
