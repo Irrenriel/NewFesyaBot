@@ -5,26 +5,29 @@ from asyncpg import Record
 
 from resources.tools.database import PostgreSQLDatabase
 from resources.tools.keyboards import InlineKeyboard, Call
-from src.content import ACTIVE_LOG_REQ_BY_USER, ACTIVE_LOG_REQ_BY_NONE
+from src.content import ACTIVITY_LOG_REQ_BY_USER, ACTIVITY_LOG_REQ_BY_NONE
 from src.content.consts.admin_dataclasses import ActiveLog
 
 
-async def active_log(mes: Message, db: PostgreSQLDatabase):
+async def activity_log(mes: Message, db: PostgreSQLDatabase):
+    # Get target (user) for journal and create start row
     args = mes.get_args()
     if args:
         user = args[1:] if args.startswith('@') else args
-        res = db.fetch(ACTIVE_LOG_REQ_BY_USER, [user])
+        res = db.fetch(ACTIVITY_LOG_REQ_BY_USER, [user])
         title = f'|🗄<b>Active Log: @{user}</b>|\n'
 
     else:
         user = None
-        res = db.fetch(ACTIVE_LOG_REQ_BY_NONE)
+        res = db.fetch(ACTIVITY_LOG_REQ_BY_NONE)
         title = '|🗄<b>Active Log: General</b>|\n'
 
+    # If journal is empty
     if not res:
         await mes.answer(title + 'The Log is empty or the given user does not exist.')
         return
 
+    # Formatting logs to array
     pool_logs = [ActiveLog(**i) for i in res]
     len_res, txt = len(pool_logs), ''
 
@@ -34,6 +37,7 @@ async def active_log(mes: Message, db: PostgreSQLDatabase):
     page = 1
     u = user if user else 'all'
 
+    # Creating keyboard
     kb = InlineKeyboard(
         Call('⬅️', f'j:{u}:{page-1}') if page - 1 else Call(' ', 'None'),
         Call(str(page), f'j:{u}:{page}'),
@@ -51,11 +55,11 @@ async def active_log_pages(call: CallbackQuery, db: PostgreSQLDatabase):
     d = call.data.split(':')[1:]
     if d[0] == 'all':
         user = None
-        res = db.fetch(ACTIVE_LOG_REQ_BY_NONE)
+        res = db.fetch(ACTIVITY_LOG_REQ_BY_NONE)
         title = '|🗄<b>Active Log: General</b>|\n'
     else:
         user = d[0]
-        res = db.fetch(ACTIVE_LOG_REQ_BY_USER, [user])
+        res = db.fetch(ACTIVITY_LOG_REQ_BY_USER, [user])
         title = f'|🗄<b>Active Log: @{user}</b>|\n'
 
     pool_logs = [ActiveLog(**i) for i in res]
@@ -82,7 +86,7 @@ async def active_log_pages(call: CallbackQuery, db: PostgreSQLDatabase):
     await call.message.edit_text(title + txt, reply_markup=kb)
 
 
-async def j_logging(mes: Message, db: PostgreSQLDatabase, db_name: str = 'active_log', info: str = None):
+async def add_log(mes, db: PostgreSQLDatabase, info: str = None):
     id = mes.from_user.id
     username = mes.from_user.username if mes.from_user.username else mes.from_user.first_name + ':NoUsername'
     info = mes.text if info is None else info

@@ -8,19 +8,20 @@ data_int INTEGER DEFAULT 0
 )
 
 
-[active_log]
+[activity_logger_fesya]
 
-CREATE TABLE active_log (
+CREATE TABLE activity_logger_fesya (
 -- Main info
 id INTEGER NOT NULL,
 username TEXT NOT NULL,
+type TEXT NOT NULL,
 
--- User message
-info TEXT NOT NULL,
+-- User`s activity
+data TEXT NOT NULL,
 
 -- Datetime
-time INTEGER NOT NULL,
-date TEXT NOT NULL
+time timetz DEFAULT LOCALTIME,
+date timestamptz DEFAULT LOCALTIMESTAMP
 )
 
 
