@@ -28,7 +28,7 @@ async def sql(mes: Message, db: PostgreSQLDatabase):
     await mes.answer(txt)
 
 
-async def db_req(db: PostgreSQLDatabase, mode: int, poll: str, limit: int = 40000) -> str | None:
+async def db_req(db: PostgreSQLDatabase, mode: int, poll: str, limit: int = 40000):
     try:
         if mode == 1 or mode == 2:
             result = await db.fetch(poll, one_row=True if mode == 1 else False)

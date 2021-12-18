@@ -26,8 +26,7 @@ class PostgreSQLDatabase:
         )
         return True
 
-    async def fetch(self, request: str, args: list = None, one_row: bool = False) -> \
-            list[asyncpg.Record] | asyncpg.Record | None:
+    async def fetch(self, request: str, args: list = None, one_row: bool = False):
         """
         Get a data rows from database by request.
         :param request: SQL request

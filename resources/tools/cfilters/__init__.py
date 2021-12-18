@@ -19,7 +19,7 @@ class IsUser(BoundFilter):
         self.is_admin = is_admin
         self.has_username = has_username
 
-    async def check(self, update: Message | CallbackQuery) -> bool:
+    async def check(self, update) -> bool:
         user = update.from_user
 
         # If User`s ID == self.id
@@ -52,5 +52,5 @@ class IsChat(BoundFilter):
     def __init__(self, chat_id: int):
         self.chat_id = chat_id
 
-    async def check(self, update: Message | CallbackQuery) -> bool:
+    async def check(self, update) -> bool:
         return update.chat.id == self.chat_id

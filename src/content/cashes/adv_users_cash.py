@@ -58,7 +58,7 @@ class AdvUsersCash:
         with AdvUsersCash._rlock:
             return list(filter(func, self._storage))
 
-    async def select_id(self, uids: list[int] | int) -> list:
+    async def select_id(self, uids) -> list:
         """
         Selecting info from stores by ID/list of IDs.
         :param uids: uids to filter
@@ -71,7 +71,7 @@ class AdvUsersCash:
             elif type(uids) is int:
                 return self._store_by_ids.get(uids)
 
-    async def select_rank(self, ranks: list[int] | int) -> dict:
+    async def select_rank(self, ranks) -> dict:
         """
         Selecting info from stores by Ranks.
         :param ranks: ranks to filter

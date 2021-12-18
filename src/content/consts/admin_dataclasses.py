@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from datetime import datetime, time
 
 
 @dataclass
@@ -8,8 +9,8 @@ class ActiveLog:
     username: str
 
     # User message
-    info: str
+    data: str
 
     # Datetime
-    time: int
-    date: str
+    time: time
+    date: datetime

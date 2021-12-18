@@ -78,7 +78,7 @@ class UsersCash:
         with UsersCash._rlock:
             return list(filter(func, self._storage))
 
-    async def select_id(self, uids: list[int] | int) -> list:
+    async def select_id(self, uids) -> list:
         """
         Selecting info from stores by ID/list of IDs.
         :param uids: uids to filter
@@ -91,7 +91,7 @@ class UsersCash:
             elif type(uids) is int:
                 return self._store_by_ids.get(uids)
 
-    async def select_castle(self, castles: list[Castles] | Castles) -> dict:
+    async def select_castle(self, castles) -> dict:
         """
         Selecting info from stores by Castles.
         :param castles: castles to filter
@@ -107,7 +107,7 @@ class UsersCash:
             elif type(castles) is Castles:
                 return self._store_by_castles.get(castles)
 
-    async def select_guild_tag(self, guild_tags: list[str] | str) -> dict:
+    async def select_guild_tag(self, guild_tags) -> dict:
         """
         Selecting info from stores by Guild tags.
         :param guild_tags: guild tags to filter
@@ -123,7 +123,7 @@ class UsersCash:
             elif type(guild_tags) is str:
                 return self._store_by_guild_tags.get(guild_tags)
 
-    async def select_role(self, roles: list[Roles] | Roles) -> dict:
+    async def select_role(self, roles) -> dict:
         """
         Selecting info from stores by Guild tags.
         :param roles: roles to filter
@@ -139,7 +139,7 @@ class UsersCash:
             elif type(roles) is Roles:
                 return self._store_by_guild_tags.get(roles)
 
-    async def check_role(self, uid: int, roles: Roles | list[Roles]) -> bool:
+    async def check_role(self, uid: int, roles) -> bool:
         """
         Checking id to role.
         :param uid: id to check

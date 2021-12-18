@@ -1,7 +1,7 @@
 from resources.models import dp
 
-from resources.tools.cfilters import Command, IsUser, IsReplyFilter, ChatTypeFilter
-from src.functions import sql, info, reg_as
+from resources.tools.cfilters import Command, IsUser, IsReplyFilter, ChatTypeFilter, Text
+from src.functions import sql, info, reg_as, activity_log, activity_log_pages
 
 
 '''<<<-----   ADMIN FUNCs   ----->>>'''
@@ -25,6 +25,12 @@ dp.register_message_handler(
 
 # /j (Journal)
 dp.register_message_handler(
-    active_log,
+    activity_log,
     Command('j'), IsUser(is_admin=True)
+)
+
+# Switch Pages (Journal)
+dp.register_callback_query_handler(
+    activity_log_pages,
+    Text(startswith='j:'), IsUser(is_admin=True)
 )

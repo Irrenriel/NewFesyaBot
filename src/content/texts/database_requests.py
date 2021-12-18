@@ -7,11 +7,11 @@ SELECT id, rank, reputation, avail_quests, inprog_quest, d_limit FROM adv_users
 '''
 
 ACTIVITY_LOGGING_REQ_BY_USER = '''
-SELECT id, username, info, time, date FROM active_log WHERE username = $1 ORDER BY time DESC
+SELECT id, username, data, time, date FROM activity_logger_fesya WHERE username = $1 ORDER BY date DESC
 '''
 
 ACTIVITY_LOGGING_REQ_BY_NONE = '''
-SELECT id, username, info, time, date FROM active_log ORDER BY time DESC
+SELECT id, username, data, time, date FROM activity_logger_fesya ORDER BY date DESC
 '''
 
 ACTIVITY_LOGGING_REQ_INSERT = f'''
