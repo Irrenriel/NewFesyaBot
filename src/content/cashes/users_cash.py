@@ -1,11 +1,11 @@
+from datetime import datetime
 from typing import Optional
 import threading
 
-from asyncpg import Record
 from pydantic import BaseModel
 
 from resources.tools.database import PostgreSQLDatabase
-from src.content import Castles, Roles, Classes, GMRole, ROLES_DICT
+from src.content import Castles, Roles, Classes, GMRole, ROLES_DICT, GET_NEW_USER_REQUEST
 
 
 class UserData(BaseModel):
@@ -23,8 +23,8 @@ class UserData(BaseModel):
 
     # Bot Data
     role: Roles
-    last_hero_update: int
     gm_role: GMRole
+    hero_update: datetime
 
 
 class UsersCash:
@@ -35,7 +35,7 @@ class UsersCash:
     _store_by_roles = {}
     _rlock = threading.RLock()
 
-    async def update(self, db_result: list[Record]):
+    async def update(self, db_result: list):
         """
         Updating all storages.
         :param db_result: list of Records by postgres
@@ -78,7 +78,7 @@ class UsersCash:
         with UsersCash._rlock:
             return list(filter(func, self._storage))
 
-    async def select_id(self, uids) -> list:
+    async def select_id(self, uids):
         """
         Selecting info from stores by ID/list of IDs.
         :param uids: uids to filter
@@ -158,3 +158,13 @@ class UsersCash:
             self._storage.append(user)
 
             await self.reload()
+
+    async def add_new_user(self, db: PostgreSQLDatabase, uid: int):
+        with UsersCash._rlock:
+            data = await db.fetch(GET_NEW_USER_REQUEST, [uid], one_row=True)
+            data = UserData(**data)
+
+            self._store_by_ids[data.id] = data
+            self._store_by_guild_tags.setdefault(data.guild_tag, {})[data.id] = data
+            self._store_by_castles.setdefault(data.castle, {})[data.id] = data
+            self._store_by_roles.setdefault(data.role, {})[data.id] = data

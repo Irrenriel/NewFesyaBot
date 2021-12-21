@@ -16,8 +16,8 @@ castle INTEGER NOT NULL,
 -- Bot Data
 -- Role: 1 - Default User, 2 - Officer, 3 - Commander, 4 - Alliance leader
 role INTEGER DEFAULT 1,
-last_hero_update INTEGER NOT NULL,
-gm_role INTEGER DEFAULT 0
+gm_role INTEGER DEFAULT 0,
+hero_update timestamp DEFAULT LOCALTIMESTAMP
 )
 
 

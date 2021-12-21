@@ -48,7 +48,7 @@ class PostgreSQLDatabase:
                 result: list[asyncpg.Record] = await conn.fetch(request, *args)
                 return result
 
-    async def execute(self, request: str,  args: list = None, many: bool = False):
+    async def execute(self, request: str, args: list = None, many: bool = False):
         """
         Execute a request to database.
         :param request: SQL request

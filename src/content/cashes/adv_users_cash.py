@@ -1,12 +1,8 @@
 import threading
-from dataclasses import dataclass
-
-from asyncpg import Record
 from pydantic import BaseModel
 
 
-@dataclass
-class AdvUserData:
+class AdvUserData(BaseModel):
     # Telegram Data
     id: int
 
@@ -15,8 +11,8 @@ class AdvUserData:
     reputation: int
 
     # Adv Quests
-    avail_quests: any
-    inprog_quest: any
+    avail_quests: int
+    inprog_quest: int
     d_limit: int
 
 
@@ -27,7 +23,7 @@ class AdvUsersCash:
 
     _rlock = threading.RLock()
 
-    async def update(self, db_result: list[Record]):
+    async def update(self, db_result: list):
         """
         Updating all storages.
         :param db_result: list of Records by postgres
