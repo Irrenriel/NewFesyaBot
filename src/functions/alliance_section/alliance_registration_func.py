@@ -23,3 +23,5 @@ async def alliance_get_code(mes: Message, db: PostgreSQLDatabase):
         return
 
     await tac.create(mes.from_user.id, mes.text)
+    await mes.answer(REG_GET_CODE)
+    await StateOn.AllianceGetMenu.set()

@@ -7,3 +7,4 @@ class StateOn(StatesGroup):
 
     # Alliance
     AllianceGetCode = State()
+    AllianceGetMenu = State()

@@ -1,0 +1,2 @@
+from .alliance_main_menu_func import alliance_main_menu
+from .alliance_registration_func import alliance_new_reg
