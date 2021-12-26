@@ -24,7 +24,7 @@ class TempAllianceCash:
         self.cash.get(uid).add_main(name, owner, n_guilds, n_peoples, b_pogs, b_money, stock, glory, row)
 
     async def add_roster(self, uid, roster: dict, row):
-        alliance = self.cash.get(uid).add_roster(roster, row)
+        self.cash.get(uid).add_roster(roster, row)
 
     async def get_data(self, uid):
         return self.cash.get(uid)
