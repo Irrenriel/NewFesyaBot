@@ -13,7 +13,7 @@ cycle INTEGER DEFAULT 0,
 status TEXT DEFAULT '⏳',
 
 -- Alive Data
-exist BOOL DEFAULT 0,
+exist BOOL DEFAULT False,
 found_time INTEGER DEFAULT 0,
 death_time INTEGER DEFAULT 0,
 

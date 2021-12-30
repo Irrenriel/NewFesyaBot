@@ -7,7 +7,6 @@ data_str TEXT DEFAULT '',
 data_int INTEGER DEFAULT 0
 )
 
-
 [activity_logger_fesya]
 
 CREATE TABLE activity_logger_fesya (

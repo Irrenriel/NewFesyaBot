@@ -76,3 +76,6 @@ async def alliance_get_roster(mes: Message, db: PostgreSQLDatabase):
         return
 
     await tac.add_roster(mes.from_user.id, d_parse, str(mes))
+
+    alliance = await tac.get_data(mes.from_user.id)
+    await db.execute(REG_NEW_ALLIANCE, alliance.get_me())

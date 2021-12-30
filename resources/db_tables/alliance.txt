@@ -39,7 +39,7 @@ g_main_raw TEXT DEFAULT '',
 g_roles_raw TEXT DEFAULT '',
 g_roster_raw TEXT DEFAULT '',
 g_atklist_raw TEXT DEFAULT '',
-g_deflist_raw TEXT DEFAULT ''
+g_deflist_raw TEXT DEFAULT '',
 
 -- Last Updates
 main_last_upd INTEGER DEFAULT 0,
@@ -66,8 +66,8 @@ n_guilds INTEGER DEFAULT 0,
 -- Balance (👝)
 al_balance_pogs INTEGER DEFAULT 0,
 al_balance_money INTEGER DEFAULT 0,
-al_main_last_update INTEGER DEFAULT 0,
-al_rost_last_update INTEGER DEFAULT 0,
+al_main_last_update timestamp DEFAULT LOCALTIMESTAMP,
+al_rost_last_update timestamp DEFAULT LOCALTIMESTAMP,
 al_stock INTEGER DEFAULT 0,
 al_glory INTEGER DEFAULT 0,
 

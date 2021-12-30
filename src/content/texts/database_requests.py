@@ -33,3 +33,12 @@ INNER JOIN alliance_hq ON alliance_guilds.al_code = alliance_hq.al_code
 INNER JOIN users ON alliance_hq.al_leader = users.id
 WHERE alliance_guilds.guild_tag = $1
 '''
+
+REG_NEW_ALLIANCE = '''\
+INSERT INTO alliance_hq (
+    al_code, al_name, al_owner, al_leader, n_members, n_guilds, al_balance_pogs,
+    al_balance_money, al_stock, al_glory, al_guilds, al_main_raw, al_roster_raw,
+    al_main_last_update, al_rost_last_update
+)
+VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?, strftime('%s','now', 'localtime'), strftime('%s','now', 'localtime'))
+'''
