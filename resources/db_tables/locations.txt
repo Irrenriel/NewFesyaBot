@@ -42,3 +42,28 @@ code TEXT PRIMARY KEY,
 -- Res Data
 res_json TEXT NOT NULL
 )
+
+
+[loc_guilds]
+
+CREATE TABLE loc_guilds (
+-- Code of Alliance
+code TEXT NOT NULL,
+
+-- Guild Tag and Emoji
+guild_tag TEXT PRIMARY KEY,
+guild_emoji TEXT NOT NULL
+)
+
+
+[loc_history]
+
+CREATE TABLE loc_history (
+-- Code of Location
+code TEXT NOT NULL,
+
+-- Datetime, Message ID and Text
+data timestamp DEFAULT LOCALTIMESTAMP,
+url INTEGER NOT NULL,
+txt TEXT NOT NULL
+)
