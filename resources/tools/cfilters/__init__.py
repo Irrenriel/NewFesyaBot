@@ -52,7 +52,7 @@ class IsUser(BoundFilter):
                 return False
 
         # Is User Has Role
-        if self.has_roles is not None and not uc.check_role(user.id, self.has_roles):
+        if self.has_roles is not None and not await uc.check_role(user.id, self.has_roles):
             return False
 
         return True

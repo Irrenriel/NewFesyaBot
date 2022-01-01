@@ -1,1 +1,1 @@
-from . import main_handlers, admin_handlers
+from . import main_handlers, admin_handlers, alliance_handlers, location_handlers

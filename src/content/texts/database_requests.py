@@ -34,11 +34,23 @@ INNER JOIN users ON alliance_hq.al_leader = users.id
 WHERE alliance_guilds.guild_tag = $1
 '''
 
-REG_NEW_ALLIANCE = '''\
+REG_NEW_ALLIANCE = '''
 INSERT INTO alliance_hq (
     al_code, al_name, al_owner, al_leader, n_members, n_guilds, al_balance_pogs,
     al_balance_money, al_stock, al_glory, al_guilds, al_main_raw, al_roster_raw,
     al_main_last_update, al_rost_last_update
 )
-VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?, strftime('%s','now', 'localtime'), strftime('%s','now', 'localtime'))
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $10, $11, $12, LOCALTIMESTAMP, LOCALTIMESTAMP)
+'''
+
+INCREASE_LOCATION_TOP_COUNT_REQ = '''
+INSERT INTO location_top (uid) VALUES ($1) ON CONFLICT (uid) DO UPDATE SET count = location_top.count + 1
+'''
+
+INSERT_OR_UPDATE_LOCATION_BUFF_REQ = '''
+INSERT INTO loc_buff (code, bless_json) VALUES ($1, $2) ON CONFLICT (code) DO UPDATE SET bless_json = $2
+'''
+
+INSERT_OR_UPDATE_LOCATION_RES_REQ = '''
+INSERT INTO loc_res (code, res_json) VALUES ($1, $2) ON CONFLICT (code) DO UPDATE SET res_json = $2
 '''

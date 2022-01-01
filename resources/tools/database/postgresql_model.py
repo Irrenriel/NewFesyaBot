@@ -61,7 +61,7 @@ class PostgreSQLDatabase:
 
         async with self._pool.acquire() as conn:
             if many:
-                await conn.executemany(request, *args)
+                await conn.executemany(request, args)
             else:
                 await conn.execute(request, *args)
 

@@ -2,10 +2,10 @@
 
 CREATE TABLE loc (
 -- Identification Data
-code TEXT DEFAULT 'Empty',
+code TEXT NOT NULL,
 name TEXT NOT NULL,
 lvl INTEGER NOT NULL,
-type TEXT NOT NULL,
+type INTEGER NOT NULL,
 
 -- Temporary Data
 conqueror TEXT DEFAULT 'Forbidden Clan',
@@ -13,13 +13,32 @@ cycle INTEGER DEFAULT 0,
 status TEXT DEFAULT '⏳',
 
 -- Alive Data
-exist BOOL DEFAULT False,
-found_time INTEGER DEFAULT 0,
-death_time INTEGER DEFAULT 0,
+exist BOOL DEFAULT True,
+found_time timestamp DEFAULT LOCALTIMESTAMP,
+death_time timestamp DEFAULT LOCALTIMESTAMP,
 
--- Other
-ft_str TEXT DEFAULT '',
-dt_str TEXT DEFAULT '',
+f_by TEXT DEFAULT 'None',
+f_by_guild TEXT DEFAULT 'None'
+)
 
-f_by TEXT DEFAULT 'None'
+
+[loc_buff]
+
+CREATE TABLE loc_buff (
+-- Identification Data
+code TEXT PRIMARY KEY,
+
+-- Bless Data
+bless_json TEXT NOT NULL
+)
+
+
+[loc_res]
+
+CREATE TABLE loc_res (
+-- Identification Data
+code TEXT PRIMARY KEY,
+
+-- Res Data
+res_json TEXT NOT NULL
 )

@@ -6,7 +6,7 @@ from aiogram.types import CallbackQuery, Message
 from resources.tools.database import PostgreSQLDatabase
 from resources.tools.states import StateOn
 from src.content.texts.alliance_txt import REG_AL_WELCOME, REG_GET_CODE, REG_GET_MAIN
-from src.content import temp_alliance_cash as tac, AL_MAIN_PARSE
+from src.content import temp_alliance_cash as tac, AL_MAIN_PARSE, REG_NEW_ALLIANCE
 
 
 async def alliance_new_reg(call: CallbackQuery):
@@ -21,7 +21,7 @@ async def alliance_get_code(mes: Message, db: PostgreSQLDatabase):
         return
 
     # IF ALREADY REGISTERED
-    if await db.fetch('SELECT * FROM alliance_hq WHERE al_code = ?', [mes.text], one_row=True):
+    if await db.fetch('SELECT * FROM alliance_hq WHERE al_code = $1', [mes.text], one_row=True):
         await mes.answer('Данный альянс уже зарегистрирован! Выясняйте кем или пишите в поддержку.')
         return
 
@@ -47,7 +47,7 @@ async def alliance_get_main(mes: Message, db: PostgreSQLDatabase):
     # TO THE FUTURE FEATURES
     b_pogs, b_money, stock, glory = parse.group('b_pogs', 'b_money', 'stock', 'glory')
 
-    al = await db.fetch('SELECT name FROM loc WHERE code = ?', [await tac.get_code(mes.from_user.id)], one_row=True)
+    al = await db.fetch('SELECT name FROM loc WHERE code = $1', [await tac.get_code(mes.from_user.id)], one_row=True)
     if not al or al.get('name') != name:
         await mes.answer('Код альянса не совпадает с именем. Чужой Альянс кидаешь!!1!')
         return

@@ -133,6 +133,8 @@ class UsersCash:
             if type(roles) is list:
                 result = {}
                 for i in [self._store_by_roles.get(role) for role in roles]:
+                    if not i:
+                        continue
                     result.update(i)
                 return result
 
