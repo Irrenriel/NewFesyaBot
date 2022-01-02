@@ -16,7 +16,7 @@ dp.register_message_handler(
 dp.register_message_handler(
     new_bless_input,
     Text(contains="attractions:"), IsForward(CW_BOT_ID),
-    IsUser(has_roles=[Roles.ADMIN, Roles.ALLIANCE_LEADER, Roles.COMMANDER])
+    IsUser(has_roles=[Roles.ADMIN, Roles.ALLIANCE_LEADER, Roles.COMMANDER, Roles.OFFICER])
 )
 
 # Location`s Resource Input
@@ -29,11 +29,17 @@ dp.register_message_handler(
 # Delete Location from Database, /l_del [code]
 dp.register_message_handler(
     loc_del,
-    Command('l_del'), IsUser(has_roles=[Roles.ADMIN, Roles.ALLIANCE_LEADER, Roles.COMMANDER])
+    Command('l_del'), IsUser(has_roles=[Roles.ADMIN, Roles.ALLIANCE_LEADER])
 )
 
 # Check Info about Location, /l_info [name/code]
 dp.register_message_handler(
     loc_info,
     Command('l_info'), IsUser(has_roles=[Roles.ADMIN, Roles.ALLIANCE_LEADER, Roles.COMMANDER, Roles.OFFICER])
+)
+
+# Check History of Location, /l_history [code]
+dp.register_message_handler(
+    loc_history,
+    Command('l_history'), IsUser(has_roles=[Roles.ADMIN, Roles.ALLIANCE_LEADER, Roles.COMMANDER, Roles.OFFICER])
 )

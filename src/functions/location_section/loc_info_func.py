@@ -117,3 +117,10 @@ class LocInfoData(BaseModel):
     conqueror: str
     cycle: int
     status: str
+
+
+async def loc_history(mes: Message, db: PostgreSQLDatabase):
+    code = mes.get_args()
+    if not code:
+        await mes.answer('/l_history [код]')
+        return

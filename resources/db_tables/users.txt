@@ -51,3 +51,10 @@ id INTEGER NOT NULL,
 -- Variables
 quests_1st_time INTEGER DEFAULT 0
 )
+
+
+[banned_users]
+
+CREATE TABLE banned_users (
+id INTEGER PRIMARY KEY
+)

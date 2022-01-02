@@ -11,13 +11,13 @@ async def loc_del(mes: Message, db: PostgreSQLDatabase):
 
     loc = await db.fetch('SELECT * FROM loc WHERE code = $1 and exist = True', [code], one_row=True)
     if not loc:
-        await mes.answer('Невозможно. Такой локации нет в базе.')
+        await mes.answer('[❌] Невозможно. Такой локации нет в базе.')
         return
 
     await db.execute(
         'UPDATE loc SET exist = False, death_time = LOCALTIMESTAMP WHERE code = $1', [code]
     )
-    await mes.answer(f'Выполнено!')
+    await mes.answer(f'[✅] Выполнено!')
 
     # chats = (x[0] for x in mes.db.checkall('SELECT id FROM chats WHERE delete_loc_ntf = 1', []))
     # if not chats:

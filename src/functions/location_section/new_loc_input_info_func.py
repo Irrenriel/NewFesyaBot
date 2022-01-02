@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 from aiogram.types import Message
 
 from resources.tools.database import PostgreSQLDatabase
-from src.content import NEW_LOC_INPUT_PARSE, LOC_TYPES, LOC_TYPES_ENUM, LocTypes, NEW_LOCATION_NOTIFICATION, \
+from src.content import NEW_LOC_INPUT_PARSE, LOC_TYPES_ENUM, LocTypes, NEW_LOCATION_NOTIFICATION, \
     INCREASE_LOCATION_TOP_COUNT_REQ, UserData, INSERT_OR_UPDATE_LOCATION_BUFF_REQ, INSERT_OR_UPDATE_LOCATION_RES_REQ
 from src.functions.admin_section.settings_func import delete_message_with_notification
 

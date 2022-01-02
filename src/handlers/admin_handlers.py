@@ -1,8 +1,8 @@
 from resources.models import dp
 
 from resources.tools.cfilters import Command, IsUser, IsReplyFilter, Text
-from src.functions import sql, info, reg_as, activity_log, activity_log_pages, callback_cancel, callback_none
-
+from src.functions import sql, info, reg_as, activity_log, activity_log_pages, callback_cancel, callback_none, ban, \
+    unban
 
 '''<<<-----   ADMIN FUNCs   ----->>>'''
 # /sql
@@ -21,6 +21,18 @@ dp.register_message_handler(
 dp.register_message_handler(
     reg_as,
     Command('reg_as'), IsReplyFilter('is_reply'), IsUser(is_admin=True)
+)
+
+# /ban
+dp.register_message_handler(
+    ban,
+    Command('ban'), IsUser(is_admin=True)
+)
+
+# /ban
+dp.register_message_handler(
+    unban,
+    Command('unban'), IsUser(is_admin=True)
 )
 
 # /j (Journal)

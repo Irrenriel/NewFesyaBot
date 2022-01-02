@@ -4,6 +4,8 @@ SELECT id, username, nickname, lvl, main_class, sub_class, guild_tag, castle, ro
 
 ADV_MAIN_REQ = "SELECT id, rank, reputation, avail_quests, inprog_quest, d_limit FROM adv_users;"
 
+BANNED_MAIN_REQ = 'SELECT id FROM banned_users;'
+
 ACTIVITY_LOGGING_REQ_BY_USER = """
 SELECT id, username, data, time, date FROM activity_logger_fesya
 WHERE username = $1 ORDER BY date DESC;
