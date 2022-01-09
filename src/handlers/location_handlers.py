@@ -1,9 +1,10 @@
 from config import CW_BOT_ID
 from resources.models import dp
 
-from resources.tools.cfilters import Command, IsUser, ChatTypeFilter, Text, IsForward
+from resources.tools.cfilters import Command, IsUser, Text, IsForward
 from src.content import Roles
-from src.functions import new_location_input, new_bless_input, new_res_input, loc_del, loc_info
+from src.functions import new_location_input, new_bless_input, new_res_input, loc_del, loc_info, loc_history, \
+    loc_capture, loc_miss, loc_buffs
 
 '''<<<-----   LOCATION SECTION   ----->>>'''
 # New Location Input
@@ -42,4 +43,22 @@ dp.register_message_handler(
 dp.register_message_handler(
     loc_history,
     Command('l_history'), IsUser(has_roles=[Roles.ADMIN, Roles.ALLIANCE_LEADER, Roles.COMMANDER, Roles.OFFICER])
+)
+
+# Check Captured Locations List, /l_capture [code]
+dp.register_message_handler(
+    loc_capture,
+    Command('l_capture'), IsUser(has_roles=[Roles.ADMIN, Roles.ALLIANCE_LEADER, Roles.COMMANDER, Roles.OFFICER])
+)
+
+# Check Missing Locations List, /l_miss
+dp.register_message_handler(
+    loc_miss,
+    Command('l_miss'), IsUser(is_registered=True)
+)
+
+# Check List of Buffs, /l_buffs
+dp.register_message_handler(
+    loc_buffs,
+    Command('l_buffs'), IsUser(has_roles=[Roles.ADMIN, Roles.ALLIANCE_LEADER, Roles.COMMANDER, Roles.OFFICER])
 )

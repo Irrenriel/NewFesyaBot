@@ -56,3 +56,21 @@ INSERT INTO loc_buff (code, bless_json) VALUES ($1, $2) ON CONFLICT (code) DO UP
 INSERT_OR_UPDATE_LOCATION_RES_REQ = '''
 INSERT INTO loc_res (code, res_json) VALUES ($1, $2) ON CONFLICT (code) DO UPDATE SET res_json = $2
 '''
+
+LOC_HISTORY_REQ = 'SELECT date, url, txt FROM loc_history WHERE code = $1 ORDER BY -url LIMIT $2'
+
+LOC_CAPTURE_REQ = '''
+SELECT code, name, lvl, type, conqueror, cycle, status FROM loc WHERE conqueror = $1 and exist = True ORDER BY lvl
+'''
+
+LOC_INFO_REQ = 'SELECT code, name, lvl, type, conqueror, cycle, status FROM loc WHERE code = $1 and exist = True'
+
+LOC_INFO_2_REQ = 'SELECT code, name, lvl, type, conqueror, cycle, status FROM loc WHERE name ILIKE $1 and exist = True'
+
+LOC_INFO_GUILD_INFO = 'SELECT guild_tag, guild_emoji FROM loc_guilds WHERE code = $1'
+
+LOC_MISS_REQ = 'SELECT code, name, lvl, type, conqueror, cycle, status FROM loc WHERE code LIKE $1 and exist = True'
+
+LOC_BUFFS_REQ = 'SELECT code, name, lvl, type, conqueror, cycle, status FROM loc WHERE exist = True'
+
+LOC_BUFFS_2_REQ = 'SELECT code, bless_json FROM loc_buff WHERE code = ANY($1::text[])'

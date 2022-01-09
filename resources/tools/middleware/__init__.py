@@ -15,7 +15,7 @@ class Middleware(BaseMiddleware):
 
     async def on_pre_process_message(self, message: types.Message, data: dict):
         if message.from_user.id not in ADMINS_ID:
-            await add_log(self.db, message, 'MSG: ' + message.text)
+            await add_log(self.db, message, f'MSG: {message.text}')
 
         data['db'] = self.db
         data['user'] = await self.uc.select_id(message.from_user.id)
@@ -23,7 +23,7 @@ class Middleware(BaseMiddleware):
 
     async def on_pre_process_callback_query(self, callback_query: types.CallbackQuery, data: dict):
         if callback_query.from_user.id not in ADMINS_ID:
-            await add_log(self.db, callback_query, 'CLB: ' + callback_query.data)
+            await add_log(self.db, callback_query, f'CLB: {callback_query.data}')
 
         data['db'] = self.db
         data['user'] = await self.uc.select_id(callback_query.from_user.id)
@@ -31,7 +31,7 @@ class Middleware(BaseMiddleware):
 
     async def on_pre_process_inline_query(self, inline_query: types.InlineQuery, data: dict):
         # if inline_query.from_user.id not in ADMINS_ID:
-        #   await add_log(self.db, inline_query, 'INL: ' + inline_query.query)
+        #   await add_log(self.db, inline_query, f'INL: {inline_query.query}')
 
         data['db'] = self.db
         data['user'] = await self.uc.select_id(inline_query.from_user.id)

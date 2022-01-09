@@ -63,7 +63,7 @@ CREATE TABLE loc_history (
 code TEXT NOT NULL,
 
 -- Datetime, Message ID and Text
-data timestamp DEFAULT LOCALTIMESTAMP,
+date timestamp DEFAULT LOCALTIMESTAMP,
 url INTEGER NOT NULL,
 txt TEXT NOT NULL
 )

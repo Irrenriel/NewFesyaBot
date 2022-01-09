@@ -1,4 +1,8 @@
+from dataclasses import dataclass
+from datetime import datetime
 from enum import Enum
+
+from pydantic import BaseModel
 
 
 class LocTypes(Enum):
@@ -15,4 +19,26 @@ LOC_TYPES_ENUM = {
     'Outpost': LocTypes.FORT
 }
 
-LOC_TYPES_BY_NUM = {1: '🏷', 2: '📦', 3: '🎖'}
+GET_LOC_TYPE_EMOJI = {LocTypes.RUINS: '🏷', LocTypes.MINE: '📦', LocTypes.FORT: '🎖'}
+
+class LocInfoData(BaseModel):
+    code: str
+    name: str
+    lvl: int
+    type: LocTypes
+    conqueror: str
+    cycle: int
+    status: str
+
+
+@dataclass
+class LocHistoryData:
+    date: datetime
+    url: int
+    text: str
+
+
+@dataclass
+class LocGuildInfo:
+    guild_tag: str
+    guild_emoji: str

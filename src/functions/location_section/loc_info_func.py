@@ -1,11 +1,11 @@
 import json
 
 from aiogram.types import Message
-from asyncpg import Record
-from pydantic import BaseModel
 
 from resources.tools.database import PostgreSQLDatabase
-from src.content import LocTypes, LOC_TYPES_BY_NUM, AL_INFO_TEXT, LOC_INFO_TEXT
+from src.content import LocTypes, AL_INFO_TEXT, LOC_INFO_TEXT, LOC_HISTORY_REQ, AL_HISTORY_TEXT, LOC_CAPTURE_REQ, \
+    AL_CAPTURE_TEXT, LocInfoData, LocHistoryData, GET_LOC_TYPE_EMOJI, LOC_INFO_REQ, LOC_INFO_2_REQ, \
+    LOC_INFO_GUILD_INFO, LocGuildInfo
 
 
 async def loc_info(mes: Message, db: PostgreSQLDatabase):
@@ -14,83 +14,68 @@ async def loc_info(mes: Message, db: PostgreSQLDatabase):
         await mes.answer('/l_info [код/название локации]')
         return
 
-    loc = await db.fetch(
-        'SELECT code, name, lvl, type, conqueror, cycle, status FROM loc WHERE code = $1 and exist = True',
-        [code], one_row=True
-    )
-
+    loc = await db.fetch(LOC_INFO_REQ, [code], one_row=True)
     if not loc:
-        loc = await db.fetch(
-            'SELECT code, name, lvl, type, conqueror, cycle, status FROM loc WHERE name LIKE $1 and exist = True',
-            [code + '%'], one_row=True
-        )
+        loc = await db.fetch(LOC_INFO_2_REQ, [code + '%'], one_row=True)
 
-    answer = await loc_info_answer(mes, db, loc) if loc else 'Данной локации нет в базе данных.'
+    answer = await loc_info_answer(db, LocInfoData(**loc)) if loc else 'Данной локации нет в базе данных.'
     await mes.answer(answer, disable_web_page_preview=True)
 
 
-async def loc_info_answer(mes: Message, db: PostgreSQLDatabase, loc: Record):
-    data = LocInfoData(**loc)
-
+async def loc_info_answer(db: PostgreSQLDatabase, loc: LocInfoData):
     # If Alliance
-    if data.type == LocTypes.ALLIANCE:
+    if loc.type == LocTypes.ALLIANCE:
         # Basic info
-        guilds = await db.fetch('SELECT * FROM loc_guilds WHERE code = $1', [data.code])
-        roster = ', '.join([f'{l[1]}[{l[2]}]' for l in guilds]) if guilds else 'Нет данных'
+        guilds = [LocGuildInfo(**i) for i in await db.fetch(LOC_INFO_GUILD_INFO, [loc.code])]
+        roster = ', '.join([f'{l.guild_emoji}[{l.guild_tag}]' for l in guilds]) if guilds else 'Нет данных'
 
-        captured_locs = await db.fetch(
-            'SELECT code, name, lvl, type FROM loc WHERE conqueror = $1 and exist = True ORDER BY lvl',
-            [data.code]
-        )
+        captured_locs = [LocInfoData(**i) for i in await db.fetch(LOC_CAPTURE_REQ, [loc.code])]
 
         # Captured locations info
         m = '<a href="https://t.me/share/url?url=/l_info%20{}"><b>{}{} lvl.{}</b></a>'
         cl_txt = '\n'.join(
-            [
-                m.format(
-                    l.get('code'), LOC_TYPES_BY_NUM.get(l.get('type'), 'ERROR'), l.get('name'), str(l.get('lvl'))
-                ) for l in captured_locs[:5]
-            ]
+            [m.format(l.code, GET_LOC_TYPE_EMOJI.get(l.type, 'ERROR'), l.name, str(l.lvl)) for l in captured_locs[:5]]
         ) + '\n...' if len(captured_locs) > 5 else ''
 
         # History of activity locations
-        loc_history = await db.fetch(
-            'SELECT data, url, txt FROM loc_history WHERE code = $1 ORDER BY -url LIMIT 5', [data.code]
-        )
+        l_history = [LocHistoryData(**i) for i in await db.fetch(LOC_HISTORY_REQ, [loc.code, 5])]
         mm = '<a href="https://t.me/ChatWarsDigest/{}">{}</a>'
         lh_txt = '\n\n'.join(
-            [f'[{mm.format(l.get("url"), l.get("data"))}]\n{l.get("txt")}' for l in loc_history]
-        ) if loc_history else 'Нет данных'
+            [f'[{mm.format(l.url, l.date)}]\n{l.text}' for l in l_history]
+        ) if l_history else 'Нет данных'
 
         answer = AL_INFO_TEXT.format(
-            data.name, data.code, roster, data.code, str(len(captured_locs)), cl_txt, data.code, lh_txt
+            loc.name, loc.code, roster, loc.code, str(len(captured_locs)), cl_txt, loc.code, lh_txt
         )
 
     # If Other
     else:
         # Basic info
-        conq_info = await db.fetch('SELECT name FROM loc WHERE code = $1', [data.conqueror], one_row=True)
+        conq_info = await db.fetch('SELECT name FROM loc WHERE code = $1', [loc.conqueror], one_row=True)
+
         m = '<a href="https://t.me/share/url?url=/l_info%20{}"><b>🎪{}</b></a>'
-        conq_txt = m.format(data.conqueror, conq_info.get('name')) if conq_info else 'Нет данных'
+        conq_txt = m.format(loc.conqueror, conq_info.get('name')) if conq_info else 'Нет данных'
 
         # Resources info if Mine
-        res_txt = await res_func(db, data) if data.type == '📦' else ''
+        res_txt = await res_func(db, loc) if loc.type == LocTypes.MINE else ''
 
         # Buffs info
-        buffs = await db.fetch('SELECT bless_json FROM loc_buff where code = $1', [data.code], one_row=True)
+        buffs = await db.fetch('SELECT bless_json FROM loc_buff where code = $1', [loc.code], one_row=True)
         buff_txt = await buff_func(json.loads(buffs.get('bless_json'))) if buffs else 'Нет данных'
 
-        answer = LOC_INFO_TEXT.format(data.type, data.name, str(data.lvl), data.code, conq_txt, res_txt, buff_txt)
+        answer = LOC_INFO_TEXT.format(
+            GET_LOC_TYPE_EMOJI.get(loc.type), loc.name, str(loc.lvl), loc.code, conq_txt, res_txt, buff_txt
+        )
 
     return answer
 
 
-async def res_func(db: PostgreSQLDatabase, data):
+async def res_func(db: PostgreSQLDatabase, loc: LocInfoData):
     res_txt = '<b>⛏Ископаемые:</b>\n'
 
-    res = await db.fetch('SELECT res_json FROM loc_res WHERE code = $1', [data.code], one_row=True)
+    res = await db.fetch('SELECT res_json FROM loc_res WHERE code = $1', [loc.code], one_row=True)
     res_txt += '\n'.join(
-        [f'  💎<i>{r}</i>' for r in json.loads(res[0]).get('resources')]
+        [f'  💎<i>{r}</i>' for r in json.loads(res.get('res_json')).get('resources')]
     ) if res else 'Нет данных'
     res_txt += '\n\n'
 
@@ -106,17 +91,8 @@ async def buff_func(buffs: dict):
         x = blesses.get(bless)
         for i, b in enumerate(x, start=1):
             txt += '    ├ <i>{}({}🎖)</i>\n'.format(*b) if i < len(x) else '    └ <i>{}({}🎖)</i>\n'.format(*b)
+
     return txt
-
-
-class LocInfoData(BaseModel):
-    code: str
-    name: str
-    lvl: int
-    type: LocTypes
-    conqueror: str
-    cycle: int
-    status: str
 
 
 async def loc_history(mes: Message, db: PostgreSQLDatabase):
@@ -124,3 +100,46 @@ async def loc_history(mes: Message, db: PostgreSQLDatabase):
     if not code:
         await mes.answer('/l_history [код]')
         return
+
+    loc = await db.fetch('SELECT type FROM loc WHERE code = $1 and exist = True', [code], one_row=True)
+    if not loc:
+        await mes.answer('Данной локации нет в базе данных.')
+        return
+
+    if loc.get('type') != -1:
+        await mes.answer('Информация доступна только по альянсам.')
+        return
+
+    loc_history = [LocHistoryData(**i) for i in await db.fetch(LOC_HISTORY_REQ, [code, 20])]
+
+    m = '<a href="https://t.me/ChatWarsDigest/{}">{}</a>'
+    lh_txt = '\n\n'.join(
+        f'[{m.format(str(l.url), str(l.date))}]\n{l.text}' for l in loc_history
+    ) if loc_history else 'Нет данных'
+
+    await mes.answer(AL_HISTORY_TEXT.format(code, lh_txt), disable_web_page_preview=True)
+
+
+async def loc_capture(mes: Message, db: PostgreSQLDatabase):
+    code = mes.get_args()
+    if not code:
+        await mes.answer('/l_capture [код]')
+        return
+
+    loc = await db.fetch('SELECT type FROM loc WHERE code = $1 and exist = True', [code], one_row=True)
+    if not loc:
+        await mes.answer('Данной локации нет в базе данных.')
+        return
+
+    if loc.get('type') != -1:
+        await mes.answer('Информация доступна только по альянсам.')
+        return
+
+    captured_locs = [LocInfoData(**i) for i in await db.fetch(LOC_CAPTURE_REQ, [code])]
+
+    m = '<a href="https://t.me/share/url?url=/l_info%20{}"><b>{}{} lvl.{}</b></a>'
+    cl_txt = '\n'.join(
+        m.format(l.code, GET_LOC_TYPE_EMOJI.get(l.type), l.name, str(l.lvl)) for l in captured_locs
+    ) if captured_locs else 'Нет данных'
+
+    await mes.answer(AL_CAPTURE_TEXT.format(code, cl_txt), disable_web_page_preview=True)
