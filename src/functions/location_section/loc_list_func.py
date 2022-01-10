@@ -1,4 +1,5 @@
 import asyncio
+import datetime
 from typing import Union
 
 from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
@@ -6,7 +7,7 @@ from aiogram.utils.exceptions import MessageNotModified
 
 from resources.tools.database import PostgreSQLDatabase
 from src.content import LOC_LIST_TEXT, LOC_OBJECTS_REQ, LocInfoData, GET_LOC_TYPE_EMOJI, LOC_CAPTURE_REQ, \
-    LOC_MAP_BY_TIER, LOC_MAP_BY_TYPE
+    LOC_MAP_BY_TIER_REQ, LOC_MAP_BY_TYPE_REQ
 
 
 async def loc_list(mes: Union[Message, CallbackQuery], db: PostgreSQLDatabase):
@@ -15,11 +16,12 @@ async def loc_list(mes: Union[Message, CallbackQuery], db: PostgreSQLDatabase):
     mines_len = await db.fetch('SELECT count(*) FROM loc WHERE type = 2 and exist = True', one_row=True)
     forts_len = await db.fetch('SELECT count(*) FROM loc WHERE type = 3 and exist = True', one_row=True)
 
-    last_update = await db.fetch('SELECT date FROM settings_date WHERE var = $1', ['l_list_upd'], one_row=True)
+    last_update = await db.fetch('SELECT date FROM settings_date WHERE var = $1', ['l_check_upd'], one_row=True)
 
     txt = LOC_LIST_TEXT.format(
         str(ruins_len.get('count')), str(mines_len.get('count')), str(forts_len.get('count')),
-        str(alliance_len.get('count')), '❌', str(last_update.get('date')) if last_update else ''
+        str(alliance_len.get('count')), '❌',
+        last_update.get('date').strftime('%H:%M:%S %d-%m-%Y') if last_update else ''
     )
 
     try:
@@ -177,7 +179,7 @@ async def loc_list_map_by_tier(alliances: list, db: PostgreSQLDatabase, kwargs: 
     for al in alliances:
         # All locations of alliance
         locs = [
-            LocInfoData(**i) for i in await db.fetch(LOC_MAP_BY_TIER, [al.code, kwargs['f'], kwargs['t']])
+            LocInfoData(**i) for i in await db.fetch(LOC_MAP_BY_TIER_REQ, [al.code, kwargs['f'], kwargs['t']])
         ]
         if not locs:
             continue
@@ -192,7 +194,7 @@ async def loc_list_map_by_tier(alliances: list, db: PostgreSQLDatabase, kwargs: 
         txt += '\n'
 
     empty_locs = [
-        LocInfoData(**i) for i in await db.fetch(LOC_MAP_BY_TIER, ["Forbidden Clan", kwargs['f'], kwargs['t']])
+        LocInfoData(**i) for i in await db.fetch(LOC_MAP_BY_TIER_REQ, ["Forbidden Clan", kwargs['f'], kwargs['t']])
     ]
     len_el = len(empty_locs)
 
@@ -216,7 +218,7 @@ async def loc_list_map_by_type(alliances: list, db: PostgreSQLDatabase, kwargs: 
     for al in alliances:
         # All locations of alliance
         locs = [
-            LocInfoData(**i) for i in await db.fetch(LOC_MAP_BY_TYPE, [al.code, kwargs['type']])
+            LocInfoData(**i) for i in await db.fetch(LOC_MAP_BY_TYPE_REQ, [al.code, kwargs['type']])
         ]
         if not locs:
             continue
@@ -231,7 +233,7 @@ async def loc_list_map_by_type(alliances: list, db: PostgreSQLDatabase, kwargs: 
         txt += '\n'
 
     empty_locs = [
-        LocInfoData(**i) for i in await db.fetch(LOC_MAP_BY_TYPE, ["Forbidden Clan", kwargs['type']])
+        LocInfoData(**i) for i in await db.fetch(LOC_MAP_BY_TYPE_REQ, ["Forbidden Clan", kwargs['type']])
     ]
     len_el = len(empty_locs)
 

@@ -77,12 +77,12 @@ LOC_BUFFS_2_REQ = 'SELECT code, bless_json FROM loc_buff WHERE code = ANY($1::te
 
 LOC_OBJECTS_REQ = 'SELECT code, name, lvl, type, conqueror, cycle, status FROM loc WHERE type = $1 and exist = True'
 
-LOC_MAP_BY_TIER = '''
+LOC_MAP_BY_TIER_REQ = '''
 SELECT code, name, lvl, type, conqueror, cycle, status FROM loc
 WHERE conqueror = $1 and exist = True and $2 <= lvl and lvl <= $3 ORDER BY lvl
 '''
 
-LOC_MAP_BY_TYPE = '''
+LOC_MAP_BY_TYPE_REQ = '''
 SELECT code, name, lvl, type, conqueror, cycle, status FROM loc
 WHERE conqueror = $1 and type = $2 and exist = True ORDER BY lvl
 '''

@@ -4,7 +4,7 @@ from resources.models import dp
 from resources.tools.cfilters import Command, IsUser, Text, IsForward
 from src.content import Roles
 from src.functions import new_location_input, new_bless_input, new_res_input, loc_del, loc_info, loc_history, \
-    loc_capture, loc_miss, loc_buffs, loc_list, callback_cancel, loc_list_objects, loc_list_map
+    loc_capture, loc_miss, loc_buffs, loc_list, callback_cancel, loc_list_objects, loc_list_map, loc_help, loc_check
 
 '''<<<-----   LOCATION SECTION   ----->>>'''
 # New Location Input
@@ -91,4 +91,16 @@ dp.register_callback_query_handler(
 dp.register_callback_query_handler(
     loc_list_objects,
     Text(startswith='ll:'), IsUser(is_registered=True)
+)
+
+# Checking locations on existing, /l_check, /l_chk
+dp.register_message_handler(
+    loc_check,
+    Command(['l_check', 'l_chk']), IsUser(has_roles=[Roles.ADMIN, Roles.ALLIANCE_LEADER, Roles.COMMANDER])
+)
+
+# Help for this section`s commands
+dp.register_message_handler(
+    loc_help,
+    Command('l_help'), IsUser(is_registered=True)
 )
