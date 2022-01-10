@@ -28,6 +28,7 @@ async def loc_list(mes: Union[Message, CallbackQuery], db: PostgreSQLDatabase):
 
         else:
             await mes.message.edit_text(txt, reply_markup=loc_list_kb())
+            await mes.answer()
 
     except MessageNotModified:
         await mes.answer()
@@ -57,6 +58,7 @@ async def loc_list_objects(call: CallbackQuery, db: PostgreSQLDatabase):
 
     try:
         await call.message.edit_text(txt, reply_markup=loc_list_kb())
+        await call.answer()
 
     except MessageNotModified:
         await call.answer()
@@ -101,6 +103,7 @@ async def loc_list_map(call: CallbackQuery, db: PostgreSQLDatabase):
 
     try:
         await call.message.edit_text(txt, reply_markup=loc_list_kb())
+        await call.answer()
 
     except MessageNotModified:
         await call.answer()
