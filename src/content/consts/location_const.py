@@ -6,10 +6,10 @@ from pydantic import BaseModel
 
 
 class LocTypes(Enum):
+    ALLIANCE = -1
     RUINS = 1
     MINE = 2
     FORT = 3
-    ALLIANCE = -1
 
 
 LOC_TYPES_BY_NAME = {'Ruins': '🏷', 'Mine': '📦', 'Fort': '🎖', 'Tower': '🎖', 'Outpost': '🎖'}

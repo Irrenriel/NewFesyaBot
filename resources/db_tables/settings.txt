@@ -1,10 +1,16 @@
 [settings]
 
-create table settings (
+CREATE TABLE settings (
 -- Name and values
 var TEXT PRIMARY KEY,
 data_str TEXT DEFAULT '',
 data_int INTEGER DEFAULT 0
+)
+
+CREATE TABLE settings_date (
+-- Name and values
+var TEXT PRIMARY KEY,
+date timestamp NOT NULL
 )
 
 [activity_logger_fesya]

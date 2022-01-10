@@ -4,7 +4,7 @@ from resources.models import dp
 from resources.tools.cfilters import Command, IsUser, Text, IsForward
 from src.content import Roles
 from src.functions import new_location_input, new_bless_input, new_res_input, loc_del, loc_info, loc_history, \
-    loc_capture, loc_miss, loc_buffs
+    loc_capture, loc_miss, loc_buffs, loc_list, callback_cancel, loc_list_objects, loc_list_map
 
 '''<<<-----   LOCATION SECTION   ----->>>'''
 # New Location Input
@@ -61,4 +61,34 @@ dp.register_message_handler(
 dp.register_message_handler(
     loc_buffs,
     Command('l_buffs'), IsUser(has_roles=[Roles.ADMIN, Roles.ALLIANCE_LEADER, Roles.COMMANDER, Roles.OFFICER])
+)
+
+# List of Locations, /l_list
+dp.register_message_handler(
+    loc_list,
+    Command('l_list'), IsUser(is_registered=True)
+)
+
+# 'Меню' button
+dp.register_callback_query_handler(
+    loc_list,
+    Text('ll:menu'), IsUser(is_registered=True)
+)
+
+# 'Закрыть' button
+dp.register_callback_query_handler(
+    callback_cancel,
+    Text('ll:cancel'), IsUser(is_registered=True)
+)
+
+# 🚩Карта
+dp.register_callback_query_handler(
+    loc_list_map,
+    Text(startswith='ll:map:'), IsUser(is_registered=True)
+)
+
+# 🏷Руины, 📦Шахты, 🎖Форты
+dp.register_callback_query_handler(
+    loc_list_objects,
+    Text(startswith='ll:'), IsUser(is_registered=True)
 )

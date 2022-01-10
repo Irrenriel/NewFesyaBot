@@ -62,12 +62,12 @@ async def info(mes: Message):
         'user_is_bot': str(mr.from_user.is_bot),
         'user_first_name': mr.from_user.first_name if mr.from_user.first_name else 'None',
         'user_last_name': mr.from_user.last_name if mr.from_user.last_name else 'None',
-        'user_username': '@' + mr.from_user.username if mr.from_user.username else 'None',
+        'user_username': mr.from_user.username if mr.from_user.username else 'None',
         'user_language_code': mr.from_user.language_code if mr.from_user.language_code else 'None',
         'chat_id': str(mr.chat.id),
         'chat_type': mr.chat.type,
         'chat_title': mr.chat.title,
-        'chat_username': '@' + mr.chat.username if mr.chat.username else 'None',
+        'chat_username': mr.chat.username if mr.chat.username else 'None',
         'date': str(mr.date)
     }
 
