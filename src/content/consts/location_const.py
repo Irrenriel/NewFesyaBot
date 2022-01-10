@@ -21,6 +21,7 @@ LOC_TYPES_ENUM = {
 
 GET_LOC_TYPE_EMOJI = {LocTypes.RUINS: '🏷', LocTypes.MINE: '📦', LocTypes.FORT: '🎖', LocTypes.ALLIANCE: '🎪'}
 
+
 class LocInfoData(BaseModel):
     code: str
     name: str
