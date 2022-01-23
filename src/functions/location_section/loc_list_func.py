@@ -1,5 +1,4 @@
 import asyncio
-import datetime
 from typing import Union
 
 from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
@@ -51,7 +50,8 @@ async def loc_list_objects(call: CallbackQuery, db: PostgreSQLDatabase):
     result = [LocInfoData(**i) for i in await db.fetch(LOC_OBJECTS_REQ, [data['type']])]
     if result:
         txt += '\n\n'.join(
-            f'<b>{i}) {GET_LOC_TYPE_EMOJI.get(l.type)}{l.name} lvl. {l.lvl}</b> — <code>{l.code}</code>'
+            f'<b>{i}) {GET_LOC_TYPE_EMOJI.get(l.type)}{l.name}{(" lvl." + str(l.lvl)) if data["type"] != -1 else ""}'
+            f'</b> — <code>{l.code}</code>'
             for i, l in enumerate(result, start=1)
         )
 

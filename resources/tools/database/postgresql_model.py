@@ -45,7 +45,7 @@ class PostgreSQLDatabase:
 
             # Get All Rows
             else:
-                result: list[asyncpg.Record] = await conn.fetch(request, *args)
+                result = await conn.fetch(request, *args)
                 return result
 
     async def execute(self, request: str, args: list = None, many: bool = False):

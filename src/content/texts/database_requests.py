@@ -86,3 +86,7 @@ LOC_MAP_BY_TYPE_REQ = '''
 SELECT code, name, lvl, type, conqueror, cycle, status FROM loc
 WHERE conqueror = $1 and type = $2 and exist = True ORDER BY lvl
 '''
+
+LOC_CHECK_SELECT_DELETED_REQ = '''
+SELECT code, name, lvl, type, conqueror, cycle, status FROM loc WHERE code = ANY($1::text[]) ORDER BY lvl
+'''
