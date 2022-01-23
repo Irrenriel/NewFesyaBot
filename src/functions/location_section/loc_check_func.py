@@ -3,20 +3,30 @@ from aiogram.types import Message
 from config import CW_BOT_ID
 from resources.models import client
 from resources.tools.database import PostgreSQLDatabase
-from src.content import UserData, Roles, LOC_CHECK_SELECT_DELETED_REQ, LocInfoData, GET_LOC_TYPE_EMOJI, LocTypes
+from src.content import UserData, Roles, LOC_CHECK_SELECT_DELETED_REQ, LocInfoData, GET_LOC_TYPE_EMOJI, LocTypes, \
+    MARK_AS_DEAD_LOCATIONS
 from src.functions.admin_section.settings_func import delete_message_with_notification
 
 
 async def loc_check(mes: Message, db: PostgreSQLDatabase, user: UserData):
     if user.role != Roles.ADMIN:
-        l_check_upd = await db.fetch('SELECT data_bool FROM settings WHERE var = $1', ['l_check_upd'], one_row=True)
+        r = 'SELECT data_bool FROM settings WHERE var = $1'
 
+        l_check_upd = await db.fetch(r, ['l_check_upd'], one_row=True)
         if not l_check_upd.get('data_bool'):
             m = await mes.answer('<b>[❌] Не доступно до следующего распределения добычи альянсов.</b>')
             await delete_message_with_notification(mes, m, 5, 5)
             return
 
-    await db.execute('UPDATE settings SET data_bool = False WHERE var = $1', ['l_check_upd'])
+        telethon_queue = await db.fetch(r, ['telethon_queue'], one_row=True)
+        if not telethon_queue.get('data_bool'):
+            m = await mes.answer('<b>[❌] Аккаунт занят своей проверкой. Повторите позже.</b>')
+            await delete_message_with_notification(mes, m, 5, 5)
+            return
+
+    await db.execute(
+        'UPDATE settings SET data_bool = False WHERE var = $1 and var = $2', ['l_check_upd', 'telethon_queue']
+    )
 
     m = await mes.answer('<b>[⚜️] Выполняется проверка локаций, ожидай...</b>')
 
@@ -26,12 +36,13 @@ async def loc_check(mes: Message, db: PostgreSQLDatabase, user: UserData):
 
     result = await client.l_check_method([x.get('code') for x in await db.fetch(req)])
 
+    await client.send_message(CW_BOT_ID, '🛡Защита', 1)
+
     if type(result) is list:
         if result:
-            # await db.execute(
-            #     'UPDATE loc SET exist = False, death_time = LOCALTIMESTAMP WHERE code = ANY($1::text[])',
-            #     [result]
-            # )
+            await db.execute(MARK_AS_DEAD_LOCATIONS, [result])
+            await db.execute('UPDATE settings SET data_bool = True WHERE var = $1', ['telethon_queue'])
+
             locs = [LocInfoData(**l) for l in await db.fetch(LOC_CHECK_SELECT_DELETED_REQ, [result])]
             t = [
                 '<b>{}{}{}</b>\n  └ <code>{}</code>'.format(
@@ -43,9 +54,10 @@ async def loc_check(mes: Message, db: PostgreSQLDatabase, user: UserData):
             txt = '<b>[🎉] Проверка завершена!</b>\nИстёкшие локации:\n\n' + '\n'.join(t)
 
         else:
-            txt = 'Проверка завершена!\nИстёкшие локации не обнаружены!'
+            txt = '<b>[🎉] Проверка завершена!</b>\nИстёкшие локации не обнаружены!'
 
     else:
+        await db.execute('UPDATE settings SET data_bool = True WHERE var = $1', ['telethon_queue'])
         await m.edit_text(result)
         return
 
@@ -61,5 +73,4 @@ async def loc_check(mes: Message, db: PostgreSQLDatabase, user: UserData):
     #     except:
     #         pass
 
-    await client.send_message(CW_BOT_ID, '🛡Защита', 1)
     await m.edit_text('<b>[🎉] Проверка завершена!</b>')

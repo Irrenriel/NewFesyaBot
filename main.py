@@ -41,6 +41,19 @@ async def startup_func(dp: Dispatcher):
     if client._client.is_connected():
         info(f'▻ Telethon client with session "{config.SESSION_NAME}" is running!')
 
+        u = '@ChatWarsBot'
+        try:
+            x = await client._client.get_entity(u)
+
+        except Exception:
+            x = None
+
+        if x:
+            info(f'▻ {u} entity is founded!')
+
+        else:
+            info(f'▻ {u} entity is not founded!')
+
     else:
         info(f'▻ Telethon client with session "{config.SESSION_NAME}" is not running!')
 

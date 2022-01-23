@@ -90,3 +90,11 @@ WHERE conqueror = $1 and type = $2 and exist = True ORDER BY lvl
 LOC_CHECK_SELECT_DELETED_REQ = '''
 SELECT code, name, lvl, type, conqueror, cycle, status FROM loc WHERE code = ANY($1::text[]) ORDER BY lvl
 '''
+
+NEW_LOC_L_CHECK_FOR_TIER = '''
+SELECT code, name, lvl, type, conqueror, cycle, status FROM loc WHERE $1 <= lvl and lvl < $2
+'''
+
+MARK_AS_DEAD_LOCATIONS = '''
+UPDATE loc SET exist = False, death_time = LOCALTIMESTAMP WHERE code = ANY($1::text[])
+'''

@@ -1,12 +1,16 @@
 import json
 import re
 from datetime import datetime, timedelta
+from logging import warn
 
 from aiogram.types import Message
 
+from config import CW_BOT_ID
+from resources.models import client
 from resources.tools.database import PostgreSQLDatabase
 from src.content import NEW_LOC_INPUT_PARSE, LOC_TYPES_ENUM, LocTypes, NEW_LOCATION_NOTIFICATION, \
-    INCREASE_LOCATION_TOP_COUNT_REQ, UserData, INSERT_OR_UPDATE_LOCATION_BUFF_REQ, INSERT_OR_UPDATE_LOCATION_RES_REQ
+    INCREASE_LOCATION_TOP_COUNT_REQ, UserData, INSERT_OR_UPDATE_LOCATION_BUFF_REQ, INSERT_OR_UPDATE_LOCATION_RES_REQ, \
+    LocInfoData, NEW_LOC_L_CHECK_FOR_TIER, GET_LOC_TYPE_EMOJI, LOC_CHECK_SELECT_DELETED_REQ, MARK_AS_DEAD_LOCATIONS
 from src.functions.admin_section.settings_func import delete_message_with_notification
 
 
@@ -81,6 +85,79 @@ async def new_location_input(mes: Message, db: PostgreSQLDatabase, user: UserDat
         txt = f'<b>[🎉] Обнаружена новая локация! Вам зачислен балл, но без регистрации ваш счёт не учитывается.</b>'
 
     await mes.answer(txt)
+
+    # Tier
+    if l_type == LocTypes.ALLIANCE:
+        return
+
+    # Settings Check
+    x = await db.fetch('SELECT data_bool FROM settings WHERE var = $1', ['telethon_queue'], one_row=True)
+    if not x.get('data_bool'):
+        try:
+            await mes.bot.send_message(
+                (await client._client.get_me()).id,
+                '[❗️] Найдено больше 6 локаций одного тира, но не удаётся проверить. Идёт другая проверка'
+            )
+
+        except Exception as e:
+            warn(f'Exception Happend: {type(e)} - {e}')
+        return
+
+    if 20 <= l_lvl < 40:
+        f, t = 20, 40
+
+    elif 40 <= l_lvl < 60:
+        f, t = 40, 60
+
+    else:
+        f, t = 40, 99
+
+    locs_of_tier = await db.fetch(NEW_LOC_L_CHECK_FOR_TIER, [f, t])
+    if not locs_of_tier or len(locs_of_tier) < 7:
+        return
+
+    # Disable l_check
+    await db.execute('UPDATE settings SET data_bool = False WHERE var = $1', ['l_check_upd'])
+    result = await client.l_check_method([x.get('code') for x in locs_of_tier])
+    await client.send_message(CW_BOT_ID, '🛡Защита', 1)
+
+    if type(result) is list:
+        if not result:
+            try:
+                await mes.bot.send_message(
+                    (await client._client.get_me()).id,
+                    '[❗️] Найдено больше 6 локаций одного тира, но не удаётся проверить. Аккаунт чем-то занят.'
+                )
+
+            except Exception as e:
+                warn(f'Exception Happend: {type(e)} - {e}')
+            return
+
+        await db.execute(MARK_AS_DEAD_LOCATIONS, [result])
+        await db.execute('UPDATE settings SET data_bool = True WHERE var = $1', ['telethon_queue'])
+
+        locs = [LocInfoData(**l) for l in await db.fetch(LOC_CHECK_SELECT_DELETED_REQ, [result])]
+        t = [
+            '<b>{}{}{}</b>\n  └ <code>{}</code>'.format(
+                GET_LOC_TYPE_EMOJI.get(l.type, 'ERROR'), l.name,
+                "" if l.type == LocTypes.ALLIANCE else f" lvl.{l.lvl}", l.code
+            ) for l in locs
+        ]
+
+        txt = '<b>[🎉] Проверка завершена!</b>\nИстёкшие локации:\n\n' + '\n'.join(t)
+
+        # chats = [x[0] for x in mes.db.checkall('SELECT id FROM chats WHERE delete_loc_ntf = 1')]
+        # if not chats:
+        #     await m.edit_text('Проверка выполнена!')
+        #     return
+        #
+        # for chat in chats:
+        #     try:
+        #         await bot.send_message(chat, txt)
+        #         await asyncio.sleep(0.3)
+        #     except:
+        #         pass
+
 
 
 # Reception of blessing from locations
