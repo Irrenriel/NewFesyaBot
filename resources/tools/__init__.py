@@ -4,3 +4,4 @@ from . import states
 from . import database
 from . import middleware
 from . import telethon
+from . import bot_logging

@@ -41,6 +41,7 @@ class TelethonConversator:
     async def _action(self, text, sleep: Union[int, float] = 0, pattern=None):
         if sleep:
             await asyncio.sleep(sleep)
+
         await self._con.send_message(text)
         answer = (await self._con.get_response()).message
 
@@ -73,22 +74,24 @@ class TelethonConversator:
         pool_to_delete = []
 
         await self.connect()
-        for loc in locations:
-            if loc.startswith('NoneCode'):
-                continue
+        async with self._client.conversation(CW_BOT_ID, total_timeout=9999, timeout=5) as self._con:
+            for loc in locations:
+                if loc.startswith('NoneCode'):
+                    continue
 
-            answer = await self._action(f'/ga_atk_{loc}', round(random.uniform(1, 3), 2))
-            if answer.startswith('Ветер завывает по окрестным лугам'):
-                await self.disconnect()
-                return '<b>[⚜️] Идёт битва. Попробуйте позже.</b>'
+                answer = await self._action(f'/ga_atk_{loc}', round(random.uniform(1, 3), 2))
+                if answer.startswith('Ветер завывает по окрестным лугам'):
+                    await self.disconnect()
+                    return '<b>[⚜️] Идёт битва! Попробуйте позже.</b>'
 
-            elif answer == error:
-                answer2 = await self._action(f'/ga_def_{loc}', round(random.uniform(1, 3), 2))
-                if answer2 == error:
-                    pool_to_delete.append(loc)
-            else:
-                await self.disconnect()
-                return '>b>[⚜️] В данный момент проверить невозможно! Попробуйте позже.</b>'
+                elif answer == 'Ты сейчас занят другим приключением. Попробуй позже.':
+                    await self.disconnect()
+                    return '<b>[⚜️] В данный момент проверить невозможно! Попробуйте позже.</b>'
+
+                elif answer == error:
+                    answer2 = await self._action(f'/ga_def_{loc}', round(random.uniform(1, 3), 2))
+                    if answer2 == error:
+                        pool_to_delete.append(loc)
 
         await self.disconnect()
         return pool_to_delete

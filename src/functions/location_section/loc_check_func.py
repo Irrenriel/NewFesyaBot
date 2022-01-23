@@ -32,7 +32,7 @@ async def loc_check(mes: Message, db: PostgreSQLDatabase, user: UserData):
             #     'UPDATE loc SET exist = False, death_time = LOCALTIMESTAMP WHERE code = ANY($1::text[])',
             #     [result]
             # )
-            locs = [LocInfoData(*l) for l in await db.fetch(LOC_CHECK_SELECT_DELETED_REQ, [result])]
+            locs = [LocInfoData(**l) for l in await db.fetch(LOC_CHECK_SELECT_DELETED_REQ, [result])]
             t = [
                 '<b>{}{}{}</b>\n  └ <code>{}</code>'.format(
                     GET_LOC_TYPE_EMOJI.get(l.type, 'ERROR'), l.name,
