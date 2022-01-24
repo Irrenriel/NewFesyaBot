@@ -18,7 +18,7 @@ class Middleware(BaseMiddleware):
         if message.from_user.id not in ADMINS_ID:
             await add_log(self.db, message, f'MSG: {message.text}')
 
-        if message.from_user.id in banned_users.get_storage():
+        if message.from_user.id in await banned_users.get_storage():
             raise CancelHandler()
 
         data['db'] = self.db
@@ -29,7 +29,7 @@ class Middleware(BaseMiddleware):
         if callback_query.from_user.id not in ADMINS_ID:
             await add_log(self.db, callback_query, f'CLB: {callback_query.data}')
 
-        if callback_query.from_user.id in banned_users.get_storage():
+        if callback_query.from_user.id in await banned_users.get_storage():
             raise CancelHandler()
 
         data['db'] = self.db
@@ -40,7 +40,7 @@ class Middleware(BaseMiddleware):
         # if inline_query.from_user.id not in ADMINS_ID:
         #   await add_log(self.db, inline_query, f'INL: {inline_query.query}')
 
-        if inline_query.from_user.id in banned_users.get_storage():
+        if inline_query.from_user.id in await banned_users.get_storage():
             raise CancelHandler()
 
         data['db'] = self.db

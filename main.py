@@ -61,7 +61,6 @@ async def startup_func(dp: Dispatcher):
 
 if __name__ == '__main__':
     # Set Logging
-    debug = "--debug" in argv
-    bot_logging.set_logging(debug)
+    bot_logging.set_logging(config.debug)
 
     executor.start_polling(dp, loop=loop, on_startup=startup_func)
