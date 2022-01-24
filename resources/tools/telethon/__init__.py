@@ -5,7 +5,7 @@ from typing import Union, List
 
 from telethon import TelegramClient
 
-from config import CW_BOT_ID
+from config import config
 
 
 class TelethonConversator:
@@ -61,7 +61,7 @@ class TelethonConversator:
 
     async def conversation(self, text: Union[str, List[str]], sleep: Union[int, float] = 0, pattern=None):
         await self.connect()
-        async with self._client.conversation(CW_BOT_ID, total_timeout=9999, timeout=5) as self._con:
+        async with self._client.conversation(config.CW_BOT_ID, total_timeout=9999, timeout=5) as self._con:
             if isinstance(text, str):
                 x = await self._action(text, sleep, pattern)
             else:
@@ -74,7 +74,7 @@ class TelethonConversator:
         pool_to_delete = []
 
         await self.connect()
-        async with self._client.conversation(CW_BOT_ID, total_timeout=9999, timeout=5) as self._con:
+        async with self._client.conversation(config.CW_BOT_ID, total_timeout=9999, timeout=5) as self._con:
             for loc in locations:
                 if loc.startswith('NoneCode'):
                     continue

@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from aiogram.dispatcher import FSMContext
 from aiogram.types import Message, ReplyKeyboardRemove
 
-from config import CW_BOT_ID
+from config import config
 from resources.tools.database import PostgreSQLDatabase
 from resources.tools.states import StateOn
 from src.content import START_MAIN_MENU_TEXT, start_kb, HERO_PARSE, REG_NEW_USER_REQ, UPDATE_USER_REQ, users as uc, \
@@ -32,7 +32,7 @@ async def hero_insert(mes: Message, state: FSMContext, db: PostgreSQLDatabase, u
         return
 
     # Is this /hero
-    if mes.forward_from is None or mes.forward_from.id != CW_BOT_ID or "🎉Достижения: /ach" not in mes.text:
+    if mes.forward_from is None or mes.forward_from.id != config.CW_BOT_ID or "🎉Достижения: /ach" not in mes.text:
         await mes.answer('Требуется переслать /hero из @ChatWarsBot!')
         return
 

@@ -1,6 +1,6 @@
 from aiogram.types import Message
 
-from config import CW_BOT_ID
+from config import config
 from resources.models import client
 from resources.tools.database import PostgreSQLDatabase
 from src.content import UserData, Roles, LOC_CHECK_SELECT_DELETED_REQ, LocInfoData, GET_LOC_TYPE_EMOJI, LocTypes, \
@@ -36,7 +36,7 @@ async def loc_check(mes: Message, db: PostgreSQLDatabase, user: UserData):
 
     result = await client.l_check_method([x.get('code') for x in await db.fetch(req)])
 
-    await client.send_message(CW_BOT_ID, '🛡Защита', 1)
+    await client.send_message(config.CW_BOT_ID, '🛡Защита', 1)
 
     if type(result) is list:
         if result:

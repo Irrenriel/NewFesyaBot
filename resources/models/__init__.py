@@ -3,7 +3,7 @@ import asyncio
 from aiogram import Bot, Dispatcher
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 
-from config import BOT_TOKEN, PARSE_MODE, POSTGRES_DB, TELETHON_VARS
+from config import config
 from resources.tools import database, telethon
 
 
@@ -16,15 +16,15 @@ storage = MemoryStorage()
 
 
 # Bots
-bot = Bot(token=BOT_TOKEN, loop=loop, parse_mode=PARSE_MODE)
+bot = Bot(token=config.BOT_TOKEN, loop=loop, parse_mode=config.PARSE_MODE)
 
 # Dispatchers
 dp = Dispatcher(bot, storage=storage, loop=loop)
 
 
 # Database
-db = database.PostgreSQLDatabase(*POSTGRES_DB)
+db = database.PostgreSQLDatabase(*config.POSTGRES_DB)
 
 
 # Telethon client
-client = telethon.TelethonConversator(*TELETHON_VARS, loop=loop)
+client = telethon.TelethonConversator(*config.TELETHON_VARS, loop=loop)

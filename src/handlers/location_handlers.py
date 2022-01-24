@@ -1,4 +1,4 @@
-from config import CW_BOT_ID
+from config import config
 from resources.models import dp
 
 from resources.tools.cfilters import Command, IsUser, Text, IsForward
@@ -10,20 +10,20 @@ from src.functions import new_location_input, new_bless_input, new_res_input, lo
 # New Location Input
 dp.register_message_handler(
     new_location_input,
-    Text(contains="То remember the route you associated it with simple combination:"), IsForward(CW_BOT_ID)
+    Text(contains="То remember the route you associated it with simple combination:"), IsForward(config.CW_BOT_ID)
 )
 
 # Location`s Bless Input
 dp.register_message_handler(
     new_bless_input,
-    Text(contains="attractions:"), IsForward(CW_BOT_ID),
+    Text(contains="attractions:"), IsForward(config.CW_BOT_ID),
     IsUser(has_roles=[Roles.ADMIN, Roles.ALLIANCE_LEADER, Roles.COMMANDER, Roles.OFFICER])
 )
 
 # Location`s Resource Input
 dp.register_message_handler(
     new_res_input,
-    Text(startswith='🤝 Your alliance.'), IsForward(CW_BOT_ID),
+    Text(startswith='🤝 Your alliance.'), IsForward(config.CW_BOT_ID),
     IsUser(has_roles=[Roles.ADMIN, Roles.ALLIANCE_LEADER, Roles.COMMANDER, Roles.OFFICER])
 )
 

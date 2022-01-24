@@ -1,4 +1,4 @@
-from config import CW_BOT_ID
+from config import config
 from resources.models import dp
 
 from resources.tools.cfilters import Command, IsUser, ChatTypeFilter, Text, IsForward
@@ -35,5 +35,5 @@ dp.register_message_handler(
 # From CW /hero Inputer For Update
 dp.register_message_handler(
     hero_insert,
-    Text(contains="🎉Достижения: /ach"), IsForward(CW_BOT_ID), IsUser(is_registered=True)
+    Text(contains="🎉Достижения: /ach"), IsForward(config.CW_BOT_ID), IsUser(is_registered=True)
 )

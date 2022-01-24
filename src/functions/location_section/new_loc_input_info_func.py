@@ -5,7 +5,7 @@ from logging import warn
 
 from aiogram.types import Message
 
-from config import CW_BOT_ID
+from config import config
 from resources.models import client
 from resources.tools.database import PostgreSQLDatabase
 from src.content import NEW_LOC_INPUT_PARSE, LOC_TYPES_ENUM, LocTypes, NEW_LOCATION_NOTIFICATION, \
@@ -119,7 +119,7 @@ async def new_location_input(mes: Message, db: PostgreSQLDatabase, user: UserDat
     # Disable l_check
     await db.execute('UPDATE settings SET data_bool = False WHERE var = $1', ['l_check_upd'])
     result = await client.l_check_method([x.get('code') for x in locs_of_tier])
-    await client.send_message(CW_BOT_ID, '🛡Защита', 1)
+    await client.send_message(config.CW_BOT_ID, '🛡Защита', 1)
 
     if type(result) is list:
         if not result:

@@ -1,4 +1,4 @@
-from config import CW_BOT_ID
+from config import config
 from resources.models import dp
 
 from resources.tools.cfilters import Command, IsUser, ChatTypeFilter, Text, IsForward
@@ -31,7 +31,7 @@ dp.register_message_handler(
 # NewAllReg Get Menu
 dp.register_message_handler(
     alliance_get_main,
-    Text(startswith='🤝'), ChatTypeFilter('private'), IsForward(CW_BOT_ID), IsUser(is_registered=True),
+    Text(startswith='🤝'), ChatTypeFilter('private'), IsForward(config.CW_BOT_ID), IsUser(is_registered=True),
     state=StateOn.AllianceGetMenu
     # State: AllianceUpd.GetMenu -> AllianceUpd.GetRoster
 )
@@ -39,7 +39,7 @@ dp.register_message_handler(
 # NewAllReg Get Roster
 dp.register_message_handler(
     alliance_get_roster,
-    Text(startswith='📋Roster:\n'), ChatTypeFilter('private'), IsForward(CW_BOT_ID),
+    Text(startswith='📋Roster:\n'), ChatTypeFilter('private'), IsForward(config.CW_BOT_ID),
     IsUser(is_registered=True), state=StateOn.AllianceGetRoster
     # State: AllianceUpd.GetRoster -> None
 )

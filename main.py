@@ -3,7 +3,7 @@ from sys import argv
 
 from aiogram import executor, Dispatcher
 
-import config
+from config import config
 from resources.models import dp, loop, db, client
 from resources.tools import bot_logging
 from resources.tools.middleware import Middleware
