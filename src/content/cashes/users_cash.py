@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import Optional
 import threading
 
+from async_property import async_property
 from pydantic import BaseModel
 
 from resources.tools.database import PostgreSQLDatabase
@@ -35,138 +36,149 @@ class UsersCash:
     _store_by_roles = {}
     _rlock = threading.RLock()
 
-    async def update(self, db_result: list):
+    @classmethod
+    async def update(cls, db_result: list):
         """
         Updating all storages.
         :param db_result: list of Records by postgres
         """
-        with UsersCash._rlock:
-            self._storage = [UserData(**r) for r in db_result]
-            await self.reload()
+        with cls._rlock:
+            cls._storage = [UserData(**r) for r in db_result]
+            await cls.reload
 
-    async def reload(self):
+    @classmethod
+    @async_property
+    async def reload(cls):
         # Store by IDs
-        if self._store_by_ids:
-            self._store_by_ids.clear()
+        if cls._store_by_ids:
+            cls._store_by_ids.clear()
 
         # Store by Guild Tags
-        if self._store_by_guild_tags:
-            self._store_by_guild_tags.clear()
+        if cls._store_by_guild_tags:
+            cls._store_by_guild_tags.clear()
 
         # Store by Castles
-        if self._store_by_castles:
-            self._store_by_castles.clear()
+        if cls._store_by_castles:
+            cls._store_by_castles.clear()
 
         # Store by Roles
-        if self._store_by_roles:
-            self._store_by_roles.clear()
+        if cls._store_by_roles:
+            cls._store_by_roles.clear()
 
         # Packing
-        for data in self._storage:
-            self._store_by_ids[data.id] = data
-            self._store_by_guild_tags.setdefault(data.guild_tag, {})[data.id] = data
-            self._store_by_castles.setdefault(data.castle, {})[data.id] = data
-            self._store_by_roles.setdefault(data.role, {})[data.id] = data
+        for data in cls._storage:
+            cls._store_by_ids[data.id] = data
+            cls._store_by_guild_tags.setdefault(data.guild_tag, {})[data.id] = data
+            cls._store_by_castles.setdefault(data.castle, {})[data.id] = data
+            cls._store_by_roles.setdefault(data.role, {})[data.id] = data
 
-    async def select(self, func) -> list:
+    @classmethod
+    async def select(cls, func) -> list:
         """
         Selecting info from stores.
         Example UsersCash().select(lambda x: x.guild_tag == 'AT' and 20 < x.lvl < 41) -> List[UserData]
         :param func: lambda logic
         :return: list of UserData
         """
-        with UsersCash._rlock:
-            return list(filter(func, self._storage))
+        with cls._rlock:
+            return list(filter(func, cls._storage))
 
-    async def select_id(self, uids):
+    @classmethod
+    async def select_id(cls, uids):
         """
         Selecting info from stores by ID/list of IDs.
         :param uids: uids to filter
         :return: list of UserData
         """
-        with UsersCash._rlock:
+        with cls._rlock:
             if type(uids) is list:
-                return [self._store_by_ids.get(uid) for uid in uids]
+                return [cls._store_by_ids.get(uid) for uid in uids]
 
             elif type(uids) is int:
-                return self._store_by_ids.get(uids)
+                return cls._store_by_ids.get(uids)
 
-    async def select_castle(self, castles) -> dict:
+    @classmethod
+    async def select_castle(cls, castles) -> dict:
         """
         Selecting info from stores by Castles.
         :param castles: castles to filter
         :return: dict of UserData
         """
-        with UsersCash._rlock:
+        with cls._rlock:
             if type(castles) is list:
                 result = {}
-                for i in [self._store_by_castles.get(castle) for castle in castles]:
+                for i in [cls._store_by_castles.get(castle) for castle in castles]:
                     result.update(i)
                 return result
 
             elif type(castles) is Castles:
-                return self._store_by_castles.get(castles)
+                return cls._store_by_castles.get(castles)
 
-    async def select_guild_tag(self, guild_tags) -> dict:
+    @classmethod
+    async def select_guild_tag(cls, guild_tags) -> dict:
         """
         Selecting info from stores by Guild tags.
         :param guild_tags: guild tags to filter
         :return: dict of UserData
         """
-        with UsersCash._rlock:
+        with cls._rlock:
             if type(guild_tags) is list:
                 result = {}
-                for i in [self._store_by_guild_tags.get(guild_tag) for guild_tag in guild_tags]:
+                for i in [cls._store_by_guild_tags.get(guild_tag) for guild_tag in guild_tags]:
                     result.update(i)
                 return result
 
             elif type(guild_tags) is str:
-                return self._store_by_guild_tags.get(guild_tags)
+                return cls._store_by_guild_tags.get(guild_tags)
 
-    async def select_role(self, roles) -> dict:
+    @classmethod
+    async def select_role(cls, roles) -> dict:
         """
         Selecting info from stores by Guild tags.
         :param roles: roles to filter
         :return: dict of UserData
         """
-        with UsersCash._rlock:
+        with cls._rlock:
             if type(roles) is list:
                 result = {}
-                for i in [self._store_by_roles.get(role) for role in roles]:
+                for i in [cls._store_by_roles.get(role) for role in roles]:
                     if not i:
                         continue
                     result.update(i)
                 return result
 
             elif type(roles) is Roles:
-                return self._store_by_guild_tags.get(roles)
+                return cls._store_by_guild_tags.get(roles)
 
-    async def check_role(self, uid: int, roles) -> bool:
+    @classmethod
+    async def check_role(cls, uid: int, roles) -> bool:
         """
         Checking id to role.
         :param uid: id to check
         :param roles: roles to check
         :return: bool
         """
-        with UsersCash._rlock:
-            return bool((await self.select_role(roles)).get(uid))
+        with cls._rlock:
+            return bool((await cls.select_role(roles)).get(uid))
 
-    async def change_role(self, db: PostgreSQLDatabase, role: int, user: UserData):
-        with UsersCash._rlock:
+    @classmethod
+    async def change_role(cls, db: PostgreSQLDatabase, role: int, user: UserData):
+        with cls._rlock:
             await db.execute('UPDATE users SET role = $1 WHERE id = $2', [role, user.id])
 
-            self._storage = list(filter(lambda x: x.id != user.id, self._storage))
+            cls._storage = list(filter(lambda x: x.id != user.id, cls._storage))
             user.role = ROLES_DICT.get(role)
-            self._storage.append(user)
+            cls._storage.append(user)
 
-            await self.reload()
+            await cls.reload()
 
-    async def add_new_user(self, db: PostgreSQLDatabase, uid: int):
-        with UsersCash._rlock:
+    @classmethod
+    async def add_new_user(cls, db: PostgreSQLDatabase, uid: int):
+        with cls._rlock:
             data = await db.fetch(GET_NEW_USER_REQUEST, [uid], one_row=True)
             data = UserData(**data)
 
-            self._store_by_ids[data.id] = data
-            self._store_by_guild_tags.setdefault(data.guild_tag, {})[data.id] = data
-            self._store_by_castles.setdefault(data.castle, {})[data.id] = data
-            self._store_by_roles.setdefault(data.role, {})[data.id] = data
+            cls._store_by_ids[data.id] = data
+            cls._store_by_guild_tags.setdefault(data.guild_tag, {})[data.id] = data
+            cls._store_by_castles.setdefault(data.castle, {})[data.id] = data
+            cls._store_by_roles.setdefault(data.role, {})[data.id] = data

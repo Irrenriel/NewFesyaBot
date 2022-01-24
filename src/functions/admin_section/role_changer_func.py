@@ -2,7 +2,7 @@ from aiogram.types import Message
 
 from config import config
 from resources.tools.database import PostgreSQLDatabase
-from src.content import users, UserData, banned_users, BANNED_MAIN_REQ
+from src.content import UsersCash, UserData, BannedUsersCash, BANNED_MAIN_REQ
 
 
 async def reg_as(mes: Message, db: PostgreSQLDatabase):
@@ -11,12 +11,12 @@ async def reg_as(mes: Message, db: PostgreSQLDatabase):
         await mes.answer('Error: Incorrect Syntax!')
         return
 
-    man: UserData = await users.select_id(mes.reply_to_message.from_user.id)
+    man: UserData = await UsersCash.select_id(mes.reply_to_message.from_user.id)
     if not man:
         await mes.answer('Error: Not In Database!')
         return
 
-    await users.change_role(db, int(role), man)
+    await UsersCash.change_role(db, int(role), man)
     await mes.answer('Success: Done!')
 
 
@@ -42,7 +42,7 @@ async def ban(mes: Message, db: PostgreSQLDatabase):
             'INSERT INTO banned_users (id) VALUES ($1) ON CONFLICT DO NOTHING', [[i,] for i in uid], many=True
         )
 
-        await banned_users.update(await db.fetch(BANNED_MAIN_REQ))
+        await BannedUsersCash.update(await db.fetch(BANNED_MAIN_REQ))
         await mes.answer('Success: Done!')
 
     else:
@@ -68,7 +68,7 @@ async def unban(mes: Message, db: PostgreSQLDatabase):
 
     if uid:
         await db.execute('DELETE FROM banned_users WHERE id = any($1::integer[])', [uid])
-        await banned_users.update(await db.fetch(BANNED_MAIN_REQ))
+        await BannedUsersCash.update(await db.fetch(BANNED_MAIN_REQ))
         await mes.answer('Success: Done!')
 
     else:

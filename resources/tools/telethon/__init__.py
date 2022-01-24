@@ -19,21 +19,21 @@ class TelethonConversator:
     _max_req = 2
 
     def __init__(self, SESSION_NAME: str, API_ID: int, API_HASH: str, loop):
-        self._client = TelegramClient(SESSION_NAME, API_ID, API_HASH, loop=loop)
-        self._client.start()
+        self.client = TelegramClient(SESSION_NAME, API_ID, API_HASH, loop=loop)
+        self.client.start()
 
     async def connect(self):
-        await self._client.connect()
+        await self.client.connect()
 
     async def disconnect(self):
-        await self._client.disconnect()
+        await self.client.disconnect()
 
     async def send_message(self, chat_id: Union[str, int], text: str, sleep: Union[int, float] = 0):
         await self.connect()
 
         if sleep:
             await asyncio.sleep(sleep)
-        m = await self._client.send_message(chat_id, text)
+        m = await self.client.send_message(chat_id, text)
 
         await self.disconnect()
         return m
@@ -61,7 +61,7 @@ class TelethonConversator:
 
     async def conversation(self, text: Union[str, List[str]], sleep: Union[int, float] = 0, pattern=None):
         await self.connect()
-        async with self._client.conversation(config.CW_BOT_ID, total_timeout=9999, timeout=5) as self._con:
+        async with self.client.conversation(config.CW_BOT_ID, total_timeout=9999, timeout=5) as self._con:
             if isinstance(text, str):
                 x = await self._action(text, sleep, pattern)
             else:
@@ -74,7 +74,7 @@ class TelethonConversator:
         pool_to_delete = []
 
         await self.connect()
-        async with self._client.conversation(config.CW_BOT_ID, total_timeout=9999, timeout=5) as self._con:
+        async with self.client.conversation(config.CW_BOT_ID, total_timeout=9999, timeout=5) as self._con:
             for loc in locations:
                 if loc.startswith('NoneCode'):
                     continue

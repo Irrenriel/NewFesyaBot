@@ -95,7 +95,7 @@ async def new_location_input(mes: Message, db: PostgreSQLDatabase, user: UserDat
     if not x.get('data_bool'):
         try:
             await mes.bot.send_message(
-                (await client._client.get_me()).id,
+                (await client.client.get_me()).id,
                 '[❗️] Найдено больше 6 локаций одного тира, но не удаётся проверить. Идёт другая проверка'
             )
 
@@ -125,7 +125,7 @@ async def new_location_input(mes: Message, db: PostgreSQLDatabase, user: UserDat
         if not result:
             try:
                 await mes.bot.send_message(
-                    (await client._client.get_me()).id,
+                    (await client.client.get_me()).id,
                     '[❗️] Найдено больше 6 локаций одного тира, но не удаётся проверить. Аккаунт чем-то занят.'
                 )
 

@@ -23,62 +23,66 @@ class AdvUsersCash:
 
     _rlock = threading.RLock()
 
-    async def update(self, db_result: list):
+    @classmethod
+    async def update(cls, db_result: list):
         """
         Updating all storages.
         :param db_result: list of Records by postgres
         """
-        with AdvUsersCash._rlock:
-            self._storage = [AdvUserData(**r) for r in db_result]
+        with cls._rlock:
+            cls._storage = [AdvUserData(**r) for r in db_result]
 
             # Store by IDs
-            if self._store_by_ids:
-                self._store_by_ids.clear()
+            if cls._store_by_ids:
+                cls._store_by_ids.clear()
 
             # Store by Ranks
-            if self._store_by_ranks:
-                self._store_by_ranks.clear()
+            if cls._store_by_ranks:
+                cls._store_by_ranks.clear()
 
             # Packing
-            for data in self._storage:
-                self._store_by_ids[data.id] = data
-                self._store_by_ranks.setdefault(data.rank, {})[data.id] = data
+            for data in cls._storage:
+                cls._store_by_ids[data.id] = data
+                cls._store_by_ranks.setdefault(data.rank, {})[data.id] = data
 
-    async def select(self, func) -> list:
+    @classmethod
+    async def select(cls, func) -> list:
         """
         Selecting info from stores.
         Example AdvUsersCash().select(lambda x: x.id == 1234567 and 2 < x.rank < 3) -> List[AdvUserData]
         :param func: lambda logic
         :return: list of AdvUserData
         """
-        with AdvUsersCash._rlock:
-            return list(filter(func, self._storage))
+        with cls._rlock:
+            return list(filter(func, cls._storage))
 
-    async def select_id(self, uids) -> list:
+    @classmethod
+    async def select_id(cls, uids) -> list:
         """
         Selecting info from stores by ID/list of IDs.
         :param uids: uids to filter
         :return: list of AdvUserData
         """
-        with AdvUsersCash._rlock:
+        with cls._rlock:
             if type(uids) is list:
-                return [self._store_by_ids.get(uid) for uid in uids]
+                return [cls._store_by_ids.get(uid) for uid in uids]
 
             elif type(uids) is int:
-                return self._store_by_ids.get(uids)
+                return cls._store_by_ids.get(uids)
 
-    async def select_rank(self, ranks) -> dict:
+    @classmethod
+    async def select_rank(cls, ranks) -> dict:
         """
         Selecting info from stores by Ranks.
         :param ranks: ranks to filter
         :return: list of AdvUserData
         """
-        with AdvUsersCash._rlock:
+        with cls._rlock:
             if type(ranks) is list:
                 result = {}
-                for i in [self._store_by_ranks.get(rank) for rank in ranks]:
+                for i in [cls._store_by_ranks.get(rank) for rank in ranks]:
                     result.update(i)
                 return result
 
             elif type(ranks) is int:
-                return self._store_by_ranks.get(ranks)
+                return cls._store_by_ranks.get(ranks)

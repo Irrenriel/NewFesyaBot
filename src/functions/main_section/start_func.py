@@ -7,7 +7,7 @@ from aiogram.types import Message, ReplyKeyboardRemove
 from config import config
 from resources.tools.database import PostgreSQLDatabase
 from resources.tools.states import StateOn
-from src.content import START_MAIN_MENU_TEXT, start_kb, HERO_PARSE, REG_NEW_USER_REQ, UPDATE_USER_REQ, users as uc, \
+from src.content import START_MAIN_MENU_TEXT, start_kb, HERO_PARSE, REG_NEW_USER_REQ, UPDATE_USER_REQ, UsersCash as uc, \
     MAIN_REQ, UserData
 
 

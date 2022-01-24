@@ -1,37 +1,62 @@
 class TempCash:
     cash = {}
 
-    def insert(self, uid: int, mid: int):
-        self.cash[uid] = mid
+    @classmethod
+    def insert(cls, uid: int, mid: int):
+        cls.cash[uid] = mid
 
-    def get(self, uid: int):
-        return self.cash.get(uid)
+    @classmethod
+    def get(cls, uid: int):
+        return cls.cash.get(uid)
 
 
 class TempAllianceCash:
     cash = {}
 
-    async def create(self, uid: int, code: str):
-        self.cash[uid] = Alliance(code, uid)
+    @classmethod
+    async def create(cls, uid: int, code: str):
+        cls.cash[uid] = Alliance(code, uid)
 
-    async def get_code(self, uid):
-        return self.cash.get(uid).code
+    @classmethod
+    async def get_code(cls, uid):
+        return cls.cash.get(uid).code
 
-    async def get_num_guilds(self, uid):
-        return self.cash.get(uid).n_guilds
+    @classmethod
+    async def get_num_guilds(cls, uid):
+        return cls.cash.get(uid).n_guilds
 
-    async def add_main(self, uid, name, owner, n_guilds, n_peoples, b_pogs, b_money, stock, glory, row):
-        self.cash.get(uid).add_main(name, owner, n_guilds, n_peoples, b_pogs, b_money, stock, glory, row)
+    @classmethod
+    async def add_main(cls, uid, name, owner, n_guilds, n_peoples, b_pogs, b_money, stock, glory, row):
+        cls.cash.get(uid).add_main(name, owner, n_guilds, n_peoples, b_pogs, b_money, stock, glory, row)
 
-    async def add_roster(self, uid, roster: dict, row):
-        self.cash.get(uid).add_roster(roster, row)
+    @classmethod
+    async def add_roster(cls, uid, roster: dict, row):
+        cls.cash.get(uid).add_roster(roster, row)
 
-    async def get_data(self, uid):
-        return self.cash.get(uid)
+    @classmethod
+    async def get_data(cls, uid):
+        return cls.cash.get(uid)
 
 
 class Alliance:
     def __init__(self, code: str, uid: int):
+        self.name = None
+        self.owner = None
+
+        self.n_guilds = None
+        self.n_members = None
+
+        self.b_pogs = None
+        self.b_money = None
+
+        self.stock = None
+        self.glory = None
+
+        self.main_row = None
+
+        self.roster = None
+        self.roster_row = None
+
         self.code = code
         self.uid = uid
 
@@ -56,8 +81,8 @@ class Alliance:
         self.roster_row = row
 
     def get_me(self):
-        return [self.code, self.name, self.owner, self.uid, self.n_members, self.n_guilds, self.b_pogs, self.b_money,\
-               self.stock, self.glory, ', '.join(self.roster.keys()), self.main_row, self.roster_row]
+        return [self.code, self.name, self.owner, self.uid, self.n_members, self.n_guilds, self.b_pogs, self.b_money,
+                self.stock, self.glory, ', '.join(self.roster.keys()), self.main_row, self.roster_row]
 
     def get_roster(self):
         return [(x, self.code) for x in self.roster]

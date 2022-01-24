@@ -11,7 +11,7 @@ from aiogram.types import Message, CallbackQuery
 
 from config import config
 
-from src.content import users as uc
+from src.content import UsersCash as uc
 
 
 # Creating filters

@@ -4,7 +4,7 @@ import re
 from asyncpg import Record
 
 from resources.tools.database import PostgreSQLDatabase
-from src.content import ADMIN_REPLY_INFO_TEXT, users, adv_users, MAIN_REQ, ADV_MAIN_REQ
+from src.content import ADMIN_REPLY_INFO_TEXT, UsersCash, AdvUsersCash, MAIN_REQ, ADV_MAIN_REQ
 
 
 # /sql
@@ -22,8 +22,8 @@ async def sql(mes: Message, db: PostgreSQLDatabase):
         return
 
     if mode == 3:
-        await users.update(await db.fetch(MAIN_REQ))
-        await adv_users.update(await db.fetch(ADV_MAIN_REQ))
+        await UsersCash.update(await db.fetch(MAIN_REQ))
+        await AdvUsersCash.update(await db.fetch(ADV_MAIN_REQ))
 
     await mes.answer(txt)
 

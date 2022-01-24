@@ -33,6 +33,7 @@ class Config(BaseSettings):
     ADMINS_ID: list[int] = []
 
     # Global constants:
+    CURRENT_VERSION = "0.0"
 
 
 config = Config()
