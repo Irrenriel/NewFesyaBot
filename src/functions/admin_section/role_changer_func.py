@@ -23,23 +23,28 @@ async def reg_as(mes: Message, db: PostgreSQLDatabase):
 async def ban(mes: Message, db: PostgreSQLDatabase):
     target = mes.get_args()
     if not target and mes.reply_to_message:
-        uid = [[mes.reply_to_message.from_user.id], ] if mes.reply_to_message.from_user.id not in ADMINS_ID else []
+        uid = [mes.reply_to_message.from_user.id] if mes.reply_to_message.from_user.id not in ADMINS_ID else []
 
     elif target and target.isdigit():
-        uid = [[int(target)], ] if int(target) not in ADMINS_ID else []
+        uid = [int(target)] if int(target) not in ADMINS_ID else []
 
     else:
-        guild_members = await db.fetch('SELECT id FROM users WHERE guild_tag = $1', [target])
-        if not guild_members:
+        uid = [
+            x.get('id') for x in await db.fetch('SELECT id FROM users WHERE guild_tag = $1', [target])
+            if x.get('id') not in ADMINS_ID
+        ]
+        if not uid:
             await mes.answer('Error: No Guild!')
             return
 
-        uid = [[gm.get('id'), ] for gm in guild_members if gm.get('id') not in ADMINS_ID]
-
     if uid:
-        await db.execute('INSERT INTO banned_users (id) VALUES ($1) ON CONFLICT DO NOTHING', uid, many=True)
+        await db.execute(
+            'INSERT INTO banned_users (id) VALUES ($1) ON CONFLICT DO NOTHING', [[i,] for i in uid], many=True
+        )
+
         await banned_users.update(await db.fetch(BANNED_MAIN_REQ))
         await mes.answer('Success: Done!')
+
     else:
         await mes.answer('Error: No Users To Ban!')
 
@@ -53,12 +58,13 @@ async def unban(mes: Message, db: PostgreSQLDatabase):
         uid = [int(target)] if int(target) not in ADMINS_ID else []
 
     else:
-        guild_members = await db.fetch('SELECT id FROM users WHERE guild_tag = $1', [target])
-        if not guild_members:
+        uid = [
+            x.get('id') for x in await db.fetch('SELECT id FROM users WHERE guild_tag = $1', [target])
+            if x.get('id') not in ADMINS_ID
+        ]
+        if not uid:
             await mes.answer('Error: No Guild!')
             return
-
-        uid = [gm.get('id') for gm in guild_members if gm.get('id') not in ADMINS_ID]
 
     if uid:
         await db.execute('DELETE FROM banned_users WHERE id = any($1::integer[])', [uid])

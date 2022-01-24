@@ -1,9 +1,10 @@
+from aiogram.dispatcher.handler import CancelHandler
 from aiogram.dispatcher.middlewares import BaseMiddleware
 from aiogram import types
 
 from config import ADMINS_ID
 from resources.tools.database import PostgreSQLDatabase
-from src.content import UsersCash, AdvUsersCash, ACTIVITY_LOGGING_REQ_INSERT
+from src.content import UsersCash, AdvUsersCash, ACTIVITY_LOGGING_REQ_INSERT, banned_users
 
 
 class Middleware(BaseMiddleware):
@@ -17,6 +18,9 @@ class Middleware(BaseMiddleware):
         if message.from_user.id not in ADMINS_ID:
             await add_log(self.db, message, f'MSG: {message.text}')
 
+        if message.from_user.id in banned_users.get_storage():
+            raise CancelHandler()
+
         data['db'] = self.db
         data['user'] = await self.uc.select_id(message.from_user.id)
         data['adv_user'] = await self.auc.select_id(message.from_user.id)
@@ -25,6 +29,9 @@ class Middleware(BaseMiddleware):
         if callback_query.from_user.id not in ADMINS_ID:
             await add_log(self.db, callback_query, f'CLB: {callback_query.data}')
 
+        if callback_query.from_user.id in banned_users.get_storage():
+            raise CancelHandler()
+
         data['db'] = self.db
         data['user'] = await self.uc.select_id(callback_query.from_user.id)
         data['adv_user'] = await self.auc.select_id(callback_query.from_user.id)
@@ -32,6 +39,9 @@ class Middleware(BaseMiddleware):
     async def on_process_inline_query(self, inline_query: types.InlineQuery, data: dict):
         # if inline_query.from_user.id not in ADMINS_ID:
         #   await add_log(self.db, inline_query, f'INL: {inline_query.query}')
+
+        if inline_query.from_user.id in banned_users.get_storage():
+            raise CancelHandler()
 
         data['db'] = self.db
         data['user'] = await self.uc.select_id(inline_query.from_user.id)
