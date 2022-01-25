@@ -63,3 +63,22 @@ CREATE TABLE f_reports_storage (
 report TEXT NOT NULL,
 timestamp INTEGER NOT NULL
 )
+
+
+[chats]
+
+CREATE TABLE chats (
+-- Main Info
+id INTEGER PRIMARY KEY,
+
+-- Alliance Leader
+new_loc_ntf BOOL DEFAULT False,
+delete_loc_ntf BOOL DEFAULT False,
+
+-- All chats
+brief_log BOOL DEFAULT False,
+brief_mode INTEGER DEFAULT 0,
+
+-- AT chat
+craft_ntf BOOL DEFAULT False
+)

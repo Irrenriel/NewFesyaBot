@@ -1,5 +1,6 @@
 __all__ = [
-    'Command', 'ChatTypeFilter', 'Text', 'IsReplyFilter', 'RegexpCommandsFilter', 'IsChat', 'IsUser', 'IsForward'
+    'Command', 'ChatTypeFilter', 'Text', 'IsReplyFilter', 'RegexpCommandsFilter', 'IsChat', 'IsUser', 'IsForward',
+    'IsBotAddedToChat'
 ]
 
 # Base Filters Import
@@ -72,3 +73,9 @@ class IsChat(BoundFilter):
 
     async def check(self, update) -> bool:
         return update.chat.id == self.chat_id
+
+
+class IsBotAddedToChat(BoundFilter):
+    async def check(self, update: Message) -> bool:
+        in_chat = update.bot.id in [i.id for i in update.new_chat_members] if update.new_chat_members else False
+        return in_chat and update.chat.type in ['supergroup', 'group']
