@@ -170,7 +170,7 @@ class UsersCash:
             user.role = ROLES_DICT.get(role)
             cls._storage.append(user)
 
-            await cls.reload()
+            await cls.reload
 
     @classmethod
     async def add_new_user(cls, db: PostgreSQLDatabase, uid: int):
