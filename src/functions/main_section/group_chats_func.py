@@ -1,7 +1,8 @@
 from aiogram.types import Message
 
 from resources.tools.database import PostgreSQLDatabase
-from src.content import HELP_NEW_CHAT_ID_TEXT
+from src.content import HELP_NEW_CHAT_ID_TEXT, SETTINGS_GET_CHAT
+from src.content.consts.main_resources import ChatInfo
 
 
 async def new_chat_found(mes: Message, db: PostgreSQLDatabase):
@@ -13,6 +14,10 @@ async def new_chat_found(mes: Message, db: PostgreSQLDatabase):
 
 
 async def settings(mes: Message, db: PostgreSQLDatabase):
-    if not await db.fetch('SELECT * FROM chats WHERE id = $1', [mes.chat.id]):
-        await mes.answer('Данного чата нет в базе. Пригласите бота по новой в чат или обратитесь к @Irrenriel.')
-        return
+    req = await db.fetch(SETTINGS_GET_CHAT, [mes.chat.id], one_row=True)
+
+    if not req:
+        await db.execute('INSERT INTO chats (id) VALUES ($1)', [mes.chat.id])
+        req = await db.fetch(SETTINGS_GET_CHAT, [mes.chat.id], one_row=True)
+
+    chat = ChatInfo(**req)

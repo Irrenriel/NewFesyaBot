@@ -57,5 +57,6 @@ dp.register_message_handler(
 dp.register_message_handler(
     settings,
     Command('settings'), ChatTypeFilter(types.ChatType.SUPERGROUP),
+    IsUser(has_roles=[Roles.ADMIN, Roles.ALLIANCE_LEADER, Roles.COMMANDER])
 )
 
