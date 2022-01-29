@@ -4,7 +4,8 @@ from resources.models import dp
 from resources.tools.cfilters import Command, IsUser, Text, IsForward
 from src.content import Roles
 from src.functions import new_location_input, new_bless_input, new_res_input, loc_del, loc_info, loc_history, \
-    loc_capture, loc_miss, loc_buffs, loc_list, callback_cancel, loc_list_objects, loc_list_map, loc_help, loc_check
+    loc_capture, loc_miss, loc_buffs, loc_list, callback_cancel, loc_list_objects, loc_list_map, loc_help, loc_check, \
+    loc_resurrect
 
 '''<<<-----   LOCATION SECTION   ----->>>'''
 # New Location Input
@@ -31,6 +32,12 @@ dp.register_message_handler(
 dp.register_message_handler(
     loc_del,
     Command('l_del'), IsUser(has_roles=[Roles.ADMIN, Roles.ALLIANCE_LEADER])
+)
+
+# Resurrect Location from Grave :), /l_resurrect [code]
+dp.register_message_handler(
+    loc_resurrect,
+    Command('l_resurrect'), IsUser(has_roles=Roles.ADMIN)
 )
 
 # Check Info about Location, /l_info [name/code]

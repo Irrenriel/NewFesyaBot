@@ -1,5 +1,3 @@
-import asyncio
-import random
 from logging import info
 
 from aiogram import executor, Dispatcher
@@ -10,13 +8,6 @@ from resources.tools import bot_logging
 from resources.tools.middleware import Middleware, BanMiddleware, ThrottleMiddleware
 from src.content import UsersCash, AdvUsersCash, BannedUsersCash, MAIN_REQ, ADV_MAIN_REQ, BANNED_MAIN_REQ
 from src import handlers  # Do not delete this!!!
-
-
-async def get_channel_participants():
-    ent = await client.client.get_entity('Levinfled')
-    message = await client.client.send_message(ent, 'Hello')
-    await asyncio.sleep(random.randint(1, 3))
-    await client.client.edit_message(message, 'Not hello', file=open('photo_2022-01-28_00-46-45.jpg', 'rb'))
 
 
 async def startup_func(dp: Dispatcher):
@@ -49,8 +40,6 @@ async def startup_func(dp: Dispatcher):
 
         else:
             info(f'▻ {u} entity is not founded!')
-
-        await get_channel_participants()
 
     else:
         info(f'▻ Telethon client with session "{config.SESSION_NAME}" is not running!')

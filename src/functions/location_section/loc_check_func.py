@@ -1,10 +1,13 @@
+import asyncio
+
 from aiogram.types import Message
 
 from config import config
 from resources.models import client
 from resources.tools.database import PostgreSQLDatabase
 from src.content import UserData, Roles, LOC_CHECK_SELECT_DELETED_REQ, LocInfoData, GET_LOC_TYPE_EMOJI, LocTypes, \
-    MARK_AS_DEAD_LOCATIONS
+    MARK_AS_DEAD_LOCATIONS, DELETE_LOC_NTF
+from src.content.consts.main_resources import ChatInfo
 from src.functions.admin_section.settings_func import delete_message_with_notification
 
 
@@ -61,16 +64,16 @@ async def loc_check(mes: Message, db: PostgreSQLDatabase, user: UserData):
         await m.edit_text(result)
         return
 
-    # chats = [x[0] for x in mes.db.checkall('SELECT id FROM chats WHERE delete_loc_ntf = 1')]
-    # if not chats:
-    #     await m.edit_text('Проверка выполнена!')
-    #     return
-    #
-    # for chat in chats:
-    #     try:
-    #         await bot.send_message(chat, txt)
-    #         await asyncio.sleep(0.3)
-    #     except:
-    #         pass
+    # Notifications
+    chats = [ChatInfo(**c) for c in await db.fetch(DELETE_LOC_NTF)]
+
+    if chats:
+        for chat in chats:
+            try:
+                await asyncio.sleep(0.3)
+                await mes.bot.send_message(chat.id, txt)
+
+            except Exception:
+                pass
 
     await m.edit_text('<b>[🎉] Проверка завершена!</b>')

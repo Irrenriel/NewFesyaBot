@@ -102,3 +102,11 @@ UPDATE loc SET exist = False, death_time = LOCALTIMESTAMP WHERE code = ANY($1::t
 SETTINGS_GET_CHAT = '''
 SELECT id, new_loc_ntf, delete_loc_ntf, brief_log, brief_mode, craft_ntf FROM chats WHERE id = $1
 '''
+
+NEW_LOC_NTF = '''
+SELECT id, new_loc_ntf, delete_loc_ntf, brief_log, brief_mode, craft_ntf FROM chats WHERE new_loc_ntf = True
+'''
+
+DELETE_LOC_NTF = '''
+SELECT id, new_loc_ntf, delete_loc_ntf, brief_log, brief_mode, craft_ntf FROM chats WHERE delete_loc_ntf = True
+'''

@@ -1,3 +1,4 @@
+import asyncio
 import json
 import re
 from datetime import datetime, timedelta
@@ -10,7 +11,9 @@ from resources.models import client
 from resources.tools.database import PostgreSQLDatabase
 from src.content import NEW_LOC_INPUT_PARSE, LOC_TYPES_ENUM, LocTypes, NEW_LOCATION_NOTIFICATION, \
     INCREASE_LOCATION_TOP_COUNT_REQ, UserData, INSERT_OR_UPDATE_LOCATION_BUFF_REQ, INSERT_OR_UPDATE_LOCATION_RES_REQ, \
-    LocInfoData, NEW_LOC_L_CHECK_FOR_TIER, GET_LOC_TYPE_EMOJI, LOC_CHECK_SELECT_DELETED_REQ, MARK_AS_DEAD_LOCATIONS
+    LocInfoData, NEW_LOC_L_CHECK_FOR_TIER, GET_LOC_TYPE_EMOJI, LOC_CHECK_SELECT_DELETED_REQ, MARK_AS_DEAD_LOCATIONS, \
+    NEW_LOC_NTF, NEW_LOCATION_TEXT, DELETE_LOC_NTF
+from src.content.consts.main_resources import ChatInfo
 from src.functions.admin_section.settings_func import delete_message_with_notification
 
 
@@ -54,24 +57,20 @@ async def new_location_input(mes: Message, db: PostgreSQLDatabase, user: UserDat
         )
 
     # Notifications
-    # ! ! ! ! !
-    # answer = l_type + l_name + ("" if l_lvl == 99 else " lvl. " + str(l_lvl))
-    # txt = NEW_LOCATION_NOTIFICATION.format(answer, l_code)
-    #
-    # chats = mes.db.checkall('SELECT id FROM chats WHERE new_loc_ntf = 1', [])
-    #
-    # if not chats:
-    #     await mes.answer('Новая локация! {}'.format(
-    #         'Зачислен +1 балл! (/top)' if top else 'Балл не засчитан, требуется регистрация.'))
-    #     return
-    #
-    # for chat in chats:
-    #     try:
-    #         await bot.send_message(chat[0], text)
-    #     except:
-    #         pass
-    #     await asyncio.sleep(0.3)
-    # ! ! ! ! !
+    chats = [ChatInfo(**c) for c in await db.fetch(NEW_LOC_NTF)]
+
+    if chats:
+        answer = NEW_LOCATION_TEXT.format(
+            GET_LOC_TYPE_EMOJI.get(l_type), l_name, '' if l_lvl == 99 else f' lvl.{l_lvl}', l_code
+        )
+
+        for chat in chats:
+            try:
+                await asyncio.sleep(0.3)
+                await mes.bot.send_message(chat.id, answer)
+
+            except Exception:
+                pass
 
     # Reward
     await db.execute(INCREASE_LOCATION_TOP_COUNT_REQ, [mes.from_user.id])
@@ -144,20 +143,19 @@ async def new_location_input(mes: Message, db: PostgreSQLDatabase, user: UserDat
             ) for l in locs
         ]
 
-        txt = '<b>[🎉] Проверка завершена!</b>\nИстёкшие локации:\n\n' + '\n'.join(t)
+        # Notifications
+        chats = [ChatInfo(**c) for c in await db.fetch(DELETE_LOC_NTF)]
 
-        # chats = [x[0] for x in mes.db.checkall('SELECT id FROM chats WHERE delete_loc_ntf = 1')]
-        # if not chats:
-        #     await m.edit_text('Проверка выполнена!')
-        #     return
-        #
-        # for chat in chats:
-        #     try:
-        #         await bot.send_message(chat, txt)
-        #         await asyncio.sleep(0.3)
-        #     except:
-        #         pass
+        if chats:
+            answer = '<b>[🎉] Проверка завершена!</b>\nИстёкшие локации:\n\n' + "\n".join(t)
 
+            for chat in chats:
+                try:
+                    await asyncio.sleep(0.3)
+                    await mes.bot.send_message(chat.id, answer)
+
+                except Exception:
+                    pass
 
 
 # Reception of blessing from locations

@@ -8,18 +8,18 @@ from aiogram.dispatcher.filters.builtin import Command, ChatTypeFilter, Text, Is
 
 # Types for creating Custom Filters
 from aiogram.dispatcher.filters import BoundFilter
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import Message
 
 from config import config
 
-from src.content import UsersCash as uc
+from src.content import UsersCash, Roles
 
 
 # Creating filters
 class IsUser(BoundFilter):
     def __init__(
             self, is_id: int = None, is_admin: bool = None, has_username: bool = None, is_registered: bool = None,
-            has_roles: [list, int] = None
+            has_roles: [list, Roles] = None
     ):
         self.is_id = is_id
         self.is_admin = is_admin
@@ -47,13 +47,13 @@ class IsUser(BoundFilter):
 
         # Is User Registered
         if self.is_registered is not None:
-            if self.is_registered and not await uc.select_id(user.id):
+            if self.is_registered and not await UsersCash.select_id(user.id):
                 return False
-            elif not self.is_registered and await uc.select_id(user.id):
+            elif not self.is_registered and await UsersCash.select_id(user.id):
                 return False
 
         # Is User Has Role
-        if self.has_roles is not None and not await uc.check_role(user.id, self.has_roles):
+        if self.has_roles is not None and not await UsersCash.check_role(user.id, self.has_roles):
             return False
 
         return True

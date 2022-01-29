@@ -8,6 +8,6 @@ class ChatInfo(BaseModel):
     delete_loc_ntf: bool
 
     brief_log: bool
-    brief_mode: int
+    brief_mode: bool
 
     craft_ntf: bool

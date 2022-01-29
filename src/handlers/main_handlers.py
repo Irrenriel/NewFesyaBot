@@ -6,7 +6,7 @@ from resources.models import dp
 from resources.tools.cfilters import Command, IsUser, ChatTypeFilter, Text, IsForward, IsBotAddedToChat
 from resources.tools.states import StateOn
 from src.content import Roles
-from src.functions import start, hero_insert, start_new, new_chat_found, settings
+from src.functions import start, hero_insert, start_new, new_chat_found, settings, top1, top2
 
 '''<<<-----   MAIN FUNCs   ----->>>'''
 # /start
@@ -58,5 +58,17 @@ dp.register_message_handler(
     settings,
     Command('settings'), ChatTypeFilter(types.ChatType.SUPERGROUP),
     IsUser(has_roles=[Roles.ADMIN, Roles.ALLIANCE_LEADER, Roles.COMMANDER])
+)
+
+# /top1
+dp.register_message_handler(
+    top1,
+    Command('top1')
+)
+
+# /top2
+dp.register_message_handler(
+    top2,
+    Command('top2')
 )
 

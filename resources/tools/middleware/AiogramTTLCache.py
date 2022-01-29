@@ -1,3 +1,4 @@
+import threading
 import typing
 from datetime import datetime, timedelta
 
@@ -5,6 +6,8 @@ from aiogram import types
 
 
 class AiogramTTLCache:
+    _rlock = threading.RLock()
+
     def __init__(self, **ttl):
         self.ttl = ttl
         self.cache = {}
@@ -14,39 +17,42 @@ class AiogramTTLCache:
             message: types.Message = None,
             chat: typing.Union[str, int] = None,
             user: typing.Union[str, int] = None):
-        if message is not None:
-            chat, user = message.chat.id, message.from_user.id
-        chat, user = self.check_input(chat=chat, user=user)
-        ttl = self.cache.get(chat, {}).get(user, self.default)
-        if datetime.now() < ttl:
-            return True
-        self.cache.get(chat, {}).pop(user, None)
-        return False
+        with AiogramTTLCache._rlock:
+            if message is not None:
+                chat, user = message.chat.id, message.from_user.id
+            chat, user = self.check_input(chat=chat, user=user)
+            ttl = self.cache.get(chat, {}).get(user, self.default)
+            if datetime.now() < ttl:
+                return True
+            self.cache.get(chat, {}).pop(user, None)
+            return False
 
     def set(self, *,
             message: types.Message = None,
             chat: typing.Union[str, int] = None,
             user: typing.Union[str, int] = None, **ttl):
-        if message is not None:
-            chat, user = message.chat.id, message.from_user.id
-        chat, user = self.check_input(chat=chat, user=user)
-        delta_ttl = ttl or self.ttl
-        if not delta_ttl:
-            raise Exception("where ttl?????")
-        time = datetime.now() + timedelta(**delta_ttl)
-        self.cache.setdefault(chat, {}).setdefault(user, time)
+        with AiogramTTLCache._rlock:
+            if message is not None:
+                chat, user = message.chat.id, message.from_user.id
+            chat, user = self.check_input(chat=chat, user=user)
+            delta_ttl = ttl or self.ttl
+            if not delta_ttl:
+                raise Exception("where ttl?????")
+            time = datetime.now() + timedelta(**delta_ttl)
+            self.cache.setdefault(chat, {}).setdefault(user, time)
 
     def left(self, *,
              message: types.Message = None,
              chat: typing.Union[str, int] = None,
              user: typing.Union[str, int] = None) -> timedelta:
-        if message is not None:
-            chat, user = message.chat.id, message.from_user.id
-        chat, user = self.check_input(chat=chat, user=user)
-        if self.get(chat=chat, user=user):
-            return self.cache.get(chat).get(user) - datetime.now()
-        else:
-            return timedelta()
+        with AiogramTTLCache._rlock:
+            if message is not None:
+                chat, user = message.chat.id, message.from_user.id
+            chat, user = self.check_input(chat=chat, user=user)
+            if self.get(chat=chat, user=user):
+                return self.cache.get(chat).get(user) - datetime.now()
+            else:
+                return timedelta()
 
     @staticmethod
     def check_input(chat: typing.Union[str, int], user: typing.Union[str, int]):
