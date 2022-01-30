@@ -6,7 +6,7 @@ from config import config
 from resources.models import dp, loop, db, client
 from resources.tools import bot_logging
 from resources.tools.middleware import Middleware, BanMiddleware, ThrottleMiddleware
-from src.content import UsersCash, AdvUsersCash, BannedUsersCash, MAIN_REQ, ADV_MAIN_REQ, BANNED_MAIN_REQ
+from src.content import UsersCash, AdvUsersCash, BannedUsersCash, MAIN_REQ, ADV_MAIN_REQ, BANNED_MAIN_REQ, HERO_PARSE
 from src import handlers  # Do not delete this!!!
 
 

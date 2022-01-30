@@ -6,7 +6,7 @@ from src.content.consts.main_enums import GET_CLASS_EMOJI
 
 
 async def top1(mes: Message, db: PostgreSQLDatabase):
-    results = [TopResult(**r) for r in await db.fetch('SELECT uid, count FROM location_top')]
+    results = [TopResult(**r) for r in await db.fetch('SELECT uid, count FROM location_top ORDER BY count DESC')]
     text = '<u><b>🗺Топ сыщиков локаций:</b></u>\n\n'
 
     if results:
@@ -18,6 +18,7 @@ async def top1(mes: Message, db: PostgreSQLDatabase):
 
             class_emoji = GET_CLASS_EMOJI.get(user.main_class)
             text += f'<b>{num}) {class_emoji}[{user.guild_tag}]{user.nickname} — {result.count}</b>\n'
+            num += 1
 
     else:
         text += 'Пусто'

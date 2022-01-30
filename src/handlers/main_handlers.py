@@ -6,7 +6,7 @@ from resources.models import dp
 from resources.tools.cfilters import Command, IsUser, ChatTypeFilter, Text, IsForward, IsBotAddedToChat
 from resources.tools.states import StateOn
 from src.content import Roles
-from src.functions import start, hero_insert, start_new, new_chat_found, settings, top1, top2
+from src.functions import start, hero_insert, start_new, new_chat_found, settings, top1, top2, settings_v
 
 '''<<<-----   MAIN FUNCs   ----->>>'''
 # /start
@@ -57,6 +57,12 @@ dp.register_message_handler(
 dp.register_message_handler(
     settings,
     Command('settings'), ChatTypeFilter(types.ChatType.SUPERGROUP),
+    IsUser(has_roles=[Roles.ADMIN, Roles.ALLIANCE_LEADER, Roles.COMMANDER])
+)
+
+dp.register_callback_query_handler(
+    settings_v,
+    Text(startswith=['nln:', 'dln:', 'brf:', 'brfm:']),
     IsUser(has_roles=[Roles.ADMIN, Roles.ALLIANCE_LEADER, Roles.COMMANDER])
 )
 

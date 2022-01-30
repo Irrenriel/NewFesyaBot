@@ -1,3 +1,7 @@
+from dataclasses import dataclass
+from typing import Optional
+
+
 class TempCash:
     cash = {}
 
@@ -15,74 +19,76 @@ class TempAllianceCash:
 
     @classmethod
     async def create(cls, uid: int, code: str):
-        cls.cash[uid] = Alliance(code, uid)
+        cls.cash[uid] = Alliance(code)
 
     @classmethod
-    async def get_code(cls, uid):
+    async def get_code(cls, uid: int):
         return cls.cash.get(uid).code
 
     @classmethod
-    async def get_num_guilds(cls, uid):
-        return cls.cash.get(uid).n_guilds
+    async def get_num_guilds(cls, uid: int):
+        return cls.cash.get(uid).main.n_guilds
 
     @classmethod
-    async def add_main(cls, uid, name, owner, n_guilds, n_peoples, b_pogs, b_money, stock, glory, row):
-        cls.cash.get(uid).add_main(name, owner, n_guilds, n_peoples, b_pogs, b_money, stock, glory, row)
+    async def add_main(cls, uid: int, *args):
+        cls.cash.get(uid).main = AllianceMain(*args)
+
 
     @classmethod
-    async def add_roster(cls, uid, roster: dict, row):
-        cls.cash.get(uid).add_roster(roster, row)
+    async def add_roster(cls, uid: int, roster: list, row: str):
+        cls.cash.get(uid).roster = AllianceRoster(roster=roster, roster_row=row)
 
     @classmethod
-    async def get_data(cls, uid):
+    async def get_cash(cls, uid):
         return cls.cash.get(uid)
 
 
+@dataclass
+class AllianceMain:
+    name: str
+    owner: str
+
+    n_guild: int
+    n_members: int
+
+    b_pogs: int
+    b_money: int
+
+    stock: int
+    glory: int
+
+    main_row: str
+
+    def get(self):
+        return self.name, self.owner, self.n_guild, self.n_members, self.b_pogs, self.b_money, self.stock, \
+               self.glory, self.main_row
+
+
+@dataclass
+class AllianceRoster:
+    roster: list
+    roster_row: str
+
+    def get(self):
+        return self.roster, self.roster_row
+
+
+@dataclass
 class Alliance:
-    def __init__(self, code: str, uid: int):
-        self.name = None
-        self.owner = None
+    code: str
+    main: Optional[AllianceMain] = None
+    roster: Optional[AllianceRoster] = None
 
-        self.n_guilds = None
-        self.n_members = None
+    # def get_me(self):
+    #     return [
+    #         self.code, self.name, self.owner, self.uid,
+    #         self.n_members, self.n_guilds,
+    #         self.b_pogs, self.b_money, self.stock, self.glory, ', '.join(self.roster.keys()), self.main_row, self.roster_row]
 
-        self.b_pogs = None
-        self.b_money = None
-
-        self.stock = None
-        self.glory = None
-
-        self.main_row = None
-
-        self.roster = None
-        self.roster_row = None
-
-        self.code = code
-        self.uid = uid
-
-    def add_main(self, name, owner, n_guilds, n_peoples, b_pogs, b_money, stock, glory, row):
-        self.name = name
-        self.owner = owner
-
-        self.n_guilds = n_guilds
-        self.n_members = n_peoples
-
-        self.b_pogs = b_pogs
-        self.b_money = b_money
-
-        self.stock = stock
-        self.glory = glory
-
-        self.main_row = row
-
-    def add_roster(self, roster: dict, row):
-        # Saving like DICT for the future features
-        self.roster = roster
-        self.roster_row = row
+    # def get_roster(self):
+    #     return [(x, self.code) for x in self.roster]
 
     def get_me(self):
-        return [self.code, self.name, self.owner, self.uid, self.n_members, self.n_guilds, self.b_pogs, self.b_money,
-                self.stock, self.glory, ', '.join(self.roster.keys()), self.main_row, self.roster_row]
-
-    def get_roster(self):
-        return [(x, self.code) for x in self.roster]
+        return [
+            self.code, *self.main.get(),
+        ]

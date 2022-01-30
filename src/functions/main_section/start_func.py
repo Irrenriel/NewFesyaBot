@@ -7,7 +7,7 @@ from aiogram.types import Message, ReplyKeyboardRemove
 from config import config
 from resources.tools.database import PostgreSQLDatabase
 from resources.tools.states import StateOn
-from src.content import START_MAIN_MENU_TEXT, start_kb, HERO_PARSE, REG_NEW_USER_REQ, UPDATE_USER_REQ, UsersCash as uc, \
+from src.content import START_MAIN_MENU_TEXT, start_kb, HERO_PARSE, REG_NEW_USER_REQ, UPDATE_USER_REQ, UsersCash, \
     MAIN_REQ, UserData
 
 
@@ -43,7 +43,7 @@ async def hero_insert(mes: Message, state: FSMContext, db: PostgreSQLDatabase, u
 
     # Adding new user
     if await new_user_register(mes, db, first_time=first_time) is None:
-        await mes.answer('Этот /hero был украден! Как тебе не стыдно?')
+        await mes.answer('Этот /hero с ошибками! Не удаётся получить информацию! Обратитесь к @Wolftrit.')
         return
 
     if first_time:
@@ -65,25 +65,51 @@ async def new_user_register(mes: Message, db: PostgreSQLDatabase, first_time: bo
     lvl = int(parse.group('lvl'))
     nickname = parse.group('nickname')
 
-    m_class = await get_class(parse.group('class'))
-    s_class = await get_class(parse.group('sub_class')) if parse.group('sub_class') else 0
+    m_class, s_class = await get_class(parse.group('class'))
+    if not m_class:
+        return
 
     castle = await get_castle(parse.group('castle'))
     guild_tag = parse.group('guild_tag') if parse.group('guild_tag') else 'None'
 
     if first_time:
         await db.execute(REG_NEW_USER_REQ, [u.id, u.username, nickname, lvl, m_class, s_class, guild_tag, castle])
-        await uc.add_new_user(db, u.id)
+        await UsersCash.add_new_user(db, u.id)
 
     else:
         await db.execute(UPDATE_USER_REQ, [u.username, nickname, lvl, m_class, s_class, guild_tag, castle, u.id])
-        await uc.update(await db.fetch(MAIN_REQ))
+        await UsersCash.update(await db.fetch(MAIN_REQ))
 
     return True
 
 
 async def get_class(x):
-    return {'🏛': -1, '⚔️': 1, '🏹': 2, '🛡': 3, '🩸': 4, '⚒': 5, '⚗️': 6, '📦': 7, '🎩': 8}.get(x, 0)
+    d = {'🐣': -2, '🏛': -1, '⚔️': 1, '🏹': 2, '🛡': 3, '🩸': 4, '⚒': 5, '⚗️': 6, '📦': 7, '🎩': 8}
+    for emj in d:
+        if x.startswith(emj):
+            m_class = d.get(emj, 0)
+            if not m_class:
+                return 0, 0
+
+            x = x.replace(emj, '')
+            break
+
+    else:
+        return 0, 0
+
+    if x:
+        for emj in d:
+            if x.startswith(emj):
+                s_class = d.get(emj, 0)
+                break
+
+        else:
+            s_class = 0
+
+    else:
+        s_class = 0
+
+    return m_class, s_class
 
 
 async def get_castle(x):

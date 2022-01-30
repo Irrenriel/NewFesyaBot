@@ -47,12 +47,17 @@ async def alliance_get_main(mes: Message, db: PostgreSQLDatabase):
     # TO THE FUTURE FEATURES
     b_pogs, b_money, stock, glory = parse.group('b_pogs', 'b_money', 'stock', 'glory')
 
-    al = await db.fetch('SELECT name FROM loc WHERE code = $1', [await TempAllianceCash.get_code(mes.from_user.id)], one_row=True)
+    al = await db.fetch(
+        'SELECT name FROM loc WHERE code = $1', [await TempAllianceCash.get_code(mes.from_user.id)], one_row=True
+    )
     if not al or al.get('name') != name:
-        await mes.answer('Код альянса не совпадает с именем. Чужой Альянс кидаешь!!1!')
+        await mes.answer('Имя альянса не совпадает. Чужой Альянс кидаешь!!1!')
         return
 
-    await TempAllianceCash.add_main(mes.from_user.id, name, owner, n_guilds, n_peoples, b_pogs, b_money, stock, glory, str(mes))
+    await TempAllianceCash.add_main(
+        mes.from_user.id,
+        name, owner, int(n_guilds), int(n_peoples), int(b_pogs), int(b_money), int(stock), int(glory), str(mes)
+    )
     await mes.answer(REG_GET_MAIN)
     await StateOn.AllianceGetRoster.set()
 
@@ -68,14 +73,12 @@ async def alliance_get_roster(mes: Message, db: PostgreSQLDatabase):
         await mes.answer('Слишком старое сообщение. Пришли новое!')
         return
 
-    d_parse = {x[1]: (x[2], f'{x[0]}{x[1]}') for x in parse}
-
-    n_guilds = await TempAllianceCash.get_num_guilds(mes.from_user.id)
-    if len(d_parse) != int(n_guilds):
-        await mes.answer('Ростер не совпадает с количеством гильдий. Чужой Альянс кидаешь!!1!')
+    l_parse = [x[1] for x in parse]
+    if len(l_parse) != await TempAllianceCash.get_num_guilds(mes.from_user.id):
+        await mes.answer('Количество гильдий не совпадает. Чужой Альянс кидаешь!!1!')
         return
 
-    await TempAllianceCash.add_roster(mes.from_user.id, d_parse, str(mes))
+    await TempAllianceCash.add_roster(mes.from_user.id, l_parse, str(mes))
 
-    alliance = await TempAllianceCash.get_data(mes.from_user.id)
-    await db.execute(REG_NEW_ALLIANCE, alliance.get_me())
+    # alliance = await TempAllianceCash.get_data(mes.from_user.id)
+    # await db.execute(REG_NEW_ALLIANCE, [])

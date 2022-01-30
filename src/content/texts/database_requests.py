@@ -38,11 +38,11 @@ WHERE alliance_guilds.guild_tag = $1
 
 REG_NEW_ALLIANCE = '''
 INSERT INTO alliance_hq (
-    al_code, al_name, al_owner, al_leader, n_members, n_guilds, al_balance_pogs,
-    al_balance_money, al_stock, al_glory, al_guilds, al_main_raw, al_roster_raw,
-    al_main_last_update, al_rost_last_update
+    al_code, al_name, al_owner, al_leader, n_members, n_guilds,
+    al_balance_pogs, al_balance_money, al_stock, al_glory, al_main_raw,
+    al_guilds, al_roster_raw
 )
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $10, $11, $12, LOCALTIMESTAMP, LOCALTIMESTAMP)
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $10, $11, $12, $13)
 '''
 
 INCREASE_LOCATION_TOP_COUNT_REQ = '''
