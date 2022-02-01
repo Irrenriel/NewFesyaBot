@@ -1,3 +1,5 @@
+from logging import info
+
 import asyncpg
 
 
@@ -24,7 +26,7 @@ class PostgreSQLDatabase:
             database=self._database,
             host=self._host
         )
-        return True
+        info('▻ Database connected!')
 
     async def fetch(self, request: str, args: list = None, one_row: bool = False):
         """

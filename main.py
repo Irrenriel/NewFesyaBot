@@ -1,13 +1,31 @@
 from logging import info
 
 from aiogram import executor, Dispatcher
+from telethon import TelegramClient
 
 from config import config
 from resources.models import dp, loop, db, client
 from resources.tools import bot_logging
-from resources.tools.middleware import Middleware, BanMiddleware, ThrottleMiddleware
-from src.content import UsersCash, AdvUsersCash, BannedUsersCash, MAIN_REQ, ADV_MAIN_REQ, BANNED_MAIN_REQ, HERO_PARSE
-from src import handlers  # Do not delete this!!!
+from resources.tools.middleware import installing_middlewares
+from src.content import installing_cashes
+from src.handlers import run_handlers
+
+
+async def telethon_connect_check(app: TelegramClient):
+    if app.is_connected():
+        info(f'▻ Telethon client with session "{config.SESSION_NAME}" is running!')
+
+        for i in ['@ChatWarsBot', '@ChatWarsDigest']:
+            try:
+                x = await app.get_entity(i)
+
+            except Exception:
+                x = None
+
+            info(f'▻ {i} entity is founded!' if x else f'▻ {i} entity is not founded!')
+
+    else:
+        info(f'▻ Telethon client with session "{config.SESSION_NAME}" is not running!')
 
 
 async def startup_func(dp: Dispatcher):
@@ -16,56 +34,27 @@ async def startup_func(dp: Dispatcher):
 
     # Skip updates
     await dp.skip_updates()
-    info('▻ Updates skipped!')
+
+    # Handlers
+    await run_handlers(dp)
+
+    info('= = = = = = = = =')
 
     # Connecting to databases
-    con = await db.connect()
-    if not con:
-        raise Exception('Can not connect to Database')
-    info('▻ Database connected!')
+    await db.connect()
 
     # Telethon
-    if client.client.is_connected():
-        info(f'▻ Telethon client with session "{config.SESSION_NAME}" is running!')
-
-        u = '@ChatWarsBot'
-        try:
-            x = await client.client.get_entity(u)
-
-        except Exception:
-            x = None
-
-        if x:
-            info(f'▻ {u} entity is founded!')
-
-        else:
-            info(f'▻ {u} entity is not founded!')
-
-    else:
-        info(f'▻ Telethon client with session "{config.SESSION_NAME}" is not running!')
+    await telethon_connect_check(client.client)
 
     info('= = = = = = = = =')
 
     # Cashes
-    await UsersCash.update(await db.fetch(MAIN_REQ))
-    info('▻ UsersCash is running!')
-
-    await AdvUsersCash.update(await db.fetch(ADV_MAIN_REQ))
-    info('▻ AdvUsersCash is running!')
-
-    await BannedUsersCash.update(await db.fetch(BANNED_MAIN_REQ))
-    info('▻ BannedUsersCash is running!')
+    await installing_cashes(db)
 
     info('= = = = = = = = =')
 
-    dp.middleware.setup(BanMiddleware(db))
-    info('▻ BanMiddleware is setup!')
-
-    dp.middleware.setup(ThrottleMiddleware())
-    info('▻ ThrottleMiddleware is setup!')
-
-    dp.middleware.setup(Middleware(db))
-    info('▻ Middleware is setup!')
+    # Middlewares
+    await installing_middlewares(dp, db)
 
     info('= = = Bot is working! = = =')
 

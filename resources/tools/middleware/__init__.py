@@ -1,6 +1,8 @@
+from logging import info
+
 from aiogram.dispatcher.handler import CancelHandler
 from aiogram.dispatcher.middlewares import BaseMiddleware
-from aiogram import types
+from aiogram import types, Dispatcher
 
 from config import config
 from resources.tools.database import PostgreSQLDatabase
@@ -86,3 +88,14 @@ class ThrottleMiddleware(BaseMiddleware):
             # cache.set(message, seconds=int(cache.left(message).total_seconds() * 2))
             # await message.answer(f"flood control wait {self.cache.left(message=message)} sec.")
             raise CancelHandler
+
+
+async def installing_middlewares(dp: Dispatcher, db: PostgreSQLDatabase):
+    dp.middleware.setup(BanMiddleware(db))
+    info('▻ BanMiddleware is setup!')
+
+    dp.middleware.setup(ThrottleMiddleware())
+    info('▻ ThrottleMiddleware is setup!')
+
+    dp.middleware.setup(Middleware(db))
+    info('▻ Middleware is setup!')
