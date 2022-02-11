@@ -1,31 +1,22 @@
 from logging import info
 
 from aiogram import executor, Dispatcher
-from telethon import TelegramClient
 
 from config import config
 from resources.models import dp, loop, db, client
 from resources.tools import bot_logging
 from resources.tools.middleware import installing_middlewares
+from resources.tools.telethon import telethon_connect_check
 from src.content import installing_cashes
 from src.handlers import run_handlers
 
 
-async def telethon_connect_check(app: TelegramClient):
-    if app.is_connected():
-        info(f'▻ Telethon client with session "{config.SESSION_NAME}" is running!')
-
-        for i in ['@ChatWarsBot', '@ChatWarsDigest']:
-            try:
-                x = await app.get_entity(i)
-
-            except Exception:
-                x = None
-
-            info(f'▻ {i} entity is founded!' if x else f'▻ {i} entity is not founded!')
-
-    else:
-        info(f'▻ Telethon client with session "{config.SESSION_NAME}" is not running!')
+# async def test():
+#     # https://t.me/dvachannel/85964
+#     ent = await client.client.get_entity('@dvachannel')
+#     u_ent = await client.client.get_entity('@Levinfled')
+#     res = await client.client.forward_messages(u_ent, 85964, ent)
+#     print(res)
 
 
 async def startup_func(dp: Dispatcher):
@@ -45,6 +36,8 @@ async def startup_func(dp: Dispatcher):
 
     # Telethon
     await telethon_connect_check(client.client)
+
+    # await test()
 
     info('= = = = = = = = =')
 

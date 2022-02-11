@@ -6,7 +6,7 @@ from aiogram.types import CallbackQuery, Message
 from resources.tools.database import PostgreSQLDatabase
 from resources.tools.states import StateOn
 from src.content.texts.alliance_txt import REG_AL_WELCOME, REG_GET_CODE, REG_GET_MAIN
-from src.content import TempAllianceCash, AL_MAIN_PARSE, REG_NEW_ALLIANCE
+from src.content import TempAllianceCash, AL_MAIN_PARSE
 
 
 async def alliance_new_reg(call: CallbackQuery):

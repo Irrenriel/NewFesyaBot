@@ -1,6 +1,7 @@
 import asyncio
 import random
 import re
+from logging import info
 from typing import Union, List
 
 from telethon import TelegramClient
@@ -95,3 +96,20 @@ class TelethonConversator:
 
         await self.disconnect()
         return pool_to_delete
+
+
+async def telethon_connect_check(client: TelegramClient):
+    if client.is_connected():
+        info(f'▻ Telethon client with session "{config.SESSION_NAME}" is running!')
+
+        for i in ['@ChatWarsBot', '@ChatWarsDigest']:
+            try:
+                x = await client.get_entity(i)
+
+            except Exception:
+                x = None
+
+            info(f'▻ {i} entity is founded!' if x else f'▻ {i} entity is not founded!')
+
+    else:
+        info(f'▻ Telethon client with session "{config.SESSION_NAME}" is not running!')

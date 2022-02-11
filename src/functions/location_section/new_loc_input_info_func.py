@@ -61,7 +61,8 @@ async def new_location_input(mes: Message, db: PostgreSQLDatabase, user: UserDat
 
     if chats:
         answer = NEW_LOCATION_TEXT.format(
-            GET_LOC_TYPE_EMOJI.get(l_type), l_name, '' if l_lvl == 99 else f' lvl.{l_lvl}', l_code
+            type=GET_LOC_TYPE_EMOJI.get(l_type, 'Error'), name=l_name, lvl='' if l_lvl == 99 else f' lvl.{l_lvl}',
+            code=l_code
         )
 
         for chat in chats:

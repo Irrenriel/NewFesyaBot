@@ -14,9 +14,6 @@ class Middleware(BaseMiddleware):
     def __init__(self, db: PostgreSQLDatabase):
         self.db = db
 
-        self.rate_limit = 5
-        self.prefix = 'antiflood'
-
         super(Middleware, self).__init__()
 
     async def on_process_message(self, message: types.Message, data: dict):

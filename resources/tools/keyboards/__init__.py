@@ -1,4 +1,3 @@
-from typing import List
 from aiogram.types import InlineKeyboardMarkup as IKM, InlineKeyboardButton as IKB, ReplyKeyboardMarkup as RKM
 
 
