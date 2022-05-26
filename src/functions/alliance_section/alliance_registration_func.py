@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 import re
 
+from aiogram.dispatcher import FSMContext
 from aiogram.types import CallbackQuery, Message
 
 from resources.tools.database import PostgreSQLDatabase
@@ -9,12 +10,13 @@ from src.content.texts.alliance_txt import REG_AL_WELCOME, REG_GET_CODE, REG_GET
 from src.content import TempAllianceCash, AL_MAIN_PARSE
 
 
-async def alliance_new_reg(call: CallbackQuery):
+async def alliance_new_reg(call: CallbackQuery, state: FSMContext):
+    await state.reset_data()
     await call.message.edit_text(REG_AL_WELCOME)
     await StateOn.AllianceGetCode.set()
 
 
-async def alliance_get_code(mes: Message, db: PostgreSQLDatabase):
+async def alliance_get_code(mes: Message, db: PostgreSQLDatabase, state: FSMContext):
     # IF NOT CORRECT OR NOT EXIST
     if len(mes.text) != 6 or not await db.fetch('SELECT * FROM loc WHERE code = $1', [mes.text], one_row=True):
         await mes.answer('Неверный код! Попробуйте ещё...')
@@ -25,13 +27,13 @@ async def alliance_get_code(mes: Message, db: PostgreSQLDatabase):
         await mes.answer('Данный альянс уже зарегистрирован! Выясняйте кем или пишите в поддержку.')
         return
 
-    await TempAllianceCash.create(mes.from_user.id, mes.text)
+    await state.update_data(al_code=mes.text)
     await mes.answer(REG_GET_CODE)
     await StateOn.AllianceGetMenu.set()
 
 
-async def alliance_get_main(mes: Message, db: PostgreSQLDatabase):
-    parse = re.search(AL_MAIN_PARSE, mes.text)
+async def alliance_get_main(mes: Message, db: PostgreSQLDatabase, state: FSMContext):
+    parse = re.match(AL_MAIN_PARSE, mes.text)
     if parse is None:
         await mes.answer('Неверный формат🤚\nВ случае ошибки обратитесь к администратору.')
         return
@@ -41,18 +43,19 @@ async def alliance_get_main(mes: Message, db: PostgreSQLDatabase):
         await mes.answer('Слишком старое сообщение. Пришли новое!')
         return
 
-    # USEFUL VARS
-    name, owner, n_guilds, n_peoples = parse.group('al_name', 'al_leader', 'num_guilds', 'num_people')
+    data = await state.get_data()
 
-    # TO THE FUTURE FEATURES
-    b_pogs, b_money, stock, glory = parse.group('b_pogs', 'b_money', 'stock', 'glory')
+    parsing_data = parse.groupdict()
 
-    al = await db.fetch(
-        'SELECT name FROM loc WHERE code = $1', [await TempAllianceCash.get_code(mes.from_user.id)], one_row=True
-    )
-    if not al or al.get('name') != name:
+    al = await db.fetch('SELECT name FROM loc WHERE code = $1', [data['al_code']], one_row=True)
+
+    if not al or al['name'] != parsing_data['name']:
         await mes.answer('Имя альянса не совпадает. Чужой Альянс кидаешь!!1!')
         return
+
+    await state.update_data(parsing_data)
+    print(await state.get_data())
+    return
 
     await TempAllianceCash.add_main(
         mes.from_user.id,

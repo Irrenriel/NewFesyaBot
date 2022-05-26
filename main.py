@@ -11,12 +11,10 @@ from src.content import installing_cashes
 from src.handlers import run_handlers
 
 
-# async def test():
-#     # https://t.me/dvachannel/85964
-#     ent = await client.client.get_entity('@dvachannel')
-#     u_ent = await client.client.get_entity('@Levinfled')
-#     res = await client.client.forward_messages(u_ent, 85964, ent)
-#     print(res)
+async def test():
+    proxy = {
+
+    }
 
 
 async def startup_func(dp: Dispatcher):
@@ -36,8 +34,6 @@ async def startup_func(dp: Dispatcher):
 
     # Telethon
     await telethon_connect_check(client.client)
-
-    # await test()
 
     info('= = = = = = = = =')
 
