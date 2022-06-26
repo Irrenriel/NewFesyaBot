@@ -2,8 +2,8 @@
 
 CREATE TABLE alliance_guilds (
 -- Main Guild Info (👑)
-guild_tag TEXT PRIMARY KEY,
 al_code TEXT NOT NULL,
+guild_tag TEXT NOT NULL,
 guild_lvl INTEGER DEFAULT 0,
 guild_master TEXT DEFAULT '',
 guild_bartender TEXT DEFAULT '',
@@ -22,9 +22,11 @@ n_hgh_members INTEGER DEFAULT 0,
 n_knt_members INTEGER DEFAULT 0,
 n_snt_members INTEGER DEFAULT 0,
 n_rng_members INTEGER DEFAULT 0,
+n_brs_members INTEGER DEFAULT 0,
 n_col_members INTEGER DEFAULT 0,
 n_bls_members INTEGER DEFAULT 0,
 n_alc_members INTEGER DEFAULT 0,
+n_nob_members INTEGER DEFAULT 0,
 
 -- Num of Members by Sleep '💤' and Reborn (Future opportunities)
 n_slp_members INTEGER DEFAULT 0,
@@ -46,35 +48,66 @@ main_last_upd INTEGER DEFAULT 0,
 roster_last_upd INtEGER DEFAULT 0,
 atklist_last_upd INTEGER DEFAULT 0,
 deflist_last_upd INTEGER DEFAULT 0,
-roles_last_upd INTEGER DEFAULT 0
+roles_last_upd INTEGER DEFAULT 0,
+
+PRIMARY KEY(guild_tag)
 )
 
 
 [alliance_hq]
 
 CREATE TABLE alliance_hq (
--- Main Alliance Info (👑)
-al_code TEXT PRIMARY KEY,
-al_name TEXT NOT NULL,
-al_owner TEXT NOT NULL,
+-- Registration phase #1: code and leader
+
+-- Code
+al_code TEXT NOT NULL,
+
+-- Leader Telegram ID
 al_leader INTEGER NOT NULL,
 
--- Num of Members (👥)
-n_members INTEGER DEFAULT 0,
-n_guilds INTEGER DEFAULT 0,
 
--- Balance (👝)
-al_balance_pogs INTEGER DEFAULT 0,
-al_balance_money INTEGER DEFAULT 0,
-al_main_last_update timestamp DEFAULT LOCALTIMESTAMP,
-al_rost_last_update timestamp DEFAULT LOCALTIMESTAMP,
-al_stock INTEGER DEFAULT 0,
-al_glory INTEGER DEFAULT 0,
+-- Registration phase #2: Alliance Menu Input
 
--- Roster (📋)
-al_guilds TEXT DEFAULT '',
+-- Alliance Name
+al_name TEXT NOT NULL,
+
+-- Num of Guilds
+n_guilds INTEGER NOT NULL,
+
+-- Num of Members
+n_members INTEGER NOT NULL,
+
+-- Owner Guild Tag
+al_owner TEXT NOT NULL,
+
+-- Balance Pogs
+al_balance_pogs INTEGER NOT NULL,
+
+-- Balance Money
+al_balance_money INTEGER NOT NULL,
+
+-- Stock
+al_stock INTEGER NOT NULL,
+
+-- Glory
+al_glory INTEGER NOT NULL,
+
+
+-- Registration phase #2: Guilds Roster Input
+
+-- Roster
+al_guilds TEXT [] NOT NULL,
+
+
+-- Finish phase: Timestamps and raw sources
+
+-- Timestamps
+al_main_last_update TIMESTAMP DEFAULT LOCALTIMESTAMP,
+al_rost_last_update TIMESTAMP DEFAULT LOCALTIMESTAMP,
 
 -- Other Raw Sources (Texts)
-al_main_raw TEXT DEFAULT '',
-al_roster_raw TEXT DEFAULT ''
+al_main_raw TEXT NOT NULL,
+al_roster_raw TEXT NOT NULL,
+
+PRIMARY KEY(al_code)
 )

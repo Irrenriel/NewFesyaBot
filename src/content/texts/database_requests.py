@@ -28,8 +28,10 @@ SELECT id, username, nickname, lvl, main_class, sub_class, guild_tag, castle, ro
 FROM users WHERE id = $1;
 """
 
-AL_GET_GUILD_REQ = '''
-SELECT al_name, alliance_hq.al_code, al_owner, users.username, alliance_hq.n_members, n_guilds, al_guilds
+AL_GET_ALLIANCE_BY_GUILD_REQ = '''
+SELECT alliance_hq.al_name, alliance_hq.al_code, alliance_hq.al_owner, users.username as al_leader_username,
+alliance_hq.n_members, alliance_hq.n_guilds, alliance_hq.al_guilds, alliance_hq.al_main_last_update,
+alliance_hq.al_rost_last_update, alliance_hq.al_leader
 FROM alliance_guilds
 INNER JOIN alliance_hq ON alliance_guilds.al_code = alliance_hq.al_code
 INNER JOIN users ON alliance_hq.al_leader = users.id
@@ -38,11 +40,21 @@ WHERE alliance_guilds.guild_tag = $1
 
 REG_NEW_ALLIANCE = '''
 INSERT INTO alliance_hq (
-    al_code, al_name, al_owner, al_leader, n_members, n_guilds,
-    al_balance_pogs, al_balance_money, al_stock, al_glory, al_main_raw,
-    al_guilds, al_roster_raw
-)
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $10, $11, $12, $13)
+    al_code, al_leader, al_name, n_guilds, n_members, al_owner, al_balance_pogs, al_balance_money, al_stock,
+    al_glory, al_guilds, al_main_raw, al_roster_raw
+) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+'''
+
+REG_GUILDS_TO_ALLIANCE = '''
+INSERT INTO alliance_guilds (al_code, guild_tag)
+VALUES ($1, $2)
+ON CONFLICT (guild_tag) DO UPDATE SET al_code = $1
+'''
+
+GET_GUILDS_INFO_FOR_PERC = '''
+SELECT guild_tag, g_main_raw, g_roster_raw, g_atklist_raw, g_deflist_raw,
+main_last_upd, roster_last_upd, atklist_last_upd, deflist_last_upd
+FROM alliance_guilds WHERE guild_tag = any($1::text[])
 '''
 
 INCREASE_LOCATION_TOP_COUNT_REQ = '''

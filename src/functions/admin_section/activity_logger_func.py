@@ -1,5 +1,4 @@
 from aiogram.types import Message, CallbackQuery
-from datetime import datetime, time
 
 from resources.tools.database import PostgreSQLDatabase
 from resources.tools.keyboards import InlineKeyboard, Call
@@ -83,3 +82,16 @@ async def activity_log_pages(call: CallbackQuery, db: PostgreSQLDatabase):
     )
 
     await call.message.edit_text(title + txt, reply_markup=kb)
+
+
+# async def pager(slice: int = 10):
+#     n_slice = 10
+#
+#
+#
+#
+# async def create_pager_kb(n_slice: int, page: int, results: list, u: str):
+#     _1st_btn = Call("◀️", f'j:{u}:{page-1}') if page - 1 else Call(" ", "None")
+#     _2nd_btn = Call(str(page), f'j:{u}:{page}')
+#     _3rd_btn = Call("▶️", f'j:{u}:{page-1}') if len(results) > page * n_slice else Call(" ", "None")
+#     return InlineKeyboard(_1st_btn, _2nd_btn, _3rd_btn, Call('Закрыть', 'j_cancel'), row_width=3)
