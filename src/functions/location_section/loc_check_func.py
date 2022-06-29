@@ -38,13 +38,13 @@ async def loc_check(mes: Message, db: PostgreSQLDatabase, user: UserData):
     req = r1 if mes.get_command().startswith('l_chk') else r2
 
     result = await client.l_check_method([x.get('code') for x in await db.fetch(req)])
-
     await client.send_message(config.CW_BOT_ID, '🛡Защита', 1)
+
+    await db.execute('UPDATE settings SET data_bool = True WHERE var = $1', ['telethon_queue'])
 
     if type(result) is list:
         if result:
             await db.execute(MARK_AS_DEAD_LOCATIONS, [result])
-            await db.execute('UPDATE settings SET data_bool = True WHERE var = $1', ['telethon_queue'])
 
             locs = [LocInfoData(**l) for l in await db.fetch(LOC_CHECK_SELECT_DELETED_REQ, [result])]
             t = [
@@ -60,7 +60,6 @@ async def loc_check(mes: Message, db: PostgreSQLDatabase, user: UserData):
             txt = '<b>[🎉] Проверка завершена!</b>\nИстёкшие локации не обнаружены!'
 
     else:
-        await db.execute('UPDATE settings SET data_bool = True WHERE var = $1', ['telethon_queue'])
         await m.edit_text(result)
         return
 

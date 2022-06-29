@@ -48,7 +48,7 @@ class TelethonConversator:
 
         if pattern is None:
             self._req = 0
-            return (answer)
+            return answer
 
         parse = re.search(pattern, answer)
         if parse is None:
@@ -58,6 +58,7 @@ class TelethonConversator:
             self._req += 1
             await asyncio.sleep(self._sleep)
             return await self._action(text, sleep, pattern)
+
         return parse
 
     async def conversation(self, text: Union[str, List[str]], sleep: Union[int, float] = 0, pattern=None):
@@ -96,6 +97,22 @@ class TelethonConversator:
 
         await self.disconnect()
         return pool_to_delete
+
+    async def shop_gold_method(self):
+        cmds = ['/ws_MYdnt', '/ws_MYdnt_stand']
+        result = {}
+
+        await self.connect()
+        async with self.client.conversation(config.CW_BOT_ID, total_timeout=9999, timeout=5) as self._con:
+            for i, cmd in enumerate(cmds):
+                await self._con.send_message(cmd)
+                result[cmd] = (await self._con.get_response()).message
+
+                if not i:  # Only for 2 elements
+                    await asyncio.sleep(float(str(random.uniform(1, 3))[0:4]))
+
+        await self.disconnect()
+        return result
 
 
 async def telethon_connect_check(client: TelegramClient):

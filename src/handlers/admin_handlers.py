@@ -2,7 +2,7 @@ from aiogram import Dispatcher
 
 from resources.tools.cfilters import Command, IsUser, IsReplyFilter, Text
 from src.functions import sql, info, reg_as, activity_log, activity_log_pages, callback_cancel, callback_none, ban, \
-    unban
+    unban, update_cashes
 
 
 async def register_admin_handlers(dp: Dispatcher):
@@ -57,6 +57,12 @@ async def register_admin_handlers(dp: Dispatcher):
     dp.register_callback_query_handler(
         callback_cancel,
         Text('j_cancel'), IsUser(is_admin=True)
+    )
+
+    # Update Cashes
+    dp.register_message_handler(
+        update_cashes,
+        Command('update_cash'), IsUser(is_admin=True)
     )
 
     # SETTINGS

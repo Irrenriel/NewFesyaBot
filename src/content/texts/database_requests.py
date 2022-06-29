@@ -104,7 +104,7 @@ SELECT code, name, lvl, type, conqueror, cycle, status FROM loc WHERE code = ANY
 '''
 
 NEW_LOC_L_CHECK_FOR_TIER = '''
-SELECT code, name, lvl, type, conqueror, cycle, status FROM loc WHERE $1 <= lvl and lvl < $2
+SELECT code, name, lvl, type, conqueror, cycle, status FROM loc WHERE $1 <= lvl and lvl < $2 and exist = True
 '''
 
 MARK_AS_DEAD_LOCATIONS = '''
@@ -121,4 +121,15 @@ SELECT id, new_loc_ntf, delete_loc_ntf, brief_log, brief_mode, craft_ntf FROM ch
 
 DELETE_LOC_NTF = '''
 SELECT id, new_loc_ntf, delete_loc_ntf, brief_log, brief_mode, craft_ntf FROM chats WHERE delete_loc_ntf = True
+'''
+
+ALLiANCE_UPDATE_MAIN = '''\
+UPDATE alliance_hq
+SET n_guilds = $1, n_members = $2, al_owner = $3, al_balance_pogs = $4, al_balance_money = $5, al_stock = $6,
+al_glory = $7, al_main_raw = $8, al_main_last_update = LOCALTIMESTAMP WHERE al_code = $9
+'''
+
+ALLiANCE_UPDATE_ROSTER = '''
+UPDATE alliance_hq
+SET al_guilds = $1, al_roster_raw = $2, al_rost_last_update = LOCALTIMESTAMP WHERE al_code = $3
 '''

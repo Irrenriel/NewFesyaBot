@@ -1,4 +1,3 @@
-import asyncio
 from logging import info
 
 from aiogram import executor, Dispatcher
@@ -10,45 +9,6 @@ from resources.tools.middleware import installing_middlewares
 from resources.tools.telethon import telethon_connect_check
 from src.content import installing_cashes
 from src.handlers import run_handlers
-
-
-async def test():
-    pass
-    # ent = await client.client.get_entity('rybar')
-    #
-    # messages = await client.client.get_messages(ent, None, min_id=33264, max_id=33280)
-    # await asyncio.sleep(2)
-    #
-    # pool = {}
-    # media_group = None
-    #
-    # u = await client.client.get_entity('Levinfled')
-    # await asyncio.sleep(2)
-    #
-    # for message in messages:
-    #     if message.grouped_id:
-    #         pool.setdefault(message.grouped_id, []).append(message)
-    #
-    #         if not media_group:
-    #             media_group = message.grouped_id
-    #
-    #         elif media_group and media_group != message.grouped_id:
-    #             await client.client.forward_messages(u, messages=pool.pop(media_group))
-    #             media_group = None
-    #
-    #     else:
-    #         if media_group:
-    #             await client.client.forward_messages(u, messages=pool.pop(media_group))
-    #             media_group = None
-    #
-    #         else:
-    #             await client.client.forward_messages(u, message)
-    #
-    #         await asyncio.sleep(2)
-    #
-    # else:
-    #     if pool:
-    #         await client.client.forward_messages(u, messages=pool.pop(media_group))
 
 
 async def startup_func(dp: Dispatcher):
@@ -68,8 +28,6 @@ async def startup_func(dp: Dispatcher):
 
     # Telethon
     await telethon_connect_check(client.client)
-
-    await test()
 
     info('= = = = = = = = =')
 

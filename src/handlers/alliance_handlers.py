@@ -2,10 +2,10 @@ from aiogram import Dispatcher
 
 from config import config
 
-from resources.tools.cfilters import Command, IsUser, ChatTypeFilter, Text, IsForward
+from resources.tools.cfilters import IsUser, ChatTypeFilter, Text, IsForward
 from resources.tools.states import StateOn
-from src.functions import alliance_main_menu, alliance_new_reg, alliance_get_main, alliance_get_code,\
-    alliance_get_roster
+from src.functions import alliance_main_menu, alliance_new_reg, alliance_get_main, alliance_get_code, \
+    alliance_get_roster, alliance_upd_main, alliance_upd_roster
 
 
 async def register_alliance_handlers(dp: Dispatcher):
@@ -30,7 +30,8 @@ async def register_alliance_handlers(dp: Dispatcher):
     # NewAllReg Get Code
     dp.register_message_handler(
         alliance_get_code,
-        ChatTypeFilter('private'), IsUser(is_registered=True), state=StateOn.AllianceGetCode
+        ChatTypeFilter('private'), IsUser(is_registered=True),
+        state=StateOn.AllianceGetCode
         # State: AllianceUpd.GetCode -> AllianceUpd.GetMenu
     )
 
@@ -46,6 +47,20 @@ async def register_alliance_handlers(dp: Dispatcher):
     dp.register_message_handler(
         alliance_get_roster,
         Text(startswith='📋Roster:\n'), ChatTypeFilter('private'), IsForward(config.CW_BOT_ID),
-        IsUser(is_registered=True), state=StateOn.AllianceGetRoster
+        IsUser(is_registered=True),
+        state=StateOn.AllianceGetRoster
         # State: AllianceUpd.GetRoster -> None
+    )
+
+    # Update Alliance Menu
+    dp.register_message_handler(
+        alliance_upd_main,
+        Text(startswith='🤝'), ChatTypeFilter('private'), IsForward(config.CW_BOT_ID), IsUser(is_registered=True)
+    )
+
+    # Update Alliance Roster
+    dp.register_message_handler(
+        alliance_upd_roster,
+        Text(startswith='📋Roster:\n'), ChatTypeFilter('private'), IsForward(config.CW_BOT_ID),
+        IsUser(is_registered=True)
     )

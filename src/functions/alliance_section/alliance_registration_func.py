@@ -1,15 +1,15 @@
 import logging
 from datetime import datetime, timedelta
 import re
-from typing import Dict, Optional
 
 from aiogram.dispatcher import FSMContext
 from aiogram.types import CallbackQuery, Message
 
 from resources.tools.database import PostgreSQLDatabase
 from resources.tools.states import StateOn
-from src.content.texts.alliance_txt import REG_AL_WELCOME, REG_GET_CODE, REG_GET_MAIN, REG_COMPLETE, ALLIANCE_MAIN_PAGE_LEADER
-from src.content import AL_MAIN_PARSE, REG_NEW_ALLIANCE, UserData, AL_GET_ALLIANCE_BY_GUILD_REQ, REG_GUILDS_TO_ALLIANCE
+from src.content import AL_MAIN_PARSE, REG_NEW_ALLIANCE, UserData, REG_GUILDS_TO_ALLIANCE, REG_AL_WELCOME, \
+    REG_GET_CODE, REG_GET_MAIN, REG_COMPLETE, UsersCash, MAIN_REQ
+from src.functions.alliance_section.alliance_base_helpful_func import sorting_menu_parse
 from src.functions.alliance_section.alliance_main_menu_func import alliance_main_menu_text
 
 
@@ -98,34 +98,11 @@ async def alliance_get_roster(mes: Message, db: PostgreSQLDatabase, user: UserDa
     )
 
     await db.execute(REG_GUILDS_TO_ALLIANCE, [(data['al_code'], tag) for tag in al_guilds], many=True)
+    await db.execute('UPDATE users SET role = $1 WHERE id = $2', [4, mes.from_user.id])
+    await UsersCash.update(await db.fetch(MAIN_REQ))
 
-    await state.reset_data()
     await mes.answer(REG_COMPLETE)
-    await state.finish()
-
     await alliance_main_menu_text(mes, db, user)
 
-
-async def sorting_menu_parse(parsing_data: dict, msg: str) -> Optional[Dict]:
-    keys = [
-        'al_name', 'n_guilds', 'n_members', 'al_owner', 'al_balance_pogs', 'al_balance_money', 'al_stock', 'al_glory'
-    ]
-
-    primary_keys = ['al_name', 'al_owner']
-    int_keys = ['n_guilds', 'n_members', 'al_balance_pogs', 'al_balance_money', 'al_stock', 'al_glory']
-
-    result = {}
-
-    for key in keys:
-        k = parsing_data.get(key)
-
-        if not k and key in primary_keys:
-            return
-
-        key_in = key in int_keys
-        result[key] = (int(parsing_data[key]) if key_in else parsing_data[key]) if k else (0 if key_in else '')
-
-    else:
-        result['al_main_raw'] = msg
-
-    return result
+    await state.reset_data()
+    await state.finish()

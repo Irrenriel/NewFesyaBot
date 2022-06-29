@@ -14,6 +14,7 @@ class Castles(Enum):
 
 class Roles(Enum):
     ADMIN = -1
+    NONE = 0
     COMMON = 1
     OFFICER = 2
     COMMANDER = 3

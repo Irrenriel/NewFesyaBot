@@ -15,6 +15,7 @@ from src.content import START_MAIN_MENU_TEXT, start_kb, HERO_PARSE, REG_NEW_USER
 async def start(mes: Message, state: FSMContext):
     # If already registered
     await mes.answer(START_MAIN_MENU_TEXT, reply_markup=start_kb())
+    await state.reset_state()
     await state.finish()
 
 

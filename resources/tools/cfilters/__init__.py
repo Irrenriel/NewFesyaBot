@@ -19,7 +19,7 @@ from src.content import UsersCash, Roles
 class IsUser(BoundFilter):
     def __init__(
             self, is_id: int = None, is_admin: bool = None, has_username: bool = None, is_registered: bool = None,
-            has_roles: [list, Roles] = None
+            has_roles: [list, Roles] = None,
     ):
         self.is_id = is_id
         self.is_admin = is_admin

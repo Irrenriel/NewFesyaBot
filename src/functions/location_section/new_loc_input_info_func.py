@@ -2,7 +2,7 @@ import asyncio
 import json
 import re
 from datetime import datetime, timedelta
-from logging import warn
+from logging import warning
 
 from aiogram.types import Message
 
@@ -100,7 +100,8 @@ async def new_location_input(mes: Message, db: PostgreSQLDatabase, user: UserDat
             )
 
         except Exception as e:
-            warn(f'Exception Happend: {type(e)} - {e}')
+            warning(f'Exception Happend: {type(e)} - {e}')
+
         return
 
     if 20 <= l_lvl < 40:
@@ -130,7 +131,7 @@ async def new_location_input(mes: Message, db: PostgreSQLDatabase, user: UserDat
                 )
 
             except Exception as e:
-                warn(f'Exception Happend: {type(e)} - {e}')
+                warning(f'Exception Happend: {type(e)} - {e}')
             return
 
         await db.execute(MARK_AS_DEAD_LOCATIONS, [result])
