@@ -4,3 +4,4 @@ pydantic
 telethon
 async-property
 apscheduler
+aiokafka

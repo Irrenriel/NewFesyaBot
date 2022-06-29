@@ -5,6 +5,8 @@ from aiogram.contrib.fsm_storage.memory import MemoryStorage
 
 from config import config
 from resources.tools import database, telethon, schedulers
+from resources.tools.cw3_api.cw3_api_class import AIOCW3_API
+from resources.tools.cw3_api.cw3_api_func import shops_formatter
 
 
 # Loop
@@ -31,3 +33,6 @@ client = telethon.TelethonConversator(*config.TELETHON_VARS, loop=loop)
 
 # Scheduler
 scheduler = schedulers.MyScheduler(loop)
+
+# CW3 API
+cw3_api = AIOCW3_API(loop, db, callbacks={'cw3-yellow_pages': shops_formatter})

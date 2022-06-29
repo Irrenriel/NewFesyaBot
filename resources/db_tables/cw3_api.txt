@@ -1,0 +1,20 @@
+[ws_shops]
+CREATE TABLE ws_shops (
+link TEXT NOT NULL,
+name TEXT NOT NULL,
+ownerTag TEXT NOT NULL,
+ownerName TEXT NOT NULL,
+ownerCastle TEXT NOT NULL,
+kind TEXT NOT NULL,
+mana INTEGER NOT NULL,
+offers TEXT NOT NULL,
+castleDiscount INTEGER NOT NULL,
+guildDiscount INTEGER NOT NULL,
+specialization TEXT NOT NULL,
+qualityCraftLevel INTEGER NOT NULL,
+specializations TEXT NOT NULL,
+maintenanceEnabled BOOL NOT NULL,
+maintenanceCost INTEGER NOT NULL,
+
+PRIMARY KEY(link)
+)

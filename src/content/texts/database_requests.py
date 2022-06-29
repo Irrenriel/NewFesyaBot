@@ -133,3 +133,14 @@ ALLiANCE_UPDATE_ROSTER = '''
 UPDATE alliance_hq
 SET al_guilds = $1, al_roster_raw = $2, al_rost_last_update = LOCALTIMESTAMP WHERE al_code = $3
 '''
+
+WS_SHOPS_INSERT = '''
+INSERT INTO ws_shops 
+(link, name, ownertag, ownername, ownercastle, kind, mana, offers, castlediscount, guilddiscount, specialization,
+qualitycraftlevel, specializations, maintenanceenabled, maintenancecost)
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
+ON CONFLICT (link) DO
+UPDATE SET name = $2, ownertag = $3, ownername = $4, ownercastle = $5, kind = $6, mana = $7, offers = $8,
+castlediscount = $9, guilddiscount = $10, specialization = $11, qualitycraftlevel = $12, specializations = $13,
+maintenanceenabled = $14, maintenancecost = $15
+'''

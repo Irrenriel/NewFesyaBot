@@ -3,7 +3,7 @@ from logging import info
 from aiogram import executor, Dispatcher
 
 from config import config
-from resources.models import dp, loop, db, client, scheduler
+from resources.models import dp, loop, db, client, scheduler, cw3_api
 from resources.tools import bot_logging
 from resources.tools.middleware import installing_middlewares
 from resources.tools.telethon import telethon_connect_check
@@ -35,7 +35,7 @@ async def startup_func(dp: Dispatcher):
     await installing_cashes(db)
 
     # Schedulers
-    await installing_schedulers(db, scheduler)
+    await installing_schedulers(db, scheduler, cw3_api)
 
     info('= = = = = = = = =')
 
