@@ -1,6 +1,8 @@
 from logging import info
+from typing import Union, List
 
 import asyncpg
+from asyncpg import Record
 
 
 class PostgreSQLDatabase:

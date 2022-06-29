@@ -4,7 +4,7 @@ from aiogram import Bot, Dispatcher
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 
 from config import config
-from resources.tools import database, telethon
+from resources.tools import database, telethon, schedulers
 
 
 # Loop
@@ -28,3 +28,6 @@ db = database.PostgreSQLDatabase(*config.POSTGRES_DB)
 
 # Telethon client
 client = telethon.TelethonConversator(*config.TELETHON_VARS, loop=loop)
+
+# Scheduler
+scheduler = schedulers.MyScheduler(loop)

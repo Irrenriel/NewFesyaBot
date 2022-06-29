@@ -3,3 +3,4 @@ asyncpg
 pydantic
 telethon
 async-property
+apscheduler
