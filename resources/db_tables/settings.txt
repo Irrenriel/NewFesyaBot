@@ -81,4 +81,13 @@ brief_mode BOOL DEFAULT False,
 
 -- AT chat
 craft_ntf BOOL DEFAULT False
+donate_fnc BOOL DEFAULT False
+)
+
+[donates]
+CREATE TABLE donates (
+name TEXT NOT NULL,
+gold INTEGER NOT NULL,
+
+PRIMARY KEY(name)
 )

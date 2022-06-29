@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 from logging import warning
 
 from aiogram.types import Message
+from asyncpg import Record
 
 from config import config
 from resources.models import client
@@ -19,8 +20,8 @@ from src.functions.admin_section.settings_func import delete_message_with_notifi
 
 # Reception of locations from CW quests
 async def new_location_input(mes: Message, db: PostgreSQLDatabase, user: UserData):
-    if not datetime.now() - mes.forward_date < timedelta(days=2):
-        return
+    # if not datetime.now() - mes.forward_date < timedelta(days=2):
+    #     return
 
     # Definition is location or alliance and packing into dictionary
     result = re.search(NEW_LOC_INPUT_PARSE, mes.text).groupdict()
@@ -35,14 +36,21 @@ async def new_location_input(mes: Message, db: PostgreSQLDatabase, user: UserDat
 
     l_name = result.get("loc_name", result.get("head_name"))
     l_lvl = int(result.get("loc_lvl", "99"))
+
     l_type = LOC_TYPES_ENUM.get(l_name.split(' ')[-1], LocTypes.ALLIANCE)
+    if l_type == LocTypes.FORT and ' ' in l_name:
+        l_type = LocTypes.ALLIANCE
+
     l_conq = 'headquarter' if l_type == LocTypes.ALLIANCE else None
 
     check = await db.fetch('SELECT code from loc WHERE name = $1 and lvl = $2', [l_name, l_lvl], one_row=True)
     u = mes.from_user.username if mes.from_user.username else mes.from_user.first_name + '_FirstName'
+
     if check and check.get('code').startswith('NoneCode'):
-        await db.execute('UPDATE loc SET code = $1, f_by = $2, f_by_guild = $3 WHERE name = $4 and lvl = $5',
-                         [l_code, u, user.guild_tag if user else 'None', l_name, l_lvl])
+        await db.execute(
+            'UPDATE loc SET code = $1, f_by = $2, f_by_guild = $3 WHERE name = $4 and lvl = $5',
+            [l_code, u, user.guild_tag if user else 'None', l_name, l_lvl]
+        )
 
     elif l_conq:
         await db.execute(
@@ -92,7 +100,7 @@ async def new_location_input(mes: Message, db: PostgreSQLDatabase, user: UserDat
 
     # Settings Check
     x = await db.fetch('SELECT data_bool FROM settings WHERE var = $1', ['telethon_queue'], one_row=True)
-    if not x.get('data_bool'):
+    if not isinstance(x, Record) or not x.get('data_bool'):
         try:
             await mes.bot.send_message(
                 (await client.client.get_me()).id,

@@ -22,14 +22,14 @@ async def gold_func(mes: Message, db: PostgreSQLDatabase, user: UserData):
     await db.execute('UPDATE settings SET data_bool = False WHERE var = $1', ['telethon_queue'])
 
     load = await mes.answer('<b>[⏳] Запрашиваю, подожди.</b>')
-    res = await client.shop_gold_method()
+    answer = await client.shop_gold_method()
 
     await db.execute('UPDATE settings SET data_bool = True WHERE var = $1', ['telethon_queue'])
 
-    mana = re.search(r'\w*/\w+', res['/ws_MYdnt']).group(0)
-    cost = re.search(r'Steel mold, 15💧 (\d+)', res['/ws_MYdnt_stand']).group(1)
+    mana = re.search(r'\w*/\w+', answer['/ws_MYdnt']).group(0)
+    cost = re.search(r'Steel mold, 15💧 (\d+)', answer['/ws_MYdnt_stand']).group(1)
     rand_price = str(random.randint(1, 999))
-    open = 'Открыто✅' if 'Studio is открыто.' in res['/ws_MYdnt'] else 'Закрыто🚫'
+    open = 'Открыто✅' if 'Studio is открыто.' in answer['/ws_MYdnt'] else 'Закрыто🚫'
 
     await load.edit_text(GOLD_TEXT.format(cost, rand_price, open, mana))
 
@@ -48,11 +48,11 @@ async def open_shop_func(mes: Message, db: PostgreSQLDatabase, user: UserData):
     await db.execute('UPDATE settings SET data_bool = False WHERE var = $1', ['telethon_queue'])
 
     load = await mes.answer('<b>[⏳] Попробую открыть, подожди.</b>')
-    res = await client.conversation('/myshop_open', float(str(random.uniform(1, 3))[0:4]))
+    answer = await client.conversation('/myshop_open', float(str(random.uniform(1, 3))[0:4]))
 
     await db.execute('UPDATE settings SET data_bool = True WHERE var = $1', ['telethon_queue'])
 
-    txt = '<b>[✅] Открыто! Заходи!</b>' if "It's OPEN now." in res else '<b>[❌] Провал! Требуется подождать...</b>'
+    txt = '<b>[✅] Открыто! Заходи!</b>' if "It's OPEN now." in answer else '<b>[❌] Провал! Требуется подождать...</b>'
     await load.edit_text(txt)
 
 
@@ -76,11 +76,11 @@ async def change_cost_func(mes: Message, regexp_command, db: PostgreSQLDatabase,
         await load.edit_text('<b>[❌] Недоступная цена.</b>')
         return
 
-    res = await client.conversation(f'/s_695_add 27 {cc}', float(str(random.uniform(1, 3))[0:4]))
+    answer = await client.conversation(f'/s_695_add 27 {cc}', float(str(random.uniform(1, 3))[0:4]))
 
     await db.execute('UPDATE settings SET data_bool = True WHERE var = $1', ['telethon_queue'])
 
-    if 'Steel mold, 15💧 {}💰'.format(cc) in res:
+    if 'Steel mold, 15💧 {}💰'.format(cc) in answer:
         txt = '<b>[✅] Успех! Установленная цена {}💰!</b>'.format(cc)
 
     else:

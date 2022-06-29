@@ -3,6 +3,7 @@ from typing import Union
 
 from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils.exceptions import MessageNotModified
+from asyncpg import Record
 
 from resources.tools.database import PostgreSQLDatabase
 from src.content import LOC_LIST_TEXT, LOC_OBJECTS_REQ, LocInfoData, GET_LOC_TYPE_EMOJI, LOC_CAPTURE_REQ, \
@@ -10,17 +11,18 @@ from src.content import LOC_LIST_TEXT, LOC_OBJECTS_REQ, LocInfoData, GET_LOC_TYP
 
 
 async def loc_list(mes: Union[Message, CallbackQuery], db: PostgreSQLDatabase):
-    alliance_len = await db.fetch('SELECT count(*) FROM loc WHERE type = -1 and exist = True', one_row=True)
-    ruins_len = await db.fetch('SELECT count(*) FROM loc WHERE type = 1 and exist = True', one_row=True)
-    mines_len = await db.fetch('SELECT count(*) FROM loc WHERE type = 2 and exist = True', one_row=True)
-    forts_len = await db.fetch('SELECT count(*) FROM loc WHERE type = 3 and exist = True', one_row=True)
-
-    last_update = await db.fetch('SELECT date FROM settings_date WHERE var = $1', ['l_check_upd'], one_row=True)
+    alliance_len, ruins_len, mines_len, forts_len, last_update = await asyncio.gather(
+        db.fetch('SELECT count(*) FROM loc WHERE type = -1 and exist = True', one_row=True),
+        db.fetch('SELECT count(*) FROM loc WHERE type = 1 and exist = True', one_row=True),
+        db.fetch('SELECT count(*) FROM loc WHERE type = 2 and exist = True', one_row=True),
+        db.fetch('SELECT count(*) FROM loc WHERE type = 3 and exist = True', one_row=True),
+        db.fetch('SELECT date FROM settings_date WHERE var = $1', ['l_check_upd'], one_row=True)
+    )
 
     txt = LOC_LIST_TEXT.format(
         str(ruins_len.get('count')), str(mines_len.get('count')), str(forts_len.get('count')),
         str(alliance_len.get('count')), '❌',
-        last_update.get('date').strftime('%H:%M:%S %d-%m-%Y') if last_update else ''
+        last_update.get('date').strftime('%H:%M:%S %d-%m-%Y') if last_update and isinstance(last_update, Record) else ''
     )
 
     try:
