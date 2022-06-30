@@ -1,6 +1,7 @@
 import json
 from collections import defaultdict
 from dataclasses import dataclass, field
+from datetime import datetime
 
 
 @dataclass
@@ -20,29 +21,10 @@ class RawGuru:
     specializations: defaultdict[dict] = field(default_factory=lambda: defaultdict(dict))
     maintenanceEnabled: bool = False
     maintenanceCost: int = 0
+    date: datetime = datetime.now()
 
     def get_data(self):
         return self.link, self.name, self.ownerTag, self.ownerName, self.ownerCastle, self.kind, self.mana, \
                json.dumps(self.offers), self.castleDiscount, self.guildDiscount, json.dumps(self.specialization),\
-               self.qualityCraftLevel, json.dumps(self.specializations), self.maintenanceEnabled, self.maintenanceCost
-
-
-class GuruShops:
-    last_date = None
-    specs_cash = {}
-
-    @classmethod
-    def get_last_date(cls):
-        return cls.last_date
-
-    @classmethod
-    def update_callback_date(cls, date):
-        cls.last_date = date
-
-    @classmethod
-    def get_specs_cash(cls):
-        return cls.specs_cash
-
-    @classmethod
-    def update_specs_cash(cls, specs_cash: dict):
-        cls.specs_cash = specs_cash
+               self.qualityCraftLevel, json.dumps(self.specializations), self.maintenanceEnabled, \
+               self.maintenanceCost, self.date

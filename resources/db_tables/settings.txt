@@ -5,7 +5,8 @@ CREATE TABLE settings (
 var TEXT PRIMARY KEY,
 data_str TEXT DEFAULT '',
 data_int INTEGER DEFAULT 0,
-data_bool BOOL DEFAULT TRUE
+data_bool BOOL DEFAULT TRUE,
+data_date TIMESTAMP
 )
 
 CREATE TABLE settings_date (

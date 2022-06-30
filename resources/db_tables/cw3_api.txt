@@ -15,6 +15,7 @@ qualityCraftLevel INTEGER NOT NULL,
 specializations TEXT NOT NULL,
 maintenanceEnabled BOOL NOT NULL,
 maintenanceCost INTEGER NOT NULL,
+date TIMESTAMP DEFAULT LOCALTIMESTAMP,
 
 PRIMARY KEY(link)
 )
