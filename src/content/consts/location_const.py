@@ -21,6 +21,24 @@ LOC_TYPES_ENUM = {
 
 GET_LOC_TYPE_EMOJI = {LocTypes.RUINS: '🏷', LocTypes.MINE: '📦', LocTypes.FORT: '🎖', LocTypes.ALLIANCE: '🎪'}
 
+STATUS_HEADQUARTERS_DICT = {
+    'easily defended': '👌🛡',
+    'easily breached': '😎⚔',
+    'breached': '⚔',
+    'defended successfully': '🛡',
+    'closely defended': '⚡🛡',
+    'closely breached': '⚡⚔'
+}
+
+STATUS_LOCATIONS_DICT = {
+    '. Easy win:': '😎⚔',
+    ':': '⚔',
+    '. Massacre:': '⚡⚔',
+    'easily protected': '👌🛡',
+    'protected': '🛡',
+    'closely protected': '⚡🛡'
+}
+
 
 class LocInfoData(BaseModel):
     code: str

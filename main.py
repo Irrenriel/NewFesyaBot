@@ -1,3 +1,4 @@
+import sys
 from logging import info
 
 from aiogram import executor, Dispatcher
@@ -45,6 +46,13 @@ async def startup_func(dp: Dispatcher):
     info('= = = Bot is working! = = =')
 
 if __name__ == '__main__':
+    # Process Name (for Linux)
+    if sys.platform == 'linux':
+        import ctypes
+
+        libc = ctypes.cdll.LoadLibrary('libc.so.6')
+        libc.prctl(15, 'F', 0, 0, 0)
+
     # Set Logging
     bot_logging.set_logging(config.debug)
 

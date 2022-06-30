@@ -3,7 +3,7 @@ from logging.handlers import RotatingFileHandler
 from sys import stdout
 
 
-def set_logging(debug: bool):
+def set_logging(debug: bool, filename: str = 'logs/soft.log'):
     class MyFilter(Filter):
         def __init__(self, level, name=''):
             self.__level = level
@@ -18,7 +18,7 @@ def set_logging(debug: bool):
     console.addFilter(MyFilter(INFO))
 
     file_log = RotatingFileHandler(
-        filename='logs/soft.log', mode='a', maxBytes=512_000_000, backupCount=1,
+        filename=filename, mode='a', maxBytes=512_000_000, backupCount=1,
         encoding="utf-8"
     )
     file_log.setLevel(INFO)
