@@ -1,0 +1,20 @@
+[location_top]
+
+CREATE TABLE location_top (
+uid INTEGER PRIMARY KEY,
+count INTEGER DEFAULT 1
+)
+
+
+[the_best_of_season]
+
+CREATE TABLE the_best_of_season (
+season TEXT NOT NULL,
+date timestamp DEFAULT LOCALTIMESTAMP,
+place_1st INTEGER DEFAULT 0,
+place_2nd INTEGER DEFAULT 0,
+place_3rd INTEGER DEFAULT 0,
+place_1st_guild TEXT DEFAULT 'None',
+place_2nd_guild TEXT DEFAULT 'None',
+place_3rd_guild TEXT DEFAULT 'None'
+)

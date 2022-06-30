@@ -1,0 +1,10 @@
+{
+  "Skill_IDs": {
+    "1": {
+      "class": "knight",
+      "state": "passive",
+      "description": "Даёт шанс нанести критический удар.",
+      ""
+    }
+  }
+}

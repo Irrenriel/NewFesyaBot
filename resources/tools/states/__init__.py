@@ -1,6 +1,11 @@
 from aiogram.dispatcher.filters.state import StatesGroup, State
 
 
-class ExampleState(StatesGroup):
-    First = State()
-    Second = State()
+class StateOn(StatesGroup):
+    # Main
+    Registration = State()
+
+    # Alliance
+    AllianceGetCode = State()
+    AllianceGetMenu = State()
+    AllianceGetRoster = State()

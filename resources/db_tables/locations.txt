@@ -1,0 +1,69 @@
+[loc]
+
+CREATE TABLE loc (
+-- Identification Data
+code TEXT NOT NULL,
+name TEXT NOT NULL,
+lvl INTEGER NOT NULL,
+type INTEGER NOT NULL,
+
+-- Temporary Data
+conqueror TEXT DEFAULT 'Forbidden Clan',
+cycle INTEGER DEFAULT 0,
+status TEXT DEFAULT '⏳',
+
+-- Alive Data
+exist BOOL DEFAULT True,
+found_time timestamp DEFAULT LOCALTIMESTAMP,
+death_time timestamp DEFAULT LOCALTIMESTAMP,
+
+f_by TEXT DEFAULT 'None',
+f_by_guild TEXT DEFAULT 'None'
+)
+
+
+[loc_buff]
+
+CREATE TABLE loc_buff (
+-- Identification Data
+code TEXT PRIMARY KEY,
+
+-- Bless Data
+bless_json TEXT NOT NULL
+)
+
+
+[loc_res]
+
+CREATE TABLE loc_res (
+-- Identification Data
+code TEXT PRIMARY KEY,
+
+-- Res Data
+res_json TEXT NOT NULL
+)
+
+
+[loc_guilds]
+
+CREATE TABLE loc_guilds (
+-- Code of Alliance
+code TEXT NOT NULL,
+
+-- Guild Tag and Emoji
+guild_tag TEXT PRIMARY KEY,
+guild_emoji TEXT NOT NULL
+)
+
+
+[loc_history]
+
+CREATE TABLE loc_history (
+-- Code of Location
+code TEXT NOT NULL,
+
+-- Datetime, Message ID and Text
+date timestamp DEFAULT LOCALTIMESTAMP,
+url INTEGER NOT NULL,
+txt TEXT NOT NULL
+)

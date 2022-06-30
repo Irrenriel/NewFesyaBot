@@ -1,0 +1,94 @@
+[settings]
+
+CREATE TABLE settings (
+-- Name and values
+var TEXT PRIMARY KEY,
+data_str TEXT DEFAULT '',
+data_int INTEGER DEFAULT 0,
+data_bool BOOL DEFAULT TRUE,
+data_date TIMESTAMP
+)
+
+CREATE TABLE settings_date (
+-- Name and values
+var TEXT PRIMARY KEY,
+date timestamp NOT NULL
+)
+
+[activity_logger_fesya]
+
+CREATE TABLE activity_logger_fesya (
+-- Main info
+id INTEGER NOT NULL,
+username TEXT NOT NULL,
+
+-- User`s activity
+data TEXT NOT NULL,
+
+-- Datetime
+time time DEFAULT LOCALTIME,
+date timestamp DEFAULT LOCALTIMESTAMP
+)
+
+
+[admin_log]
+
+CREATE TABLE admin_log (
+-- Main info
+id INTEGER NOT NULL,
+username TEXT NOT NULL,
+
+-- Activity
+info TEXT NOT NULL,
+
+-- Datetime
+time INTEGER NOT NULL,
+date TEXT NOT NULL
+)
+
+
+[quests_packs]
+
+CREATE TABLE quests_packs (
+-- Main Info
+id INTEGER NOT NULL,
+
+-- Pack
+pack TEXT NOT NULL
+)
+
+
+[f_reports_storage]
+
+CREATE TABLE f_reports_storage (
+report TEXT NOT NULL,
+timestamp INTEGER NOT NULL
+)
+
+
+[chats]
+
+CREATE TABLE chats (
+-- Main Info
+id BIGINT PRIMARY KEY,
+
+-- Alliance Leader
+new_loc_ntf BOOL DEFAULT False,
+delete_loc_ntf BOOL DEFAULT False,
+
+-- All chats
+brief_log BOOL DEFAULT False,
+brief_mode BOOL DEFAULT False,
+
+-- AT chat
+craft_ntf BOOL DEFAULT False
+donate_fnc BOOL DEFAULT False
+)
+
+[donates]
+CREATE TABLE donates (
+name TEXT NOT NULL,
+gold INTEGER NOT NULL,
+
+PRIMARY KEY(name)
+)

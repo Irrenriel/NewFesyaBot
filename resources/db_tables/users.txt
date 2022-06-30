@@ -1,0 +1,60 @@
+[users]
+
+CREATE TABLE users (
+-- Telegram Data
+id INTEGER PRIMARY KEY,
+username TEXT NOT NULL,
+
+-- CW Data
+nickname TEXT NOT NULL,
+lvl INTEGER NOT NULL,
+-- Classes: -1 - Squire or Master, 0 - Error,
+-- 1 - Knight, 2 - Ranger, 3 - Sentinel, 4 - Berserk
+-- 5 - Blacksmith, 6 - Alchemist, 7 - Collector, 8 - Noble
+main_class INTEGER NOT NULL,
+sub_class INTEGER DEFAULT 0,
+guild_tag TEXT DEFAULT 'None',
+-- Castles: 0 - Error, 1 - Oplot, 2 - Amber, 3 - Ferma, 4 - Night, 5 - Skala, 6 - Rassvet, 7 - Tortuga
+castle INTEGER NOT NULL,
+
+-- Bot Data
+-- Role: 1 - Default User, 2 - Officer, 3 - Commander, 4 - Alliance leader
+role INTEGER DEFAULT 1,
+gm_role INTEGER DEFAULT 0,
+hero_update timestamp DEFAULT LOCALTIMESTAMP
+)
+
+
+[adv_users]
+
+CREATE TABLE adv_users (
+-- Telegram Data
+id INTEGER PRIMARY KEY,
+
+-- Adv Progress
+rank INTEGER DEFAULT 1,
+reputation INTEGER DEFAULT 0,
+
+-- Adv Quests
+avail_quests TEXT DEFAULT '',
+inprog_quest TEXT DEFAULT '',
+d_limit INTEGER DEFAULT 0
+)
+
+
+[users_settings]
+
+CREATE TABLE users_settings (
+-- Main info
+id INTEGER NOT NULL,
+
+-- Variables
+quests_1st_time INTEGER DEFAULT 0
+)
+
+
+[banned_users]
+
+CREATE TABLE banned_users (
+id INTEGER PRIMARY KEY
+)
