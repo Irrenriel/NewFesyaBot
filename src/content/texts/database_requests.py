@@ -144,3 +144,18 @@ UPDATE SET name = $2, ownertag = $3, ownername = $4, ownercastle = $5, kind = $6
 castlediscount = $9, guilddiscount = $10, specialization = $11, qualitycraftlevel = $12, specializations = $13,
 maintenanceenabled = $14, maintenancecost = $15, date = $16
 '''
+
+STARTUP_GURU_SHOPS = '''
+SELECT ws_shops.link, ws_shops.name, ws_shops.ownertag, ws_shops.ownername, ws_shops.ownercastle, ws_shops.mana,
+ws_shops.offers, ws_shops.castlediscount, ws_shops.guilddiscount, ws_shops.specialization,
+ws_shops.qualitycraftlevel, ws_shops.specializations, ws_shops.maintenanceenabled, ws_shops.maintenancecost,
+ws_shops.date FROM ws_shops
+INNER JOIN settings_date ON settings_date.var = 'ws_shops_upd'
+WHERE ws_shops.date = settings_date.date
+'''
+
+GET_WS_LINK_SHOP = '''
+SELECT link, name, ownertag, ownername, ownercastle, kind, mana, offers, castlediscount, guilddiscount, specialization,
+qualitycraftlevel, specializations, maintenanceenabled, maintenancecost, date
+FROM ws_shops WHERE link = $1
+'''

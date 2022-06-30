@@ -33,7 +33,7 @@ async def installing_schedulers(db: PostgreSQLDatabase, scheduler, cw3_api):
 
 async def update_l_check_status(db: PostgreSQLDatabase):
     await db.execute('UPDATE settings SET data_bool = True WHERE var = $1', ['l_check_upd'])
-    info('Updated "l_check_upd" var! /l_check is available now!')
+    info('▻ Updated "l_check_upd" var! /l_check is available now!')
 
 
 async def run_cw3_api(scheduler, cw3_api):

@@ -33,6 +33,14 @@ async def register_at_guild_handlers(dp: Dispatcher):
         )
     )
 
+    # /cd, создать сбор суммы
+    dp.register_message_handler(
+        create_donate,
+        RegexpCommandsFilter(regexp_commands=['cd ([0-9]*)']), IsUser(
+            is_registered=True, has_roles=[Roles.ALLIANCE_LEADER, Roles.COMMANDER, Roles.OFFICER, Roles.ADMIN]
+        )
+    )
+
     # Обновить сборы суммы
     dp.register_callback_query_handler(
         update_donate,
