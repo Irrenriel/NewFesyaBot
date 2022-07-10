@@ -82,6 +82,8 @@ class PostgreSQLDatabase:
         """
         if isinstance(req_or_records, str):
             req_or_records = await self.fetch(req_or_records, *args, one_row=one_row)
+            if not req_or_records:
+                return
 
         if not isinstance(req_or_records, List) and not isinstance(req_or_records, Record):
             raise ValueError('Variable req_or_records must be a sql string request or list of results!')

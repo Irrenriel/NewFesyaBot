@@ -3,6 +3,7 @@ import logging
 import re
 import sys
 import traceback
+from datetime import timedelta
 from logging import warning
 from typing import Optional, List
 
@@ -17,7 +18,7 @@ from resources.tools.database import PostgreSQLDatabase
 from src.content import BRIEF_ALLIANCE_PARSE, STATUS_HEADQUARTERS_DICT, BRIEF_GET_ALLIANCE_BY_GUILD_TAG, \
     BRIEF_INSERT_INTO_LOC_HISTORY_BREACH_AL, HQParsingData, ChatInfo, BRIEF_NTF_REQ, BRIEF_LOCATIONS_PARSE, LocInfoData, \
     BRIEF_GET_ALL_LOCS_REQ, STATUS_LOCATIONS_DICT, LocParsingData, FORBIDDEN_CLASSES, BRIEF_INSERT_GUILD_REQ, \
-    BRIEF_GET_LOC_INFO_BY_NAME_REQ
+    BRIEF_GET_LOC_INFO_BY_NAME_REQ, LOC_TYPES_ENUM
 
 
 def main():
@@ -26,7 +27,8 @@ def main():
     bot = Bot(token=config.BOT_TOKEN, loop=loop, parse_mode=config.PARSE_MODE)
 
     # Database
-    db = PostgreSQLDatabase(*config.BRIEF_DB)
+    db = PostgreSQLDatabase(*config.POSTGRES_DB)
+    loop.run_until_complete(db.connect())
 
     channels = [config.MY_TESTING_CHANNEL, config.CHAT_WARS_DIGEST, 1746905360]
 
@@ -43,10 +45,10 @@ def main():
             parse_data = parse.groupdict()
 
             code_by_name = await db.fetch(
-                'SELECT code FROM loc WHERE name = $1', [parse_data['head_name']], one_row=True
+                'SELECT code FROM loc WHERE name = $1', [parse_data['name']], one_row=True
             )
 
-            parse_data['code'] = code_by_name['code'] if code_by_name else f'NoneCode({parse_data["head_name"]})'
+            parse_data['code'] = code_by_name['code'] if code_by_name else f'NoneCode({parse_data["name"]})'
             parse_data['status'] = STATUS_HEADQUARTERS_DICT.get(parse_data['status'])
             parse_data['stock'] = parse_data.get('stock', '0')
             parse_data['glory'] = parse_data.get('glory', '0')
@@ -127,7 +129,9 @@ def main():
 
         for chat in chats:
             try:
-                await bot.send_message(chat.id, answer_short if chat.brief_mode else answer_long)
+                await bot.send_message(
+                    chat.id, answer_short if chat.brief_mode else answer_long, disable_web_page_preview=True
+                 )
 
             except Exception:
                 logging.error(traceback.format_exc())
@@ -145,10 +149,18 @@ def main():
             parse_data = parse.groupdict()
 
             parse_data['lvl'] = int(parse_data['lvl'])
-            parse_data['status'] = STATUS_LOCATIONS_DICT.get(
-                parse_data.get('def_status', parse_data.get('atk_status'))
-            )
+
+            def_status = parse_data.get('def_status')
+            atk_status = parse_data.get('atk_status')
+            parse_data['status'] = STATUS_LOCATIONS_DICT.get(def_status if def_status else atk_status)
+
             parse_data['new_conqueror'] = parse_data.get('new_conqueror', '')
+            parse_data['type'] = LOC_TYPES_ENUM[parse_data['name'].split(' ')[-1]]
+
+            if '🎖Attack:' not in loc and '🎖Defense:' not in loc:
+                parse_data['new_location'] = True
+                parse_data['code'] = ''
+                return LocParsingData(**parse_data)
 
             for l in all_locations:
                 if l.name == parse_data['name'] and l.lvl == parse_data['lvl']:
@@ -223,6 +235,7 @@ def main():
         message: Message = event.message
 
         all_locations: List[LocInfoData] = await db.fetch_orm(LocInfoData, BRIEF_GET_ALL_LOCS_REQ)
+        new_locations = []
 
         lt = {'🏷': [], '📦': [], '🎖': []}
 
@@ -236,10 +249,11 @@ def main():
             Так в брифинге отображаются новые появившиеся локации, желательно в брифинге сделать и на алики,
             и на локации оповещение о новых локациях!
             '''
-            if '🎖Attack:' not in loc and '🎖Defense:' not in loc:
-                return
-
             loc_data = await loc_parsing(loc)
+
+            if loc_data.new_location:
+                new_locations.append(loc_data)
+                continue
 
             # Datetime
             loc_data.loc_date(raw_date, mid)
@@ -272,10 +286,20 @@ def main():
                 ["⚡", [loc.code for loc in all_locations]]
             )
 
-        answer_short += '{}{}{}\n'.format(
+        if new_locations:
+            await db.execute(
+                'INSERT INTO loc (code, name, lvl, type) VALUES ($1, $2, $3, $4)',
+                [[l.get_none_code, l.name, l.lvl, l.type.value] for l in new_locations],
+                many=True
+            )
+
+        answer_short += '{}{}{}{}\n'.format(
             '\n'.join([l.get_answer for l in sorted(lt['🏷'], key=lambda i: i.lvl)]) + '\n\n' if lt.get('🏷') else '',
             '\n'.join([l.get_answer for l in sorted(lt['📦'], key=lambda i: i.lvl)]) + '\n\n' if lt.get('📦') else '',
             '\n'.join([l.get_answer for l in sorted(lt['🎖'], key=lambda i: i.lvl)]) if lt.get('🎖') else '',
+            '\n\n<b>Новые локации:</b>\n' + '\n'.join(
+                [l.get_answer for l in sorted(new_locations, key=lambda i: i.lvl)]
+            ) + '\n' if new_locations else ''
         )
 
         ending = get_ending(date, mid)
@@ -290,7 +314,9 @@ def main():
 
         for chat in chats:
             try:
-                await bot.send_message(chat.id, answer_short if chat.brief_mode else answer_long)
+                await bot.send_message(
+                    chat.id, answer_short if chat.brief_mode else answer_long, disable_web_page_preview=True
+                )
 
             except Exception:
                 logging.error(traceback.format_exc())
@@ -301,11 +327,11 @@ def main():
 
 def get_date_and_message_id(message: Message):
     if hasattr(message, 'fwd_from') and hasattr(message.fwd_from, 'channel_post'):
-        raw_date = message.fwd_from.date
+        raw_date = message.fwd_from.date.replace(tzinfo=None) + timedelta(hours=3)
         mid = message.fwd_from.channel_post
 
     else:
-        raw_date = message.date
+        raw_date = message.date.replace(tzinfo=None) + timedelta(hours=3)
         mid = message.id
 
     date = str(raw_date.strftime('%Y-%m-%d %H:%M:%S'))

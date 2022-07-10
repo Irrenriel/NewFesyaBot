@@ -10,7 +10,7 @@ NEW_LOC_INPUT_PARSE = r'(?=You found hidden location)(?:You found hidden locatio
                       r'((?=То remember)|.+\n).+ (?P<loc_code>.+)|(?:You found hidden headquarter (?P<head_name>.*))\n' \
                       r'.+: (?P<head_code>.+)$'
 
-BRIEF_ALLIANCE_PARSE = r'(?P<head_name>.+) was (?P<status>.+)(?:\:|\. )\n' \
+BRIEF_ALLIANCE_PARSE = r'(?P<name>.+) was (?P<status>.+)(?:\:|\. )\n' \
                        r'(?:(?=Attackers).+ (?P<stock>\d+|)📦 and (?P<glory>\d+|)🎖|)'
 
-BRIEF_LOCATIONS_PARSE = r'(?P<name>.+) lvl\.(?P<lvl>\d+) (?:(?=was)was (?P<def_status>.+)|belongs to (?P<new_conqueror>\w+.\w+)(?P<atk_status>.+)\n)'
+BRIEF_LOCATIONS_PARSE = r'(?P<name>.+) lvl\.(?P<lvl>\d+) (?:(?=was)was (?P<def_status>.+)|belongs to ((?P<new_conqueror>\w+.\w+)(?P<atk_status>.+)\n)?)'
