@@ -116,6 +116,7 @@ class LocParsingData:
     name: str
     lvl: int
     status: str
+    type: LocTypes
     new_conqueror: str
     prev_conqueror: str = 'Forbidden Clan'
 
@@ -131,6 +132,8 @@ class LocParsingData:
 
     own = ''
     new_conqueror_code = ''
+
+    new_location: bool = False
 
     def loc_date(self, raw_date: datetime, mid: int):
         self.raw_date = raw_date
@@ -168,3 +171,7 @@ class LocParsingData:
     @property
     def name_lvl(self):
         return f'{self.name} lvl.{self.lvl}'
+
+    @property
+    def get_none_code(self):
+        return f'NoneCode({self.name} lvl.{self.lvl})'
