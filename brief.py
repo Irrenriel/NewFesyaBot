@@ -12,16 +12,16 @@ from telethon.events import NewMessage
 from telethon.tl.types import Message
 
 from config import config
-from resources.models import loop
 from resources.tools import bot_logging
 from resources.tools.database import PostgreSQLDatabase
 from src.content import BRIEF_ALLIANCE_PARSE, STATUS_HEADQUARTERS_DICT, BRIEF_GET_ALLIANCE_BY_GUILD_TAG, \
     BRIEF_INSERT_INTO_LOC_HISTORY_BREACH_AL, HQParsingData, ChatInfo, BRIEF_NTF_REQ, BRIEF_LOCATIONS_PARSE, LocInfoData, \
-    BRIEF_GET_ALL_LOCS_REQ, STATUS_LOCATIONS_DICT, LocParsingData, FORBIDDEN_CLASSES, LocGuildInfo, \
-    BRIEF_GET_GUILDS_BY_TAGS_REQ, BRIEF_INSERT_GUILD_REQ, BRIEF_GET_LOC_INFO_BY_NAME_REQ
+    BRIEF_GET_ALL_LOCS_REQ, STATUS_LOCATIONS_DICT, LocParsingData, FORBIDDEN_CLASSES, BRIEF_INSERT_GUILD_REQ, \
+    BRIEF_GET_LOC_INFO_BY_NAME_REQ
 
 
 def main():
+    loop = asyncio.get_event_loop()
     client = TelegramClient(config.BRIEF_SESSION_NAME, config.API_ID, config.API_HASH, loop=loop)
     bot = Bot(token=config.BOT_TOKEN, loop=loop, parse_mode=config.PARSE_MODE)
 
