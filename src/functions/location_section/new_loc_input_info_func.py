@@ -1,8 +1,9 @@
 import asyncio
 import json
 import re
+import traceback
 from datetime import datetime, timedelta
-from logging import warning
+from logging import warning, error
 
 from aiogram.types import Message
 from asyncpg import Record
@@ -13,8 +14,7 @@ from resources.tools.database import PostgreSQLDatabase
 from src.content import NEW_LOC_INPUT_PARSE, LOC_TYPES_ENUM, LocTypes, NEW_LOCATION_NOTIFICATION, \
     INCREASE_LOCATION_TOP_COUNT_REQ, UserData, INSERT_OR_UPDATE_LOCATION_BUFF_REQ, INSERT_OR_UPDATE_LOCATION_RES_REQ, \
     LocInfoData, NEW_LOC_L_CHECK_FOR_TIER, GET_LOC_TYPE_EMOJI, LOC_CHECK_SELECT_DELETED_REQ, MARK_AS_DEAD_LOCATIONS, \
-    NEW_LOC_NTF, NEW_LOCATION_TEXT, DELETE_LOC_NTF
-from src.content.consts.main_resources import ChatInfo
+    NEW_LOC_NTF, NEW_LOCATION_TEXT, DELETE_LOC_NTF, ChatInfo
 from src.functions.admin_section.settings_func import delete_message_with_notification
 
 
@@ -65,7 +65,7 @@ async def new_location_input(mes: Message, db: PostgreSQLDatabase, user: UserDat
         )
 
     # Notifications
-    chats = [ChatInfo(**c) for c in await db.fetch(NEW_LOC_NTF)]
+    chats = await db.fetch_orm(ChatInfo, NEW_LOC_NTF)
 
     if chats:
         answer = NEW_LOCATION_TEXT.format(
@@ -161,11 +161,10 @@ async def new_location_input(mes: Message, db: PostgreSQLDatabase, user: UserDat
 
             for chat in chats:
                 try:
-                    await asyncio.sleep(0.3)
                     await mes.bot.send_message(chat.id, answer)
 
                 except Exception:
-                    pass
+                    error(traceback.format_exc())
 
 
 # Reception of blessing from locations

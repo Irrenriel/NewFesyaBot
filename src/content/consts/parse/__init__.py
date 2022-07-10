@@ -9,3 +9,8 @@ AL_MAIN_PARSE = r'🤝(?P<al_name>.+)\s\nGuilds:\s(?P<n_guilds>\d+)\s👥(?P<n_m
 NEW_LOC_INPUT_PARSE = r'(?=You found hidden location)(?:You found hidden location (?P<loc_name>.*)) lvl.(?P<loc_lvl>\d+)\n' \
                       r'((?=То remember)|.+\n).+ (?P<loc_code>.+)|(?:You found hidden headquarter (?P<head_name>.*))\n' \
                       r'.+: (?P<head_code>.+)$'
+
+BRIEF_ALLIANCE_PARSE = r'(?P<head_name>.+) was (?P<status>.+)(?:\:|\. )\n' \
+                       r'(?:(?=Attackers).+ (?P<stock>\d+|)📦 and (?P<glory>\d+|)🎖|)'
+
+BRIEF_LOCATIONS_PARSE = r'(?P<name>.+) lvl\.(?P<lvl>\d+) (?:(?=was)was (?P<def_status>.+)|belongs to (?P<new_conqueror>\w+.\w+)(?P<atk_status>.+)\n)'

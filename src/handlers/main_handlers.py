@@ -1,11 +1,13 @@
 from aiogram import types, Dispatcher
+from aiogram.dispatcher.filters import RegexpCommandsFilter
 
 from config import config
 
 from resources.tools.cfilters import Command, IsUser, ChatTypeFilter, Text, IsForward, IsBotAddedToChat
 from resources.tools.states import StateOn
 from src.content import Roles
-from src.functions import start, hero_insert, start_new, new_chat_found, settings, top1, top2, settings_v
+from src.functions import start, hero_insert, start_new, new_chat_found, settings, top1, top2, settings_v, ws_shops, \
+    ws_owners
 
 
 async def register_main_handlers(dp: Dispatcher):
@@ -81,4 +83,18 @@ async def register_main_handlers(dp: Dispatcher):
     dp.register_message_handler(
         top2,
         Command('top2')
+    )
+
+    # /ws
+    dp.register_message_handler(
+        ws_shops,
+        Command('ws'),
+        state=[None, StateOn.WorkBenchActive]
+    )
+
+    # /ws_link
+    dp.register_message_handler(
+        ws_owners,
+        RegexpCommandsFilter(regexp_commands=['ws_(.*)']),
+        state=[None, StateOn.WorkBenchActive]
     )

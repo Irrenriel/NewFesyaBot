@@ -9,3 +9,6 @@ class StateOn(StatesGroup):
     AllianceGetCode = State()
     AllianceGetMenu = State()
     AllianceGetRoster = State()
+
+    # Workbench
+    WorkBenchActive = State()

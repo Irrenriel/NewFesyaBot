@@ -19,3 +19,11 @@ date TIMESTAMP DEFAULT LOCALTIMESTAMP,
 
 PRIMARY KEY(link)
 )
+
+[ws_owners]
+CREATE TABLE ws_owners (
+link TEXT NOT NULL,
+username TEXT NOT NULL,
+
+PRIMARY KEY(link)
+)

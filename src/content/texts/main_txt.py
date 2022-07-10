@@ -22,3 +22,40 @@ SETTINGS_TEXT = '''\
 — Отображение сводок альянс битв: [{}]
 — Режим краткого отображения сводок: [{}]
 '''
+
+# Guru Shops
+GURU_SHOPS_TEXT = '''\
+<b>⚒Гуру лавки:</b>
+
+<b>Helmet🧢:</b>
+{helmet}
+
+<b>Armor🥋:</b>
+{armor}
+
+<b>Gloves🧤:</b>
+{gloves}
+
+<b>Boots👟:</b>
+{boots}
+
+<b>Cloaks🌂:</b>
+{coat}
+
+<b>Off-hand🛡:</b>
+{shield}
+
+<b>Weapon🗡:</b>
+{weapon}
+
+<b>Обновлено:</b> {date}
+'''
+
+GURU_OWNER_TEXT = '''\
+{ownerCastle}[{ownerTag}]{ownerName} — {username}
+{qc}
+
+{offers}
+
+{link}
+'''
