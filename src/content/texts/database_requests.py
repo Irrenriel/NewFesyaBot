@@ -159,3 +159,34 @@ SELECT link, name, ownertag, ownername, ownercastle, kind, mana, offers, castled
 qualitycraftlevel, specializations, maintenanceenabled, maintenancecost, date
 FROM ws_shops WHERE link = $1
 '''
+
+BRIEF_GET_ALLIANCE_BY_GUILD_TAG = '''
+SELECT loc.name, loc.code FROM loc
+INNER JOIN loc_guilds on loc_guilds.code = loc.code
+WHERE loc_guilds.guild_tag = $1
+'''
+
+BRIEF_INSERT_INTO_LOC_HISTORY_BREACH_AL = '''
+INSERT INTO loc_history (code, date, url, txt) VALUES ($1, $2, $3, $4)
+'''
+
+BRIEF_NTF_REQ = '''
+SELECT id, new_loc_ntf, delete_loc_ntf, brief_log, brief_mode, craft_ntf FROM chats WHERE brief_log = True
+'''
+
+BRIEF_GET_ALL_LOCS_REQ = '''
+SELECT code, name, lvl, type, conqueror, cycle, status FROM loc WHERE type > 0 AND exist = True
+'''
+
+BRIEF_GET_GUILDS_BY_TAGS_REQ = '''
+SELECT guild_tag, guild_emoji FROM loc_guilds WHERE guild_tag = any($1::text[])
+'''
+
+BRIEF_INSERT_GUILD_REQ = '''
+INSERT INTO loc_guilds (code, guild_tag, guild_emoji) VALUES ($1, $2, $3)
+ON CONFLICT (guild_tag) DO UPDATE SET code = $1, guild_emoji = $3
+'''
+
+BRIEF_GET_LOC_INFO_BY_NAME_REQ = '''
+SELECT code, name, lvl, type, conqueror, cycle, status FROM loc WHERE name = $1 AND exist = True
+'''

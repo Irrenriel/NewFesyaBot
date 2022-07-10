@@ -56,4 +56,5 @@ if __name__ == '__main__':
     # Set Logging
     bot_logging.set_logging(config.debug)
 
+    client.client.start()
     executor.start_polling(dp, loop=loop, on_startup=startup_func)

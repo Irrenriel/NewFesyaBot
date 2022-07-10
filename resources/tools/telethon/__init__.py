@@ -21,7 +21,6 @@ class TelethonConversator:
 
     def __init__(self, SESSION_NAME: str, API_ID: int, API_HASH: str, loop):
         self.client = TelegramClient(SESSION_NAME, API_ID, API_HASH, loop=loop)
-        self.client.start()
 
     async def connect(self):
         await self.client.connect()

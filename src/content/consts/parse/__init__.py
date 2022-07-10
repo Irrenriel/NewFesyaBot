@@ -13,4 +13,4 @@ NEW_LOC_INPUT_PARSE = r'(?=You found hidden location)(?:You found hidden locatio
 BRIEF_ALLIANCE_PARSE = r'(?P<head_name>.+) was (?P<status>.+)(?:\:|\. )\n' \
                        r'(?:(?=Attackers).+ (?P<stock>\d+|)📦 and (?P<glory>\d+|)🎖|)'
 
-BRIEF_LOCATIONS_PARSE = r'(?P<location_name>.+) lvl\.(?P<location_lvl>\d+) (?:(?=was)was (?P<def_status>.+)|belongs to (?P<enemy_head>\w+.\w+)(?P<atk_status>.+)\n)'
+BRIEF_LOCATIONS_PARSE = r'(?P<name>.+) lvl\.(?P<lvl>\d+) (?:(?=was)was (?P<def_status>.+)|belongs to (?P<new_conqueror>\w+.\w+)(?P<atk_status>.+)\n)'
