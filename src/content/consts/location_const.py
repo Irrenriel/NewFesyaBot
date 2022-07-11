@@ -155,6 +155,10 @@ class LocParsingData:
         return f'<b>{self.own}{self.loc_type}{self.name_lvl} [{self.status}]</b>'
 
     @property
+    def get_new_loc_answer(self):
+        return f'<b>{self.own}{self.loc_type}{self.name_lvl}</b>'
+
+    @property
     def get_answer_mode_long(self):
         return '<b>{}{}{} [{}]{}</b>\n{}{}\n'.format(
             self.own, self.loc_type, self.name_lvl, self.status, self.new_owner, self.atk_answer, self.def_answer

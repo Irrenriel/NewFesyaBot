@@ -297,8 +297,8 @@ def main():
             '\n'.join([l.get_answer for l in sorted(lt['🏷'], key=lambda i: i.lvl)]) + '\n\n' if lt.get('🏷') else '',
             '\n'.join([l.get_answer for l in sorted(lt['📦'], key=lambda i: i.lvl)]) + '\n\n' if lt.get('📦') else '',
             '\n'.join([l.get_answer for l in sorted(lt['🎖'], key=lambda i: i.lvl)]) if lt.get('🎖') else '',
-            '\n\n<b>Новые локации:</b>\n' + '\n'.join(
-                [l.get_answer for l in sorted(new_locations, key=lambda i: i.lvl)]
+            '\n\n<i>⭐️Новые локации:</i>\n' + '\n'.join(
+                [l.get_new_loc_answer for l in sorted(new_locations, key=lambda i: i.lvl)]
             ) + '\n' if new_locations else ''
         )
 
