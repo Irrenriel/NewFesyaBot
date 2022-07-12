@@ -190,3 +190,10 @@ ON CONFLICT (guild_tag) DO UPDATE SET code = $1, guild_emoji = $3
 BRIEF_GET_LOC_INFO_BY_NAME_REQ = '''
 SELECT code, name, lvl, type, conqueror, cycle, status FROM loc WHERE name = $1 AND exist = True
 '''
+
+BRIEF_INSERT_NEW_LOCATIONS_REQ = '''
+INSERT INTO loc (code, name, lvl, type) VALUES ($1, $2, $3, $4)
+ON CONFLICT (code) DO
+UPDATE SET code = $1, name = $2, lvl = $3, type = $4, conqueror = 'Forbidden Clan', cycle = 0, status = '⏳',
+exist = True, found_time = LOCALTIMESTAMP, death_time = LOCALTIMESTAMP, f_by = 'None', f_by_guild = 'None'
+'''

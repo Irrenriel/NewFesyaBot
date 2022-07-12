@@ -18,7 +18,7 @@ from resources.tools.database import PostgreSQLDatabase
 from src.content import BRIEF_ALLIANCE_PARSE, STATUS_HEADQUARTERS_DICT, BRIEF_GET_ALLIANCE_BY_GUILD_TAG, \
     BRIEF_INSERT_INTO_LOC_HISTORY_BREACH_AL, HQParsingData, ChatInfo, BRIEF_NTF_REQ, BRIEF_LOCATIONS_PARSE, LocInfoData, \
     BRIEF_GET_ALL_LOCS_REQ, STATUS_LOCATIONS_DICT, LocParsingData, FORBIDDEN_CLASSES, BRIEF_INSERT_GUILD_REQ, \
-    BRIEF_GET_LOC_INFO_BY_NAME_REQ, LOC_TYPES_ENUM
+    BRIEF_GET_LOC_INFO_BY_NAME_REQ, LOC_TYPES_ENUM, BRIEF_INSERT_NEW_LOCATIONS_REQ
 
 
 def main():
@@ -288,7 +288,7 @@ def main():
 
         if new_locations:
             await db.execute(
-                'INSERT INTO loc (code, name, lvl, type) VALUES ($1, $2, $3, $4)',
+                BRIEF_INSERT_NEW_LOCATIONS_REQ,
                 [[l.get_none_code, l.name, l.lvl, l.type.value] for l in new_locations],
                 many=True
             )
