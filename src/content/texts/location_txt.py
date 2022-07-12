@@ -14,11 +14,11 @@ AL_INFO_TEXT = '''\
 {}
 
 
-<a href="https://t.me/share/url?url=/l_capture%20{}"><b>🗺Захваченные точки: [{}]</b></a>
+<a href="https://t.me/share/url?url=/l_capture%20{}"><b>🗺Владения: [{}]</b></a>
 {}
 
 
-<a href="https://t.me/share/url?url=/l_history%20{}"><b>📝История действий:</b></a>
+<a href="https://t.me/share/url?url=/l_history%20{}"><b>📝История:</b></a>
 {}
 '''
 
@@ -27,7 +27,7 @@ LOC_INFO_TEXT = '''\
 <b>{}{} lvl.{}</b>
   └ <code>{}</code>
 
-<b>🚩Захвачена:</b>
+<b>🚩Принадлежит:</b>
 {}
 
 {}<b>✨Баффы:</b>
@@ -35,19 +35,19 @@ LOC_INFO_TEXT = '''\
 '''
 
 AL_HISTORY_TEXT = '''\
-<b>📝История действий:</b> <code>{}</code>
+<b>📝История:</b> <code>{}</code>
 ———————————————
 {}'''
 
 AL_CAPTURE_TEXT = '''\
-<b>🗺Захваченные точки:</b> <code>{}</code>
+<b>🗺Владения:</b> <code>{}</code>
 ———————————————
 {}'''
 
 LOC_LIST_TEXT = '''\
 <u><b>🗺Список локации:</b></u>
 
-Зарегистрировано живых субъектов:
+Зарегистрировано живых объектов:
     <i>🏷Руины — {}</i>
     <i>📦Шахты — {}</i>
     <i>🎖Форты — {}</i>

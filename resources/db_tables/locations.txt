@@ -18,7 +18,9 @@ found_time timestamp DEFAULT LOCALTIMESTAMP,
 death_time timestamp DEFAULT LOCALTIMESTAMP,
 
 f_by TEXT DEFAULT 'None',
-f_by_guild TEXT DEFAULT 'None'
+f_by_guild TEXT DEFAULT 'None',
+
+PRIMARY KEY(code)
 )
 
 

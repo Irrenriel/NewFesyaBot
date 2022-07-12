@@ -35,13 +35,13 @@ async def loc_info_answer(db: PostgreSQLDatabase, loc: LocInfoData):
         m = '<a href="https://t.me/share/url?url=/l_info%20{}"><b>{}{} lvl.{}</b></a>'
         cl_txt = '\n'.join(
             [m.format(l.code, GET_LOC_TYPE_EMOJI.get(l.type, 'ERROR'), l.name, str(l.lvl)) for l in captured_locs[:5]]
-        ) + '\n...' if len(captured_locs) > 5 else ''
+        ) + ('\n...' if len(captured_locs) > 5 else '')
 
         # History of activity locations
         l_history = [LocHistoryData(**i) for i in await db.fetch(LOC_HISTORY_REQ, [loc.code, 5])]
         mm = '<a href="https://t.me/ChatWarsDigest/{}">{}</a>'
         lh_txt = '\n\n'.join(
-            [f'[{mm.format(l.url, l.date)}]\n{l.text}' for l in l_history]
+            [f'[{mm.format(l.url, l.date)}]\n{l.txt}' for l in l_history]
         ) if l_history else 'Нет данных'
 
         answer = AL_INFO_TEXT.format(
@@ -110,12 +110,12 @@ async def loc_history(mes: Message, db: PostgreSQLDatabase):
         await mes.answer('Информация доступна только по альянсам.')
         return
 
-    loc_history = [LocHistoryData(**i) for i in await db.fetch(LOC_HISTORY_REQ, [code, 20])]
+    l_history = [LocHistoryData(**i) for i in await db.fetch(LOC_HISTORY_REQ, [code, 20])]
 
     m = '<a href="https://t.me/ChatWarsDigest/{}">{}</a>'
     lh_txt = '\n\n'.join(
-        f'[{m.format(str(l.url), str(l.date))}]\n{l.text}' for l in loc_history
-    ) if loc_history else 'Нет данных'
+        f'[{m.format(str(l.url), str(l.date))}]\n{l.txt}' for l in l_history
+    ) if l_history else 'Нет данных'
 
     await mes.answer(AL_HISTORY_TEXT.format(code, lh_txt), disable_web_page_preview=True)
 

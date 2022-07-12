@@ -69,7 +69,7 @@ INSERT_OR_UPDATE_LOCATION_RES_REQ = '''
 INSERT INTO loc_res (code, res_json) VALUES ($1, $2) ON CONFLICT (code) DO UPDATE SET res_json = $2
 '''
 
-LOC_HISTORY_REQ = 'SELECT date, url, txt FROM loc_history WHERE code = $1 ORDER BY -url LIMIT $2'
+LOC_HISTORY_REQ = 'SELECT code, date, url, txt FROM loc_history WHERE code = $1 ORDER BY -url LIMIT $2'
 
 LOC_CAPTURE_REQ = '''
 SELECT code, name, lvl, type, conqueror, cycle, status FROM loc WHERE conqueror = $1 and exist = True ORDER BY lvl
@@ -189,4 +189,11 @@ ON CONFLICT (guild_tag) DO UPDATE SET code = $1, guild_emoji = $3
 
 BRIEF_GET_LOC_INFO_BY_NAME_REQ = '''
 SELECT code, name, lvl, type, conqueror, cycle, status FROM loc WHERE name = $1 AND exist = True
+'''
+
+BRIEF_INSERT_NEW_LOCATIONS_REQ = '''
+INSERT INTO loc (code, name, lvl, type) VALUES ($1, $2, $3, $4)
+ON CONFLICT (code) DO
+UPDATE SET code = $1, name = $2, lvl = $3, type = $4, conqueror = 'Forbidden Clan', cycle = 0, status = '⏳',
+exist = True, found_time = LOCALTIMESTAMP, death_time = LOCALTIMESTAMP, f_by = 'None', f_by_guild = 'None'
 '''
