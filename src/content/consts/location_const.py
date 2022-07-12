@@ -56,9 +56,10 @@ class LocInfoData(BaseModel):
 
 @dataclass
 class LocHistoryData:
+    code: str
     date: datetime
     url: int
-    text: str
+    txt: str
 
 
 @dataclass
@@ -142,13 +143,13 @@ class LocParsingData:
 
     @property
     def loc_conquest_log(self):
-        x = f'<b>{LOC_TYPES_BY_NAME.get(self.name.split(" ")[-1])}{self.name} lvl.{self.lvl}[✅🚩]</b>'
+        x = f'<b>{self.loc_type}{self.name} lvl.{self.lvl}[✅🚩]</b>'
         return self.new_conqueror_code, self.raw_date, self.message_id, x
 
     @property
     def loc_failed_defend_log(self):
         x = f'<b>{self.loc_type}{self.name} lvl.{self.lvl}[🚫🚩]</b>'
-        return self.new_conqueror_code, self.raw_date, self.message_id, x
+        return self.prev_conqueror, self.raw_date, self.message_id, x
 
     @property
     def get_answer(self):

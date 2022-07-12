@@ -69,7 +69,7 @@ INSERT_OR_UPDATE_LOCATION_RES_REQ = '''
 INSERT INTO loc_res (code, res_json) VALUES ($1, $2) ON CONFLICT (code) DO UPDATE SET res_json = $2
 '''
 
-LOC_HISTORY_REQ = 'SELECT date, url, txt FROM loc_history WHERE code = $1 ORDER BY -url LIMIT $2'
+LOC_HISTORY_REQ = 'SELECT code, date, url, txt FROM loc_history WHERE code = $1 ORDER BY -url LIMIT $2'
 
 LOC_CAPTURE_REQ = '''
 SELECT code, name, lvl, type, conqueror, cycle, status FROM loc WHERE conqueror = $1 and exist = True ORDER BY lvl
