@@ -117,7 +117,7 @@ def main():
             answer_long += hq_data.get_answer_mode_long
             answer_short += hq_data.get_answer_mode_short
 
-        ending = get_ending(date, mid)
+        ending = '\n' + get_ending(date, mid)
 
         answer_long += ending
         answer_short += ending
@@ -294,10 +294,11 @@ def main():
             )
 
         answer_short += '{}{}{}{}\n'.format(
+            # Mines
             '\n'.join([l.get_answer for l in sorted(lt['🏷'], key=lambda i: i.lvl)]) + '\n\n' if lt.get('🏷') else '',
             '\n'.join([l.get_answer for l in sorted(lt['📦'], key=lambda i: i.lvl)]) + '\n\n' if lt.get('📦') else '',
-            '\n'.join([l.get_answer for l in sorted(lt['🎖'], key=lambda i: i.lvl)]) if lt.get('🎖') else '',
-            '\n\n<i>⭐️Новые локации:</i>\n' + '\n'.join(
+            '\n'.join([l.get_answer for l in sorted(lt['🎖'], key=lambda i: i.lvl)]) + '\n\n' if lt.get('🎖') else '',
+            '<i>⭐️Новые локации:</i>\n' + '\n'.join(
                 [l.get_new_loc_answer for l in sorted(new_locations, key=lambda i: i.lvl)]
             ) + '\n' if new_locations else ''
         )
