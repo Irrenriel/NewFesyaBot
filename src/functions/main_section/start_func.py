@@ -12,9 +12,9 @@ from src.content import START_MAIN_MENU_TEXT, start_kb, HERO_PARSE, REG_NEW_USER
     MAIN_REQ, UserData
 
 
-async def start(mes: Message, state: FSMContext):
+async def start(mes: Message, state: FSMContext, user: UserData):
     # If already registered
-    await mes.answer(START_MAIN_MENU_TEXT, reply_markup=start_kb())
+    await mes.answer(START_MAIN_MENU_TEXT, reply_markup=start_kb(user))
     await state.reset_state()
     await state.finish()
 
@@ -50,7 +50,7 @@ async def hero_insert(mes: Message, state: FSMContext, db: PostgreSQLDatabase, u
 
     if first_time:
         await mes.answer(f'Добро пожаловать, {mes.from_user.username}!')
-        await start(mes, state)
+        await start(mes, state, user)
 
     else:
         await mes.answer('Информация успешно обновлена!')
