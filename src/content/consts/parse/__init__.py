@@ -1,6 +1,6 @@
 HERO_PARSE = r'(?P<castle>[☘️🖤🦇🌹🍁🐢🍆])(?:(?!\[)(?P<guilds_emoji>\W)|)(?:(?=\[)\[(?P<guild_tag>.+)\]|)(?P<nickname>.+)\n' \
              r'🏅Уровень: (?P<lvl>\d+).*\n.*\n.*\n.*\n.*\n(?:(?=💧).*\n|).*\n.*\n.*\n' \
-             r'(?P<classes>[🏛⚔️🏹⚗️🐣🛡🩸⚒📦🎩]+)'
+             r'(?P<classes>[🏛⚔️🏹⚗️🐣🛡🩸🛠📦🎩]+)'
 
 AL_MAIN_PARSE = r'🤝(?P<al_name>.+)\s\nGuilds:\s(?P<n_guilds>\d+)\s👥(?P<n_members>\d+)\n' \
                 r'Owner:.*\[(?P<al_owner>\w+)\].+\n.+\n.+\nBalance:\n\s+(👝(?P<al_balance_pogs>\d+))?(\s+)?💰(?P<al_balance_money>\d+)(.+)?\n' \

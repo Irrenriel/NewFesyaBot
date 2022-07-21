@@ -12,6 +12,7 @@ class RegisterUser:
 
     classes: str
     guild_tag: str
+    guilds_emoji: str = ''
 
     op_castle: int = 0
     m_class: int = 0
@@ -38,7 +39,7 @@ class RegisterUser:
             self.guild_tag = 'None'
 
     def get_classes(self):
-        d = {'🐣': -2, '🏛': -1, '⚔️': 1, '🏹': 2, '🛡': 3, '🩸': 4, '⚒': 5, '⚗️': 6, '📦': 7, '🎩': 8}
+        d = {'🐣': -2, '🏛': -1, '⚔️': 1, '🏹': 2, '🛡': 3, '🩸': 4, '🛠': 5, '⚗️': 6, '📦': 7, '🎩': 8}
 
         # Main Class
         for emj in d:

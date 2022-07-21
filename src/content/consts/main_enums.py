@@ -50,6 +50,6 @@ ROLES_DICT = {-1: Roles.ADMIN, 1: Roles.COMMON, 2: Roles.OFFICER, 3: Roles.COMMA
 
 GET_CLASS_EMOJI = {
     Classes.NONE: '🏛', Classes.CHICK: '🐣', Classes.KNIGHT: '⚔️', Classes.RANGER: '🏹', Classes.SENTINEL: '🛡',
-    Classes.BERSERK: '🩸', Classes.BLACKSMITH: '⚒', Classes.ALCHEMIST: '⚗️', Classes.COLLECTOR: '📦',
+    Classes.BERSERK: '🩸', Classes.BLACKSMITH: '🛠', Classes.ALCHEMIST: '⚗️', Classes.COLLECTOR: '📦',
     Classes.NOBLE: '🎩'
 }

@@ -1,9 +1,11 @@
 from logging import info
 
+from resources.tools.cw3_api.cw3_api_class import AIOCW3_API
+from resources.tools.cw3_api.cw3_api_func import shops_formatter
 from resources.tools.database import PostgreSQLDatabase
 
 
-async def installing_schedulers(db: PostgreSQLDatabase, scheduler, cw3_api):
+async def installing_schedulers(db: PostgreSQLDatabase, scheduler, loop):
     await update_l_check_status(db)
 
     scheduler.add_job(
@@ -23,6 +25,9 @@ async def installing_schedulers(db: PostgreSQLDatabase, scheduler, cw3_api):
         args=[update_l_check_status, {'db': db}],
         id='l_check_upd_17_30'
     )
+
+    # CW3 API
+    cw3_api = AIOCW3_API(loop, db, callbacks={'cw3-yellow_pages': shops_formatter})
 
     scheduler.add_job(
         {'trigger': 'interval', 'seconds': 3},

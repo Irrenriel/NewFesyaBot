@@ -64,13 +64,10 @@ async def new_user_register(mes: Message, db: PostgreSQLDatabase, first_time: bo
 
     model = RegisterUser(**parse.groupdict())
 
-    # Скинули Героя, а не /hero
-    if ' ' in model.nickname:
-        return
-
     # Get Class and Sub Class
     model.process()
     if not model.m_class:
+        print(2)
         return
 
     if first_time:
