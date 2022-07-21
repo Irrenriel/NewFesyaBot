@@ -9,7 +9,7 @@ from config import config
 from resources.tools.database import PostgreSQLDatabase
 from resources.tools.states import StateOn
 from src.content import START_MAIN_MENU_TEXT, start_kb, HERO_PARSE, REG_NEW_USER_REQ, UPDATE_USER_REQ, UsersCash, \
-    MAIN_REQ, UserData
+    MAIN_REQ, UserData, RegisterUser
 
 
 async def start(mes: Message, state: FSMContext, user: UserData):
@@ -62,57 +62,23 @@ async def new_user_register(mes: Message, db: PostgreSQLDatabase, first_time: bo
     if not parse:
         return
 
-    u = mes.from_user
+    model = RegisterUser(**parse.groupdict())
 
-    lvl = int(parse.group('lvl'))
-    nickname = parse.group('nickname')
-
-    m_class, s_class = await get_class(parse.group('class'))
-    if not m_class:
+    # Скинули Героя, а не /hero
+    if ' ' in model.nickname:
         return
 
-    castle = await get_castle(parse.group('castle'))
-    guild_tag = parse.group('guild_tag') if parse.group('guild_tag') else 'None'
+    # Get Class and Sub Class
+    model.process()
+    if not model.m_class:
+        return
 
     if first_time:
-        await db.execute(REG_NEW_USER_REQ, [u.id, u.username, nickname, lvl, m_class, s_class, guild_tag, castle])
-        await UsersCash.add_new_user(db, u.id)
+        await db.execute(REG_NEW_USER_REQ, model.get_args_for_new(mes))
+        await UsersCash.add_new_user(db, mes.from_user.id)
 
     else:
-        await db.execute(UPDATE_USER_REQ, [u.username, nickname, lvl, m_class, s_class, guild_tag, castle, u.id])
+        await db.execute(UPDATE_USER_REQ, model.get_args_for_old(mes))
         await UsersCash.update(await db.fetch(MAIN_REQ))
 
     return True
-
-
-async def get_class(x):
-    d = {'🐣': -2, '🏛': -1, '⚔️': 1, '🏹': 2, '🛡': 3, '🩸': 4, '⚒': 5, '⚗️': 6, '📦': 7, '🎩': 8}
-    for emj in d:
-        if x.startswith(emj):
-            m_class = d.get(emj, 0)
-            if not m_class:
-                return 0, 0
-
-            x = x.replace(emj, '')
-            break
-
-    else:
-        return 0, 0
-
-    if x:
-        for emj in d:
-            if x.startswith(emj):
-                s_class = d.get(emj, 0)
-                break
-
-        else:
-            s_class = 0
-
-    else:
-        s_class = 0
-
-    return m_class, s_class
-
-
-async def get_castle(x):
-    return {'☘️': 1, '🍁': 2, '🍆': 3, '🦇': 4, '🖤': 5, '🌹': 6, '🐢': 7}.get(x, 0)
