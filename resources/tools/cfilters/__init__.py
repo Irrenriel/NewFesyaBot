@@ -18,7 +18,7 @@ from src.content import UsersCash, Roles
 # Creating filters
 class IsUser(BoundFilter):
     def __init__(
-            self, is_id: int = None, is_admin: bool = None, has_username: bool = None, is_registered: bool = None,
+            self, is_id=None, is_admin: bool = None, has_username: bool = None, is_registered: bool = None,
             has_roles: [list, Roles] = None,
     ):
         self.is_id = is_id
@@ -31,8 +31,12 @@ class IsUser(BoundFilter):
         user = update.from_user
 
         # If User`s ID == self.id
-        if self.is_id is not None and self.is_id != user.id:
-            return False
+        if self.is_id is not None:
+            if isinstance(self.is_id, int) and self.is_id != user.id:
+                return False
+
+            if (isinstance(self.is_id, tuple) or isinstance(self.is_id, list)) and user.id not in self.is_id:
+                return False
 
         # Is User Admin or not Admin
         if self.is_admin is not None:

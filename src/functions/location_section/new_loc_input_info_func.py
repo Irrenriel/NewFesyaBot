@@ -20,8 +20,8 @@ from src.functions.admin_section.settings_func import delete_message_with_notifi
 
 # Reception of locations from CW quests
 async def new_location_input(mes: Message, db: PostgreSQLDatabase, user: UserData):
-    # if not datetime.now() - mes.forward_date < timedelta(days=2):
-    #     return
+    if not datetime.now() - mes.forward_date < timedelta(days=2):
+        return
 
     # Definition is location or alliance and packing into dictionary
     result = re.search(NEW_LOC_INPUT_PARSE, mes.text).groupdict()
@@ -43,7 +43,7 @@ async def new_location_input(mes: Message, db: PostgreSQLDatabase, user: UserDat
 
     l_conq = 'headquarter' if l_type == LocTypes.ALLIANCE else None
 
-    check = await db.fetch('SELECT code from loc WHERE name = $1 and lvl = $2', [l_name, l_lvl], one_row=True)
+    check = await db.fetch('SELECT code FROM loc WHERE name = $1 AND lvl = $2', [l_name, l_lvl], one_row=True)
     u = mes.from_user.username if mes.from_user.username else mes.from_user.first_name + '_FirstName'
 
     if check and check.get('code').startswith('NoneCode'):

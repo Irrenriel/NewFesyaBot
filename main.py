@@ -4,12 +4,24 @@ from logging import info
 from aiogram import executor, Dispatcher
 
 from config import config
-from resources.models import dp, loop, db, client, scheduler, cw3_api
+from resources.models import dp, loop, db, client, scheduler
 from resources.tools import bot_logging
 from resources.tools.middleware import installing_middlewares
 from resources.tools.telethon import telethon_connect_check
 from src.content import installing_cashes, installing_schedulers
 from src.handlers import run_handlers
+
+
+# async def test():
+#     with open('results.txt', 'r', encoding='UTF-8') as f:
+#         args = []
+#
+#         for line in f.read().splitlines():
+#             args.append(line.split(' ', maxsplit=1))
+#
+#         await db.execute(
+#             'INSERT INTO craft_ids (cid, name) VALUES ($1, $2)', args, many=True
+#         )
 
 
 async def startup_func(dp: Dispatcher):
@@ -36,7 +48,7 @@ async def startup_func(dp: Dispatcher):
     await installing_cashes(db)
 
     # Schedulers
-    await installing_schedulers(db, scheduler, cw3_api)
+    await installing_schedulers(db, scheduler, loop)
 
     info('= = = = = = = = =')
 
