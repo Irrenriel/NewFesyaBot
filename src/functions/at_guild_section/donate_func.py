@@ -9,6 +9,7 @@ from aiogram.types import Message, ChatPermissions, CallbackQuery
 from config import config
 from resources.models import client
 from resources.tools.database import PostgreSQLDatabase
+from resources.tools.telethon import TelethonQueue
 from src.content import UserData, DONATE_TEXT, donate_kb
 from src.functions.admin_section.settings_func import delete_message_with_notification
 
@@ -21,18 +22,14 @@ async def create_donate(mes: Message, regexp_command, db: PostgreSQLDatabase, us
     if user.guild_tag != 'AT':
         return
 
-    telethon_queue = await db.fetch('SELECT data_bool FROM settings WHERE var = $1', ['telethon_queue'], one_row=True)
-    if not telethon_queue.get('data_bool'):
+    if not TelethonQueue.get_status():
         m = await mes.answer('<b>[❌] Аккаунт занят. Повторите позже.</b>')
         await delete_message_with_notification(mes, m, 5, 5)
         return
 
-    await db.execute('UPDATE settings SET data_bool = False WHERE var = $1', ['telethon_queue'])
-
-    load = await mes.answer('<b>[⏳] Создаю, подожди.</b>')
-    answer = await client.conversation('🏅Герой', float(str(random.uniform(1, 3))[0:4]))
-
-    await db.execute('UPDATE settings SET data_bool = True WHERE var = $1', ['telethon_queue'])
+    with TelethonQueue() as tq:
+        load = await mes.answer('<b>[⏳] Создаю, подожди.</b>')
+        answer = await client.conversation('🏅Герой', float(str(random.uniform(1, 3))[0:4]))
 
     if not answer.startswith('Битва семи замков через'):
         await load.edit_text('<b>[❌] Идёт битва! Невозможно в данный момент!</b>')
@@ -69,17 +66,13 @@ async def update_donate(call: CallbackQuery, db: PostgreSQLDatabase, user: UserD
         await call.message.delete()
         return
 
-    telethon_queue = await db.fetch('SELECT data_bool FROM settings WHERE var = $1', ['telethon_queue'], one_row=True)
-    if not telethon_queue.get('data_bool'):
+    if not TelethonQueue.get_status():
         await call.answer('Аккаунт занят. Повторите позже.', cache_time=3)
         return
 
-    await db.execute('UPDATE settings SET data_bool = False WHERE var = $1', ['telethon_queue'])
-
-    await call.answer('Обновляется, подождите!!', cache_time=3)
-    answer = await client.conversation('🏅Герой', float(str(random.uniform(1, 3))[0:4]))
-
-    await db.execute('UPDATE settings SET data_bool = True WHERE var = $1', ['telethon_queue'])
+    with TelethonQueue() as tq:
+        await call.answer('Обновляется, подождите!!', cache_time=3)
+        answer = await client.conversation('🏅Герой', float(str(random.uniform(1, 3))[0:4]))
 
     if not answer.message.startswith('Битва семи замков через'):
         await call.answer('Идёт битва! Повторите позже!', cache_time=5)
@@ -135,49 +128,45 @@ async def pay_donate(call: CallbackQuery, db: PostgreSQLDatabase, user: UserData
         await call.answer('Недостаточно собранных средств!', cache_time=3)
         return
 
-    telethon_queue = await db.fetch('SELECT data_bool FROM settings WHERE var = $1', ['telethon_queue'], one_row=True)
-    if not telethon_queue.get('data_bool'):
+    if not TelethonQueue.get_status():
         await call.answer('Аккаунт занят. Повторите позже.', cache_time=3)
         return
 
-    await db.execute('UPDATE settings SET data_bool = False WHERE var = $1', ['telethon_queue'])
+    with TelethonQueue() as tq:
+        await call.answer('Обновляется, подождите!!', cache_time=3)
+        answer = await client.conversation('/g_pay', float(str(random.uniform(1, 3))[0:4]))
 
-    await call.answer('Обновляется, подождите!!', cache_time=3)
-    answer = await client.conversation('/g_pay', float(str(random.uniform(1, 3))[0:4]))
-
-    parse = re.findall(r'/adv_(\S+) .+💰(\d+) /g_pay', answer.message)
-    if not parse:
-        await call.answer('Казначей занят!', cache_time=3)
-        await db.execute('UPDATE settings SET data_bool = True WHERE var = $1', ['telethon_queue'])
-        return
-
-    for adv in parse:
-        if int(adv[1]) == dj['sum']:
-            g_pay = [adv[0]]
-            break
-
-    else:
-        if sum([int(i[1]) for i in parse]) <= dj['sum']:
-            g_pay = [i[0] for i in parse]
-
-        else:
-            await call.answer('Не понимаю кого оплачивать:(', cache_time=3)
-            await db.execute('UPDATE settings SET data_bool = True WHERE var = $1', ['telethon_queue'])
-            return
-
-    if not g_pay:
-        await call.answer('Не понимаю кого оплачивать:(', cache_time=3)
-        await db.execute('UPDATE settings SET data_bool = True WHERE var = $1', ['telethon_queue'])
-        return
-
-    for pay in g_pay:
-        answer = await client.conversation(f'/g_pay {pay}', float(str(random.uniform(1, 3))[0:4]))
-        if answer != 'Successfully funded!':
+        parse = re.findall(r'/adv_(\S+) .+💰(\d+) /g_pay', answer.message)
+        if not parse:
             await call.answer('Казначей занят!', cache_time=3)
             await db.execute('UPDATE settings SET data_bool = True WHERE var = $1', ['telethon_queue'])
             return
 
-    await db.execute('UPDATE settings SET data_bool = True WHERE var = $1', ['telethon_queue'])
+        for adv in parse:
+            if int(adv[1]) == dj['sum']:
+                g_pay = [adv[0]]
+                break
+
+        else:
+            if sum([int(i[1]) for i in parse]) <= dj['sum']:
+                g_pay = [i[0] for i in parse]
+
+            else:
+                await call.answer('Не понимаю кого оплачивать:(', cache_time=3)
+                await db.execute('UPDATE settings SET data_bool = True WHERE var = $1', ['telethon_queue'])
+                return
+
+        if not g_pay:
+            await call.answer('Не понимаю кого оплачивать:(', cache_time=3)
+            await db.execute('UPDATE settings SET data_bool = True WHERE var = $1', ['telethon_queue'])
+            return
+
+        for pay in g_pay:
+            answer = await client.conversation(f'/g_pay {pay}', float(str(random.uniform(1, 3))[0:4]))
+            if answer != 'Successfully funded!':
+                await call.answer('Казначей занят!', cache_time=3)
+                await db.execute('UPDATE settings SET data_bool = True WHERE var = $1', ['telethon_queue'])
+                return
 
     await db.execute('UPDATE settings SET data_str = $1 WHERE var = $2', ["", "donate_json"])
 

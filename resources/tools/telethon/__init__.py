@@ -2,6 +2,7 @@ import asyncio
 import random
 import re
 from logging import info
+from multiprocessing import RLock
 from typing import Union, List
 
 from telethon import TelegramClient
@@ -61,14 +62,18 @@ class TelethonConversator:
         return parse
 
     async def conversation(self, text: Union[str, List[str]], sleep: Union[int, float] = 0, pattern=None):
-        await self.connect()
-        async with self.client.conversation(config.CW_BOT_ID, total_timeout=9999, timeout=5) as self._con:
-            if isinstance(text, str):
-                x = await self._action(text, sleep, pattern)
-            else:
-                x = [(await self._action(mess, sleep, pattern)) for mess in text]
-        await self.disconnect()
-        return x
+        try:
+            await self.connect()
+            async with self.client.conversation(config.CW_BOT_ID, total_timeout=9999, timeout=5) as self._con:
+                if isinstance(text, str):
+                    x = await self._action(text, sleep, pattern)
+                else:
+                    x = [(await self._action(mess, sleep, pattern)) for mess in text]
+            await self.disconnect()
+            return x
+
+        except TimeoutError:
+            return
 
     async def l_check_method(self, locations: Union[str, List[str]]):
         error = "Strange fog is so dense that you can't reach this place."
@@ -112,6 +117,26 @@ class TelethonConversator:
 
         await self.disconnect()
         return result
+
+
+class TelethonQueue:
+    avail = True
+    _lock = RLock()
+
+    @classmethod
+    def __enter__(cls):
+        with cls._lock:
+            cls.avail = False
+
+    @classmethod
+    def __exit__(cls, exc_type, exc_val, exc_tb):
+        with cls._lock:
+            cls.avail = True
+
+    @classmethod
+    def get_status(cls):
+        with cls._lock:
+            return cls.avail
 
 
 async def telethon_connect_check(client: TelegramClient):

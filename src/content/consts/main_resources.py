@@ -80,3 +80,14 @@ class ChatInfo(BaseModel):
     brief_mode: bool
 
     craft_ntf: bool
+
+
+@dataclass
+class CraftData:
+    cid: str
+    name: str
+
+
+@dataclass
+class StockData:
+    ...
