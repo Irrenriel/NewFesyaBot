@@ -12,3 +12,6 @@ class StateOn(StatesGroup):
 
     # Workbench
     WorkBenchActive = State()
+
+    # AdvGuild
+    AdvStart = State()

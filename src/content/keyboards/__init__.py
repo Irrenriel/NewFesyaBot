@@ -24,3 +24,7 @@ def donate_kb():
     return InlineKeyboard(
         Call('🔄Обновить', 'updDonate'), Call('❌Отменить', 'declDonate'), Call('💰Оплатить', 'doneDonate'), row_width=2
     )
+
+
+def adv_guild_kb():
+    return ReplyKeyboard('📋Статус', '📜Квесты', 'Вернуться↩', row_width=2)

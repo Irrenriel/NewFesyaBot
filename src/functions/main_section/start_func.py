@@ -9,7 +9,7 @@ from config import config
 from resources.tools.database import PostgreSQLDatabase
 from resources.tools.states import StateOn
 from src.content import START_MAIN_MENU_TEXT, start_kb, HERO_PARSE, REG_NEW_USER_REQ, UPDATE_USER_REQ, UsersCash, \
-    MAIN_REQ, UserData, RegisterUser
+    MAIN_REQ, UserData, RegisterUser, AdvUsersCash, ADV_MAIN_REQ
 
 
 async def start(mes: Message, state: FSMContext, user: UserData):
@@ -56,7 +56,7 @@ async def hero_insert(mes: Message, state: FSMContext, db: PostgreSQLDatabase, u
         await mes.answer('Информация успешно обновлена!')
 
 
-async def new_user_register(mes: Message, db: PostgreSQLDatabase, first_time: bool = True):
+async def new_user_register(mes: Message, db: PostgreSQLDatabase, first_time: bool = True, adv: bool = False):
     # Collecting data
     parse = re.search(HERO_PARSE, mes.text)
     if not parse:
@@ -67,7 +67,6 @@ async def new_user_register(mes: Message, db: PostgreSQLDatabase, first_time: bo
     # Get Class and Sub Class
     model.process()
     if not model.m_class:
-        print(2)
         return
 
     if first_time:
@@ -77,5 +76,12 @@ async def new_user_register(mes: Message, db: PostgreSQLDatabase, first_time: bo
     else:
         await db.execute(UPDATE_USER_REQ, model.get_args_for_old(mes))
         await UsersCash.update(await db.fetch(MAIN_REQ))
+
+    if adv:
+        pack_id, quests_pack = QuestsGenerator([mes.from_user.id, 1]).get_pack()
+
+        await db.execute('INSERT INTO quest_packs VALUES ($1, $2)', [pack_id, quests_pack])
+        await db.execute('INSERT INTO adv_users (id, avail_quests) VALUES ($1, $2)', [mes.from_user.id, quests_pack])
+        await AdvUsersCash.update(await db.fetch(ADV_MAIN_REQ))
 
     return True

@@ -11,10 +11,10 @@ from asyncpg import Record
 from config import config
 from resources.models import client
 from resources.tools.database import PostgreSQLDatabase
-from src.content import NEW_LOC_INPUT_PARSE, LOC_TYPES_ENUM, LocTypes, NEW_LOCATION_NOTIFICATION, \
-    INCREASE_LOCATION_TOP_COUNT_REQ, UserData, INSERT_OR_UPDATE_LOCATION_BUFF_REQ, INSERT_OR_UPDATE_LOCATION_RES_REQ, \
-    LocInfoData, NEW_LOC_L_CHECK_FOR_TIER, GET_LOC_TYPE_EMOJI, LOC_CHECK_SELECT_DELETED_REQ, MARK_AS_DEAD_LOCATIONS, \
-    NEW_LOC_NTF, NEW_LOCATION_TEXT, DELETE_LOC_NTF, ChatInfo
+from src.content import NEW_LOC_INPUT_PARSE, LOC_TYPES_ENUM, LocTypes, INCREASE_LOCATION_TOP_COUNT_REQ, UserData, \
+    INSERT_OR_UPDATE_LOCATION_BUFF_REQ, INSERT_OR_UPDATE_LOCATION_RES_REQ, LocInfoData, NEW_LOC_L_CHECK_FOR_TIER, \
+    GET_LOC_TYPE_EMOJI, LOC_CHECK_SELECT_DELETED_REQ, MARK_AS_DEAD_LOCATIONS, NEW_LOC_NTF, NEW_LOCATION_TEXT, \
+    DELETE_LOC_NTF, ChatInfo
 from src.functions.admin_section.settings_func import delete_message_with_notification
 
 

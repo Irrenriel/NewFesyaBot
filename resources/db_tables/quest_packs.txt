@@ -1,0 +1,8 @@
+[quest_packs]
+
+CREATE TABLE quest_packs(
+pid SERIAL,
+pack TEXT NOT NULL,
+
+PRIMARY KEY(pid)
+)
