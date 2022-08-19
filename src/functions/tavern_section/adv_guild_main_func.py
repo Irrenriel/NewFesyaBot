@@ -5,9 +5,10 @@ from aiogram.dispatcher import FSMContext
 from aiogram.types import Message, ReplyKeyboardRemove
 
 from config import config
+from resources.tools.database import PostgreSQLDatabase
 from resources.tools.states import StateOn
 from src.content import AdvUserData, ADV_GUILD_MENU_TEXT, adv_guild_kb, ADV_GUILD_WELCOME_TEXT, HERO_PARSE, \
-    RegisterUser, ADV_GUILD_WELCOME2_TEXT
+    RegisterUser, ADV_GUILD_WELCOME2_TEXT, UserData
 from src.functions import hero_insert
 
 
@@ -19,7 +20,7 @@ async def adv_guild_func(mes: Message, adv_user: AdvUserData):
     await StateOn.AdvStart.set()
 
 
-async def adv_guild_registration(mes: Message, state: FSMContext):
+async def adv_guild_registration(mes: Message, db: PostgreSQLDatabase, state: FSMContext, user: UserData):
     if mes.from_user.username is None:
         await mes.answer('У вас отсутствует @username. Установите его в настройках Telegram!')
         return
@@ -34,7 +35,7 @@ async def adv_guild_registration(mes: Message, state: FSMContext):
         await mes.answer('Слишком старый /hero. Пришли новый!')
         return
 
-    if await hero_insert(mes) is None:
+    if await hero_insert(mes, state, db, user) is None:
         await mes.answer('Этот /hero с ошибками! Не удаётся получить информацию! Обратитесь к @Wolftrit.')
         return
 
