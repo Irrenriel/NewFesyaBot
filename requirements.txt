@@ -5,3 +5,4 @@ telethon
 async-property
 apscheduler
 aiokafka
+requests

@@ -7,21 +7,16 @@ from config import config
 from resources.models import dp, loop, db, client, scheduler
 from resources.tools import bot_logging
 from resources.tools.middleware import installing_middlewares
+from resources.tools.quests import QuestsGenerator
 from resources.tools.telethon import telethon_connect_check
 from src.content import installing_cashes, installing_schedulers
 from src.handlers import run_handlers
 
 
-# async def test():
-#     with open('results.txt', 'r', encoding='UTF-8') as f:
-#         args = []
-#
-#         for line in f.read().splitlines():
-#             args.append(line.split(' ', maxsplit=1))
-#
-#         await db.execute(
-#             'INSERT INTO craft_ids (cid, name) VALUES ($1, $2)', args, many=True
-#         )
+async def test():
+    x = QuestsGenerator()
+    await x.start((1, 1), db)
+    print(x.get_pack())
 
 
 async def startup_func(dp: Dispatcher):
@@ -56,6 +51,8 @@ async def startup_func(dp: Dispatcher):
     await installing_middlewares(dp, db)
 
     info('= = = Bot is working! = = =')
+
+    await test()
 
 if __name__ == '__main__':
     # Process Name (for Linux)
