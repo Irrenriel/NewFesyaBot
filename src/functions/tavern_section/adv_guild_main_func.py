@@ -1,4 +1,3 @@
-import re
 from datetime import timedelta, datetime
 
 from aiogram.dispatcher import FSMContext
@@ -7,8 +6,8 @@ from aiogram.types import Message, ReplyKeyboardRemove
 from config import config
 from resources.tools.database import PostgreSQLDatabase
 from resources.tools.states import StateOn
-from src.content import AdvUserData, ADV_GUILD_MENU_TEXT, adv_guild_kb, ADV_GUILD_WELCOME_TEXT, HERO_PARSE, \
-    RegisterUser, ADV_GUILD_WELCOME2_TEXT, UserData
+from src.content import AdvUserData, ADV_GUILD_MENU_TEXT, adv_guild_kb, ADV_GUILD_WELCOME_TEXT, \
+    ADV_GUILD_WELCOME2_TEXT, UserData
 from src.functions import hero_insert
 
 

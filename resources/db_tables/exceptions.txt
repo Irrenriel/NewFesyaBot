@@ -1,0 +1,11 @@
+[exceptions]
+CREATE TABLE exceptions (
+    id SERIAL,
+    date timestamp DEFAULT LOCALTIMESTAMP,
+    service INT DEFAULT 0,
+    version TEXT NOT NULL,
+    message TEXT NOT NULL,
+    exception TEXT NOT NULL,
+
+    PRIMARY KEY (id)
+)

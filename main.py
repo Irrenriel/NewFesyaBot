@@ -12,21 +12,9 @@ from src.content import installing_cashes, installing_schedulers
 from src.handlers import run_handlers
 
 
-# async def test():
-#     with open('results.txt', 'r', encoding='UTF-8') as f:
-#         args = []
-#
-#         for line in f.read().splitlines():
-#             args.append(line.split(' ', maxsplit=1))
-#
-#         await db.execute(
-#             'INSERT INTO craft_ids (cid, name) VALUES ($1, $2)', args, many=True
-#         )
-
-
 async def startup_func(dp: Dispatcher):
     info('= = = Starting a bot! = = =')
-    info(f'Current version: {config.CURRENT_VERSION}')
+    info(f'Current version: {config.APP_VERSION}')
 
     # Skip updates
     await dp.skip_updates()
